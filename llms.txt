@@ -51,6 +51,7 @@ common pitfalls, and further reading.
 - [Social Return on Investment (SROI)](src/social_return_on_investment.rs): `total_outcome_value`, `sroi_ratio`, `value_after_drop_off`, `proxy_valued_share`
 - [Health Technology Assessment (HTA)](src/health_technology_assessment.rs): `icer`, `meets_threshold`, `probability_cost_effective`, `recommend_routine_commissioning`
 - [Human Capital Approach vs Friction Cost Method](src/human_capital_and_friction_cost.rs): `human_capital_cost`, `friction_cost`
+- [Markov Cohort Simulation](src/markov_cohort_simulation.rs): `advance_cohort`, `cycle_cost`, `cycle_qalys`, `simulate_cohort`
 
 ### Decision rules and thresholds
 
@@ -76,6 +77,7 @@ common pitfalls, and further reading.
 - [Expected Value of Perfect Information (EVPI)](src/expected_value_of_perfect_information.rs): `expected_nmb_of_best_option`, `expected_nmb_with_perfect_information`, `evpi`, `evpi_from_psa_draws`, `population_evpi`
 - [Expected Value of Sample Information (EVSI)](src/expected_value_of_sample_information.rs): `evsi_normal_approximation`, `expected_net_benefit_of_sampling`, `population_evsi`
 - [Benefits Realization](src/benefits_realization.rs): `realization_rate`, `optimism_error`, `optimism_adjusted_forecast`
+- [Real Options Valuation](src/real_options_valuation.rs): `risk_neutral_probability`, `option_to_expand_value`, `expanded_npv`
 
 ### Healthcare operations
 
@@ -94,6 +96,8 @@ common pitfalls, and further reading.
 - [Earlier Intervention](src/earlier_intervention.rs): `progression_events_avoided`, `value_per_avoided_progression`, `value_per_patient`, `total_backlog_value`
 - [Prevention Economics](src/prevention_economics.rs): `program_cost`, `downstream_offsets`, `net_cost`, `is_cost_saving`, `per_person_cost_saving_condition`, `qalys_gained`, +2 more
 - [Screening Economics](src/screening_economics.rs): `positive_predictive_value`, `true_positives`, `false_positives`, `total_programme_cost`, `cost_per_true_case`, `net_value_per_case_found`
+- [Population Attributable Fraction (PAF)](src/population_attributable_fraction.rs): `paf_from_relative_risk`, `cases_attributable`
+- [Number Needed to Screen (NNS)](src/number_needed_to_screen.rs): `number_needed_to_screen`, `screening_program_cost_per_outcome_prevented`
 - [Workforce Retention](src/workforce_retention.rs): `vacancy_cover_cost`, `annual_turnover_cost`, `retention_value`, `software_value`
 - [Cash-Releasing vs Non-Cash-Releasing Savings](src/cash_releasing_vs_non_cash_releasing.rs): `cash_releasing_saving`, `non_cash_releasing_value`, `annual_hours_saved`, `category_value`
 - [Hard Cash-Releasing Savings (Deficit Defense)](src/hard_cash_releasing_savings_deficit_defense.rs): `premium_shift_saving`, `overtime_saving`, `cancelled_contract_saving`, `hard_saving`, `annual_workforce_overtime_saving`, `annual_bank_agency_saving`, +1 more
@@ -112,6 +116,7 @@ common pitfalls, and further reading.
 - [Wearable Validation](src/wearable_validation.rs): `mape_percent`, `concordance_correlation`, `bland_altman`, `wear_time_compliance_percent`, `data_completeness_percent`, `classify_heart_rate_mape`, +2 more
 - [Germany's DiGA Fast-Track](src/diga_fast_track.rs): `revenue`, `activated_prescriptions`, `expected_value`, `provisional_year_finances_evidence`
 - [NICE Evidence Standards Framework (ESF)](src/nice_evidence_standards_framework.rs): `classify_tier`, `evidence_investment_range`, `years_to_recoup_evidence_cost`
+- [Concentration Index](src/concentration_index.rs): `concentration_index`
 - [GDS Service Metrics](src/gds_service_metrics.rs): `cost_per_transaction`, `completion_rate_percent`, `digital_take_up_percent`, `user_satisfaction_percent`, `channel_shift_saving`, `failure_demand_cost`
 
 ### AI evaluation and economics

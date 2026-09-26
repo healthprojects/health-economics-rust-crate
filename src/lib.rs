@@ -1,6 +1,6 @@
 //! # Health Economics
 //!
-//! Rust implementations of 86 health-economics metrics and their software
+//! Rust implementations of 91 health-economics metrics and their software
 //! engineering analogues — one module per topic. Each module implements the
 //! formulas from its source topic document (`health-economics-metrics/topics/*.md`),
 //! documents them with runnable examples, and reproduces the document's
@@ -58,7 +58,7 @@
 //! [`cost_benefit_analysis`], [`cost_minimization_analysis`],
 //! [`cost_consequence_analysis`], [`budget_impact_analysis`],
 //! [`social_return_on_investment`], [`health_technology_assessment`],
-//! [`human_capital_and_friction_cost`]
+//! [`human_capital_and_friction_cost`], [`markov_cohort_simulation`]
 //!
 //! **Decision rules and thresholds** —
 //! [`incremental_cost_effectiveness_ratio`], [`net_monetary_benefit`],
@@ -72,7 +72,8 @@
 //! **Uncertainty and evidence** —
 //! [`sensitivity_analysis`], [`probabilistic_sensitivity_analysis`],
 //! [`expected_value_of_perfect_information`],
-//! [`expected_value_of_sample_information`], [`benefits_realization`]
+//! [`expected_value_of_sample_information`], [`benefits_realization`],
+//! [`real_options_valuation`]
 //!
 //! **Healthcare operations** —
 //! [`bed_days_saved`], [`length_of_stay`], [`readmission_rate`],
@@ -81,6 +82,7 @@
 //! [`national_tariff_and_unit_costs`], [`avoidable_outsourcing_costs`],
 //! [`avoided_downstream_costs`], [`downstream_resource_optimization`],
 //! [`earlier_intervention`], [`prevention_economics`], [`screening_economics`],
+//! [`population_attributable_fraction`], [`number_needed_to_screen`],
 //! [`workforce_retention`], [`cash_releasing_vs_non_cash_releasing`],
 //! [`hard_cash_releasing_savings_deficit_defense`],
 //! [`value_generating_capacity_operational_turnaround`]
@@ -91,7 +93,7 @@
 //! [`health_app_unit_economics`], [`remote_patient_monitoring_economics`],
 //! [`digital_endpoints_and_biomarkers`], [`wearable_validation`],
 //! [`diga_fast_track`], [`nice_evidence_standards_framework`],
-//! [`gds_service_metrics`]
+//! [`gds_service_metrics`], [`concentration_index`]
 //!
 //! **AI evaluation and economics** —
 //! [`clinical_ai_evaluation`], [`ai_quality_metrics`],
@@ -146,6 +148,7 @@ pub mod carbon_footprint_per_qaly;
 pub mod cash_releasing_vs_non_cash_releasing;
 pub mod clinical_ai_evaluation;
 pub mod cloud_unit_economics;
+pub mod concentration_index;
 pub mod cost_benefit_analysis;
 pub mod cost_consequence_analysis;
 pub mod cost_effectiveness_analysis;
@@ -181,13 +184,16 @@ pub mod inference_unit_economics;
 pub mod length_of_stay;
 pub mod life_years_gained;
 pub mod marginal_vs_average_cost;
+pub mod markov_cohort_simulation;
 pub mod multi_criteria_decision_analysis;
 pub mod national_tariff_and_unit_costs;
 pub mod net_monetary_benefit;
 pub mod nice_evidence_standards_framework;
+pub mod number_needed_to_screen;
 pub mod number_needed_to_treat;
 pub mod opportunity_cost;
 pub mod patient_reported_outcomes;
+pub mod population_attributable_fraction;
 pub mod practitioner_time;
 pub mod prevention_economics;
 pub mod probabilistic_sensitivity_analysis;
@@ -195,6 +201,7 @@ pub mod qaly_shortfall_and_severity_modifiers;
 pub mod quality_adjusted_life_year;
 pub mod reach_and_equity;
 pub mod readmission_rate;
+pub mod real_options_valuation;
 pub mod referral_to_treatment;
 pub mod remote_patient_monitoring_economics;
 pub mod retention_and_churn;

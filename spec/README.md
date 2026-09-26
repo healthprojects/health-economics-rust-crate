@@ -9,7 +9,7 @@ rustdoc, not here, so that content is written once and doesn't drift.
 
 ## Files
 
-85 spec files, one per `src/` module:
+91 spec files, one per `src/` module:
 
 | Spec | Module |
 | --- | --- |
@@ -30,6 +30,7 @@ rustdoc, not here, so that content is written once and doesn't drift.
 | [`cash-releasing-vs-non-cash-releasing.md`](cash-releasing-vs-non-cash-releasing.md) | [`src/cash_releasing_vs_non_cash_releasing.rs`](../src/cash_releasing_vs_non_cash_releasing.rs) |
 | [`clinical-ai-evaluation.md`](clinical-ai-evaluation.md) | [`src/clinical_ai_evaluation.rs`](../src/clinical_ai_evaluation.rs) |
 | [`cloud-unit-economics.md`](cloud-unit-economics.md) | [`src/cloud_unit_economics.rs`](../src/cloud_unit_economics.rs) |
+| [`concentration-index.md`](concentration-index.md) | [`src/concentration_index.rs`](../src/concentration_index.rs) |
 | [`cost-benefit-analysis.md`](cost-benefit-analysis.md) | [`src/cost_benefit_analysis.rs`](../src/cost_benefit_analysis.rs) |
 | [`cost-consequence-analysis.md`](cost-consequence-analysis.md) | [`src/cost_consequence_analysis.rs`](../src/cost_consequence_analysis.rs) |
 | [`cost-effectiveness-analysis.md`](cost-effectiveness-analysis.md) | [`src/cost_effectiveness_analysis.rs`](../src/cost_effectiveness_analysis.rs) |
@@ -65,13 +66,16 @@ rustdoc, not here, so that content is written once and doesn't drift.
 | [`length-of-stay.md`](length-of-stay.md) | [`src/length_of_stay.rs`](../src/length_of_stay.rs) |
 | [`life-years-gained.md`](life-years-gained.md) | [`src/life_years_gained.rs`](../src/life_years_gained.rs) |
 | [`marginal-vs-average-cost.md`](marginal-vs-average-cost.md) | [`src/marginal_vs_average_cost.rs`](../src/marginal_vs_average_cost.rs) |
+| [`markov-cohort-simulation.md`](markov-cohort-simulation.md) | [`src/markov_cohort_simulation.rs`](../src/markov_cohort_simulation.rs) |
 | [`multi-criteria-decision-analysis.md`](multi-criteria-decision-analysis.md) | [`src/multi_criteria_decision_analysis.rs`](../src/multi_criteria_decision_analysis.rs) |
 | [`national-tariff-and-unit-costs.md`](national-tariff-and-unit-costs.md) | [`src/national_tariff_and_unit_costs.rs`](../src/national_tariff_and_unit_costs.rs) |
 | [`net-monetary-benefit.md`](net-monetary-benefit.md) | [`src/net_monetary_benefit.rs`](../src/net_monetary_benefit.rs) |
 | [`nice-evidence-standards-framework.md`](nice-evidence-standards-framework.md) | [`src/nice_evidence_standards_framework.rs`](../src/nice_evidence_standards_framework.rs) |
+| [`number-needed-to-screen.md`](number-needed-to-screen.md) | [`src/number_needed_to_screen.rs`](../src/number_needed_to_screen.rs) |
 | [`number-needed-to-treat.md`](number-needed-to-treat.md) | [`src/number_needed_to_treat.rs`](../src/number_needed_to_treat.rs) |
 | [`opportunity-cost.md`](opportunity-cost.md) | [`src/opportunity_cost.rs`](../src/opportunity_cost.rs) |
 | [`patient-reported-outcomes.md`](patient-reported-outcomes.md) | [`src/patient_reported_outcomes.rs`](../src/patient_reported_outcomes.rs) |
+| [`population-attributable-fraction.md`](population-attributable-fraction.md) | [`src/population_attributable_fraction.rs`](../src/population_attributable_fraction.rs) |
 | [`practitioner-time.md`](practitioner-time.md) | [`src/practitioner_time.rs`](../src/practitioner_time.rs) |
 | [`prevention-economics.md`](prevention-economics.md) | [`src/prevention_economics.rs`](../src/prevention_economics.rs) |
 | [`probabilistic-sensitivity-analysis.md`](probabilistic-sensitivity-analysis.md) | [`src/probabilistic_sensitivity_analysis.rs`](../src/probabilistic_sensitivity_analysis.rs) |
@@ -79,6 +83,7 @@ rustdoc, not here, so that content is written once and doesn't drift.
 | [`quality-adjusted-life-year.md`](quality-adjusted-life-year.md) | [`src/quality_adjusted_life_year.rs`](../src/quality_adjusted_life_year.rs) |
 | [`reach-and-equity.md`](reach-and-equity.md) | [`src/reach_and_equity.rs`](../src/reach_and_equity.rs) |
 | [`readmission-rate.md`](readmission-rate.md) | [`src/readmission_rate.rs`](../src/readmission_rate.rs) |
+| [`real-options-valuation.md`](real-options-valuation.md) | [`src/real_options_valuation.rs`](../src/real_options_valuation.rs) |
 | [`referral-to-treatment.md`](referral-to-treatment.md) | [`src/referral_to_treatment.rs`](../src/referral_to_treatment.rs) |
 | [`remote-patient-monitoring-economics.md`](remote-patient-monitoring-economics.md) | [`src/remote_patient_monitoring_economics.rs`](../src/remote_patient_monitoring_economics.rs) |
 | [`retention-and-churn.md`](retention-and-churn.md) | [`src/retention_and_churn.rs`](../src/retention_and_churn.rs) |
@@ -89,6 +94,7 @@ rustdoc, not here, so that content is written once and doesn't drift.
 | [`space-and-devex.md`](space-and-devex.md) | [`src/space_and_devex.rs`](../src/space_and_devex.rs) |
 | [`technical-debt.md`](technical-debt.md) | [`src/technical_debt.rs`](../src/technical_debt.rs) |
 | [`time-horizon.md`](time-horizon.md) | [`src/time_horizon.rs`](../src/time_horizon.rs) |
+| [`time-trade-off-utility.md`](time-trade-off-utility.md) | [`src/time_trade_off_utility.rs`](../src/time_trade_off_utility.rs) |
 | [`total-cost-of-ownership.md`](total-cost-of-ownership.md) | [`src/total_cost_of_ownership.rs`](../src/total_cost_of_ownership.rs) |
 | [`value-generating-capacity-operational-turnaround.md`](value-generating-capacity-operational-turnaround.md) | [`src/value_generating_capacity_operational_turnaround.rs`](../src/value_generating_capacity_operational_turnaround.rs) |
 | [`value-of-a-statistical-life.md`](value-of-a-statistical-life.md) | [`src/value_of_a_statistical_life.rs`](../src/value_of_a_statistical_life.rs) |
@@ -130,8 +136,10 @@ module's rustdoc and don't require a spec change.
   `Result<_, MoneyError>`; their spec files document an `Err` condition in
   place of the usual `None` condition. This is the crate's only dependency
   and its only departure from plain `f64`.
-- No function panics. Where a function sorts floating-point values, it uses
-  `f64::total_cmp` specifically so that `NaN` input cannot panic.
+- No function panics. Where a function sorts floating-point values, or
+  takes matched-shape slices/vectors (as in `markov_cohort_simulation`), it
+  returns `Option`/uses `f64::total_cmp` rather than risking an out-of-bounds
+  index or an unwrap.
 - No function validates that a numerator is non-negative or `<=` its
   denominator beyond the zero-denominator check — see
   [`AGENTS.md`](../AGENTS.md) for why that's a deliberate scope boundary,

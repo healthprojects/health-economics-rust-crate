@@ -1,7 +1,7 @@
 {
   "name": "health-economics",
   "version": "0.2.0",
-  "description": "Rust implementations of 86 health-economics metrics and their software engineering analogues.",
+  "description": "Rust implementations of 91 health-economics metrics and their software engineering analogues.",
   "language": "rust",
   "edition": "2024",
   "dependencies": [
@@ -791,6 +791,45 @@
       ]
     },
     {
+      "name": "markov_cohort_simulation",
+      "theme": "Economic evaluation frameworks",
+      "path": "src/markov_cohort_simulation.rs",
+      "spec": "spec/markov-cohort-simulation.md",
+      "title": "Markov Cohort Simulation",
+      "summary": "The standard HTA modelling technique for interventions whose effects unfold over multiple time periods (cycles): a hypothetical cohort starts entirely in one health state, and each cycle a fixed set of transition probabilities move fractions of the cohort between states. Costs and QALYs accrue each cycle in proportion to how much of the cohort occupies each state, and are discounted back to present value.",
+      "upstream_topic": "health-economics-metrics/topics/markov-cohort-simulation.md",
+      "functions": [
+        {
+          "name": "advance_cohort",
+          "signature": "advance_cohort(state: &[f64], transition_matrix: &[Vec<f64>]) -> Option<Vec<f64>>",
+          "formula": "`new_state[j] = Σ_i state[i] * transition_matrix[i][j]` (row-vector × matrix).",
+          "returns_none_when": "`transition_matrix.len() != state.len()`, or any row's length `!= state.len()` (malformed shape — never indexes out of bounds).",
+          "example": "`advance_cohort(&[1.0, 0.0], &[vec![0.9, 0.1], vec![0.0, 1.0]]) == Some(vec![0.9, 0.1])`"
+        },
+        {
+          "name": "cycle_cost",
+          "signature": "cycle_cost(state: &[f64], cost_per_cycle: &[f64]) -> Option<f64>",
+          "formula": "`Σ_s state[s] * cost_per_cycle[s]`",
+          "returns_none_when": "`cost_per_cycle.len() != state.len()`.",
+          "example": "`cycle_cost(&[0.9, 0.1], &[1_000.0, 0.0]) == Some(900.0)`"
+        },
+        {
+          "name": "cycle_qalys",
+          "signature": "cycle_qalys(state: &[f64], utility: &[f64], cycle_length_years: f64) -> Option<f64>",
+          "formula": "`(Σ_s state[s] * utility[s]) * cycle_length_years`",
+          "returns_none_when": "`utility.len() != state.len()`.",
+          "example": "`cycle_qalys(&[0.9, 0.1], &[0.8, 0.0], 1.0) == Some(0.72)`"
+        },
+        {
+          "name": "simulate_cohort",
+          "signature": "simulate_cohort(initial_distribution: &[f64], transition_matrix: &[Vec<f64>], cost_per_cycle: &[f64], utility: &[f64], cycle_length_years: f64, cycles: usize, discount_rate: f64) -> Option<(f64, f64)>",
+          "formula": "runs `cycle_cost`/`cycle_qalys` on each cycle's state, discounts each cycle's values by `1 / (1 + discount_rate)^t`, sums both series, and advances the cohort via `advance_cohort` between cycles. Returns `(total_discounted_cost, total_discounted_qalys)`.",
+          "returns_none_when": "`initial_distribution`, `transition_matrix`, `cost_per_cycle`, or `utility` have mismatched shapes (propagated from the three functions above).",
+          "example": "a 2-state Well/Dead model (`initial_distribution = [1.0, 0.0]`, `transition_matrix = [[0.9, 0.1], [0.0, 1.0]]`, `cost_per_cycle = [1_000.0, 0.0]`, `utility = [0.8, 0.0]`, `cycle_length_years = 1.0`, `cycles = 3`, `discount_rate = 0.035`) gives `total_discounted_cost ≈ 2_625.708_884_688_091` and `total_discounted_qalys ≈ 2.100_567_107_750_473_3` (verified by running the code, not hand-derived)."
+        }
+      ]
+    },
+    {
       "name": "incremental_cost_effectiveness_ratio",
       "theme": "Decision rules and thresholds",
       "path": "src/incremental_cost_effectiveness_ratio.rs",
@@ -1486,6 +1525,38 @@
           "formula": "`raw_forecast * (1.0 - optimism_error_rate)`",
           "returns_none_when": null,
           "example": "`optimism_adjusted_forecast(100_000.0, 0.30) == 70_000.0`"
+        }
+      ]
+    },
+    {
+      "name": "real_options_valuation",
+      "theme": "Uncertainty and evidence",
+      "path": "src/real_options_valuation.rs",
+      "spec": "spec/real-options-valuation.md",
+      "title": "Real Options Valuation",
+      "summary": "Real options valuation applies financial option-pricing logic to real (non-financial-market) investment decisions — specifically here, the *option to expand* a project later if it succeeds, without being obligated to. A simplified one-period binomial model (Cox, Ross, Rubinstein, 1979) values this: the project's value either rises (`up_factor`) or falls (`down_factor`) by the next decision point; the option to expand is only exercised if it is profitable in that state (payoff floored at zero, since it is a genuine *option*, not an obligation); a risk-neutral probability weights the two states.",
+      "upstream_topic": "health-economics-metrics/topics/real-options-valuation.md",
+      "functions": [
+        {
+          "name": "risk_neutral_probability",
+          "signature": "risk_neutral_probability(risk_free_rate: f64, down_factor: f64, up_factor: f64) -> Option<f64>",
+          "formula": "`((1.0 + risk_free_rate) - down_factor) / (up_factor - down_factor)`",
+          "returns_none_when": "`up_factor == down_factor` (the two binomial states are indistinguishable — a deliberate exact-equality guard on the degenerate input, not a rounding-sensitive comparison).",
+          "example": "`risk_neutral_probability(0.08, 0.5, 1.5) == Some(0.58)`"
+        },
+        {
+          "name": "option_to_expand_value",
+          "signature": "option_to_expand_value(project_value: f64, up_factor: f64, down_factor: f64, expansion_cost: f64, risk_free_rate: f64) -> Option<f64>",
+          "formula": "computes `p` via `risk_neutral_probability`, then `payoff_up = max(project_value * up_factor - expansion_cost, 0.0)`, `payoff_down = max(project_value * down_factor - expansion_cost, 0.0)`, then `(p * payoff_up + (1.0 - p) * payoff_down) / (1.0 + risk_free_rate)`.",
+          "returns_none_when": "`risk_neutral_probability` returns `None` (i.e. `up_factor == down_factor`).",
+          "example": "`option_to_expand_value(1_000_000.0, 1.5, 0.5, 600_000.0, 0.08) ≈ Some(483_333.333_333)` (522,000 / 1.08, a non-terminating decimal — verified by running the code, not hand-derived)."
+        },
+        {
+          "name": "expanded_npv",
+          "signature": "expanded_npv(static_npv: f64, option_value: f64) -> f64",
+          "formula": "`static_npv + option_value`",
+          "returns_none_when": null,
+          "example": "`expanded_npv(200_000.0, 483_333.333_333) ≈ 683_333.333_333`"
         }
       ]
     },
@@ -2441,6 +2512,56 @@
       ]
     },
     {
+      "name": "population_attributable_fraction",
+      "theme": "Healthcare operations",
+      "path": "src/population_attributable_fraction.rs",
+      "spec": "spec/population-attributable-fraction.md",
+      "title": "Population Attributable Fraction (PAF)",
+      "summary": "PAF is the proportion of a disease or outcome's burden in a population that is attributable to a specific risk-factor exposure — the share that would disappear if the exposure were removed entirely. It converts \"this risk factor doubles your odds\" into a population-level number a commissioner can plan around: how many cases, and how much cost, a given exposure is really worth chasing.",
+      "upstream_topic": "health-economics-metrics/topics/population-attributable-fraction.md",
+      "functions": [
+        {
+          "name": "paf_from_relative_risk",
+          "signature": "paf_from_relative_risk(prevalence_exposed: f64, relative_risk: f64) -> Option<f64>",
+          "formula": "`prevalence_exposed * (relative_risk - 1.0) / (1.0 + prevalence_exposed * (relative_risk - 1.0))`",
+          "returns_none_when": "the denominator `1 + prevalence_exposed × (relative_risk − 1)` is `0.0`.",
+          "example": "`paf_from_relative_risk(0.3, 2.5) == Some(0.310_344_827_586_206_9)` (0.45 / 1.45)"
+        },
+        {
+          "name": "cases_attributable",
+          "signature": "cases_attributable(total_cases: f64, paf: f64) -> f64",
+          "formula": "`total_cases * paf`",
+          "returns_none_when": null,
+          "example": "`cases_attributable(1_000.0, 0.310_344_827_586_206_9) ≈ 310.34`"
+        }
+      ]
+    },
+    {
+      "name": "number_needed_to_screen",
+      "theme": "Healthcare operations",
+      "path": "src/number_needed_to_screen.rs",
+      "spec": "spec/number-needed-to-screen.md",
+      "title": "Number Needed to Screen (NNS)",
+      "summary": "NNS is the number of people who must be screened — not merely treated — to prevent **one** adverse outcome over a defined follow-up period, given the population's baseline risk and the relative risk reduction that early detection and treatment achieve. It is NNT's screening-programme-level analogue: NNT asks how many must be *treated* to prevent one outcome; NNS asks how many must go through the whole screen-and-then-treat pathway to get there.",
+      "upstream_topic": "health-economics-metrics/topics/number-needed-to-screen.md",
+      "functions": [
+        {
+          "name": "number_needed_to_screen",
+          "signature": "number_needed_to_screen(baseline_risk: f64, relative_risk_reduction: f64) -> Option<f64>",
+          "formula": "`1.0 / (baseline_risk * relative_risk_reduction)`",
+          "returns_none_when": "`baseline_risk * relative_risk_reduction == 0.0`.",
+          "example": "`number_needed_to_screen(0.02, 0.25) == Some(200.0)`"
+        },
+        {
+          "name": "screening_program_cost_per_outcome_prevented",
+          "signature": "screening_program_cost_per_outcome_prevented(nns: f64, cost_per_screen: f64) -> f64",
+          "formula": "`nns * cost_per_screen`",
+          "returns_none_when": null,
+          "example": "`screening_program_cost_per_outcome_prevented(200.0, 50.0) == 10_000.0`"
+        }
+      ]
+    },
+    {
       "name": "activation_and_uptake",
       "theme": "Digital health products",
       "path": "src/activation_and_uptake.rs",
@@ -3129,6 +3250,24 @@
           "formula": "`volume × digital_share × (1.0 − completion_rate) × fallback_channel_cost`",
           "returns_none_when": null,
           "example": "`failure_demand_cost(2_000_000.0, 0.30, 0.84, 3.20) == 307_200.0`"
+        }
+      ]
+    },
+    {
+      "name": "concentration_index",
+      "theme": "Digital health products",
+      "path": "src/concentration_index.rs",
+      "spec": "spec/concentration-index.md",
+      "title": "Concentration Index",
+      "summary": "The Concentration Index (Wagstaff, Paci, van Doorslaer, 1991) is a standard measure of socioeconomic-related inequality in a health variable, ranging from -1 to 1: negative means the health variable is concentrated among the socioeconomically disadvantaged, positive means it is concentrated among the better-off, and zero means no consistent socioeconomic gradient.",
+      "upstream_topic": "health-economics-metrics/topics/concentration-index.md",
+      "functions": [
+        {
+          "name": "concentration_index",
+          "signature": "concentration_index(health_values: &[f64], socioeconomic_ranks: &[f64]) -> Option<f64>",
+          "formula": "`(2.0 / mean(health_values)) * covariance(health_values, socioeconomic_ranks)`, where `covariance(X, Y) = mean(X * Y) - mean(X) * mean(Y)` (population covariance).",
+          "returns_none_when": "`health_values.len() != socioeconomic_ranks.len()`, either slice is empty, or `mean(health_values) == 0.0`.",
+          "example": "for `health_values = [1.0, 2.0, 3.0, 4.0]` and `socioeconomic_ranks = [0.125, 0.375, 0.625, 0.875]`, `concentration_index(&health_values, &socioeconomic_ranks) == Some(0.25)`."
         }
       ]
     },

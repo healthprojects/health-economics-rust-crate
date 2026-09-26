@@ -1,6 +1,6 @@
 # Health Economics Rust crate
 
-Health economics models, structs, calculations, and examples — 85 modules
+Health economics models, structs, calculations, and examples — 91 modules
 covering the metrics of health technology assessment, healthcare operations,
 digital health products, clinical AI evaluation, and their software
 engineering analogues. One module per topic.
@@ -100,6 +100,7 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `patient_reported_outcomes` — PROMs and PREMs
 - `number_needed_to_treat` — NNT and NNH from absolute risk differences
 - `work_productivity_and_activity_impairment` — WPAI: absenteeism and presenteeism
+- `time_trade_off_utility` — TTO: how a utility weight is actually elicited from a respondent
 
 ### Economic evaluation frameworks
 
@@ -111,6 +112,7 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `budget_impact_analysis` — affordability for the payer
 - `social_return_on_investment` — SROI
 - `health_technology_assessment` — the HTA process end-to-end
+- `markov_cohort_simulation` — multi-cycle state-transition modelling for chronic conditions
 - `human_capital_and_friction_cost` — indirect/productivity cost valuation methods
 
 ### Decision rules and thresholds
@@ -135,6 +137,7 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `sensitivity_analysis` — one-way analysis and tornado diagrams
 - `probabilistic_sensitivity_analysis` — Monte Carlo over parameter distributions
 - `expected_value_of_perfect_information` — EVPI: what resolving uncertainty is worth
+- `real_options_valuation` — pricing the option to expand a project later, not just to gather information first
 - `expected_value_of_sample_information` — EVSI: pricing a specific proposed study
 - `benefits_realization` — tracking promised benefits after go-live
 
@@ -146,6 +149,7 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `national_tariff_and_unit_costs`, `avoidable_outsourcing_costs`
 - `avoided_downstream_costs`, `downstream_resource_optimization`
 - `earlier_intervention`, `prevention_economics`, `screening_economics`
+- `population_attributable_fraction`, `number_needed_to_screen`
 - `workforce_retention`, `cash_releasing_vs_non_cash_releasing`
 - `hard_cash_releasing_savings_deficit_defense`
 - `value_generating_capacity_operational_turnaround`
@@ -153,7 +157,7 @@ cargo run --example engineering_economics       # delivery metrics as economics
 ### Digital health products
 
 - `activation_and_uptake`, `adherence_and_persistence`
-- `engagement_metrics`, `retention_and_churn`, `reach_and_equity`
+- `engagement_metrics`, `retention_and_churn`, `reach_and_equity`, `concentration_index`
 - `health_app_unit_economics`, `remote_patient_monitoring_economics`
 - `digital_endpoints_and_biomarkers`, `wearable_validation`
 - `diga_fast_track` — Germany's DiGA reimbursement pathway
