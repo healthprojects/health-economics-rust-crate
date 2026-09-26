@@ -1,6 +1,6 @@
 {
   "name": "health-economics",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Rust implementations of 85 health-economics metrics and their software engineering analogues.",
   "language": "rust",
   "edition": "2024",
@@ -3953,6 +3953,13 @@
           "formula": "`total.mul(multiplier)` — an exact `Decimal` product that may carry more decimal places than the currency's minor-unit exponent; the caller must round explicitly afterward with a stated rounding rule.",
           "returns_none_when": "Err: the multiplication overflows.",
           "example": "`apply_multiplier(Money::from_minor(1_481_472, iso::USD), Decimal::new(105, 2)).unwrap()` then `.round(2, Round::HalfEven) == Money::from_minor(1_555_546, iso::USD)` ($14,814.72 × 1.05 = exact $15,555.456, rounds half-even to $15,555.46)"
+        },
+        {
+          "name": "budget_variance",
+          "signature": "budget_variance(actual: Money<'static, iso::Currency>, budgeted: Money<'static, iso::Currency>) -> Result<Money<'static, iso::Currency>, MoneyError>",
+          "formula": "`actual.sub(budgeted)` — positive means over budget, negative means under budget, exact to the minor unit.",
+          "returns_none_when": "Err: `actual` and `budgeted` are in different currencies.",
+          "example": "`budget_variance(Money::from_minor(1_555_546, iso::USD), Money::from_minor(1_481_472, iso::USD)).unwrap() == Money::from_minor(74_074, iso::USD)` ($15,555.46 actual against a $14,814.72 budget is exactly $740.74 over)"
         }
       ]
     }

@@ -21,6 +21,12 @@ the module's rustdoc.
 - Returns `Err(MoneyError::Overflow)` iff the multiplication overflows.
 - Worked example: `apply_multiplier(Money::from_minor(1_481_472, iso::USD), Decimal::new(105, 2)).unwrap()` then `.round(2, Round::HalfEven) == Money::from_minor(1_555_546, iso::USD)` ($14,814.72 × 1.05 = exact $15,555.456, rounds half-even to $15,555.46)
 
+### `budget_variance(actual: Money<'static, iso::Currency>, budgeted: Money<'static, iso::Currency>) -> Result<Money<'static, iso::Currency>, MoneyError>`
+
+- Formula: `actual.sub(budgeted)` — positive means over budget, negative means under budget, exact to the minor unit.
+- Returns `Err(MoneyError::CurrencyMismatch)` iff `actual` and `budgeted` are in different currencies.
+- Worked example: `budget_variance(Money::from_minor(1_555_546, iso::USD), Money::from_minor(1_481_472, iso::USD)).unwrap() == Money::from_minor(74_074, iso::USD)` ($15,555.46 actual against a $14,814.72 budget is exactly $740.74 over)
+
 ## Invariants
 
 - `sum_line_items` is exact and order-independent by construction (it uses

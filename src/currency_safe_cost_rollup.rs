@@ -181,6 +181,40 @@ pub fn apply_multiplier(
     total.mul(multiplier)
 }
 
+/// Exact variance between an actual amount and a budgeted amount.
+///
+/// Positive means over budget, negative means under budget — exactly, to
+/// the minor unit, with none of the drift a plain `f64` subtraction of two
+/// large rolled-up totals could introduce.
+///
+/// # Arguments
+///
+/// * `actual` — the amount actually spent.
+/// * `budgeted` — the amount that was budgeted.
+///
+/// # Errors
+///
+/// Returns [`MoneyError::CurrencyMismatch`] if `actual` and `budgeted` are
+/// in different currencies.
+///
+/// # Examples
+///
+/// ```rust
+/// use health_economics::currency_safe_cost_rollup::budget_variance;
+/// use rusty_money::{iso, Money};
+///
+/// let actual = Money::from_minor(1_555_546, iso::USD); // $15,555.46
+/// let budgeted = Money::from_minor(1_481_472, iso::USD); // $14,814.72
+/// let variance = budget_variance(actual, budgeted).unwrap();
+/// assert_eq!(variance, Money::from_minor(74_074, iso::USD)); // $740.74 over budget
+/// ```
+pub fn budget_variance(
+    actual: Money<'static, iso::Currency>,
+    budgeted: Money<'static, iso::Currency>,
+) -> Result<Money<'static, iso::Currency>, MoneyError> {
+    actual.sub(budgeted)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -209,5 +243,27 @@ mod tests {
         let adjusted = apply_multiplier(total, Decimal::new(105, 2)).unwrap();
         let rounded = adjusted.round(2, Round::HalfEven);
         assert_eq!(rounded, Money::from_minor(1_555_546, iso::USD));
+    }
+
+    /// Worked example: $15,555.46 actual against a $14,814.72 budget is
+    /// exactly $740.74 over budget.
+    #[test]
+    fn variance_between_escalated_and_original_total() {
+        let actual = Money::from_minor(1_555_546, iso::USD);
+        let budgeted = Money::from_minor(1_481_472, iso::USD);
+        let variance = budget_variance(actual, budgeted).unwrap();
+        assert_eq!(variance, Money::from_minor(74_074, iso::USD));
+    }
+
+    /// Comparing amounts in different currencies is a caught error, not a
+    /// silent miscalculation.
+    #[test]
+    fn mismatched_currencies_is_an_error() {
+        let actual = Money::from_major(100, iso::USD);
+        let budgeted = Money::from_major(100, iso::GBP);
+        assert!(matches!(
+            budget_variance(actual, budgeted),
+            Err(MoneyError::CurrencyMismatch { .. })
+        ));
     }
 }

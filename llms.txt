@@ -135,7 +135,7 @@ common pitfalls, and further reading.
 - [Build vs Buy](src/build_vs_buy.rs): `risk_adjusted_build_cost`, `risk_adjusted_time_to_value`, `total_cost_of_ownership`, `cost_of_delay`, `effective_cost`
 - [Cloud Unit Economics (FinOps)](src/cloud_unit_economics.rs): `unit_cost`, `unit_cost_ratio`, `unit_cost_change`
 - [Exact-Cents Cost Allocation](src/exact_cents_cost_allocation.rs): `allocate_by_shares`
-- [Currency-Safe Cost Rollup](src/currency_safe_cost_rollup.rs): `sum_line_items`, `apply_multiplier`
+- [Currency-Safe Cost Rollup](src/currency_safe_cost_rollup.rs): `sum_line_items`, `apply_multiplier`, `budget_variance`
 
 ## Optional
 
