@@ -88,7 +88,7 @@
 //! ## Sources
 //!
 //! - Claxton K. "Exploring uncertainty in cost-effectiveness analysis."
-//!   PharmacoEconomics 2008. <https://pubmed.ncbi.nlm.nih.gov/18279550/>
+//!   `PharmacoEconomics` 2008. <https://pubmed.ncbi.nlm.nih.gov/18279550/>
 //! - York Health Economics Consortium glossary: EVPI.
 //!   <https://yhec.co.uk/glossary/expected-value-of-perfect-information-evpi/>
 //!
@@ -135,9 +135,9 @@ fn max_of(values: &[f64]) -> Option<f64> {
 ///
 /// # Returns
 ///
-/// The best expected NMB, or `None` if `scenarios` is empty or the first
-/// scenario has no options. (Scenarios with fewer options than the first
-/// will panic on index; keep option lists the same length.)
+/// The best expected NMB, or `None` if `scenarios` is empty, the first
+/// scenario has no options, or any scenario's option list has a different
+/// length than the first (every scenario must offer the same options).
 ///
 /// # Examples
 ///
@@ -154,9 +154,10 @@ fn max_of(values: &[f64]) -> Option<f64> {
 /// let e = expected_nmb_of_best_option(&scenarios).unwrap();
 /// assert!((e - 3.6).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn expected_nmb_of_best_option(scenarios: &[Scenario]) -> Option<f64> {
     let n_options = scenarios.first()?.option_nmbs.len();
-    if n_options == 0 {
+    if n_options == 0 || scenarios.iter().any(|s| s.option_nmbs.len() != n_options) {
         return None;
     }
     // E-then-max: expectation per option j across worlds ...
@@ -198,6 +199,7 @@ pub fn expected_nmb_of_best_option(scenarios: &[Scenario]) -> Option<f64> {
 /// let e = expected_nmb_with_perfect_information(&scenarios).unwrap();
 /// assert!((e - 4.8).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn expected_nmb_with_perfect_information(scenarios: &[Scenario]) -> Option<f64> {
     if scenarios.is_empty() {
         return None;
@@ -241,6 +243,7 @@ pub fn expected_nmb_with_perfect_information(scenarios: &[Scenario]) -> Option<f
 /// let v = evpi(&scenarios).unwrap();
 /// assert!((v - 1.2).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn evpi(scenarios: &[Scenario]) -> Option<f64> {
     // E[max] − max E[]: the gap is the price of deciding blind.
     Some(expected_nmb_with_perfect_information(scenarios)? - expected_nmb_of_best_option(scenarios)?)
@@ -273,11 +276,15 @@ pub fn evpi(scenarios: &[Scenario]) -> Option<f64> {
 /// let v = evpi_from_psa_draws(&draws).unwrap();
 /// assert!((v - 1.2).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn evpi_from_psa_draws(draws: &[Vec<f64>]) -> Option<f64> {
     if draws.is_empty() {
         return None;
     }
-    // Each PSA draw is a possible world with equal weight 1/n.
+    // Each PSA draw is a possible world with equal weight 1/n. Draw counts
+    // fit comfortably in f64's 52-bit mantissa for any realistic simulation
+    // size.
+    #[allow(clippy::cast_precision_loss)]
     let p = 1.0 / draws.len() as f64;
     let scenarios: Vec<Scenario> = draws
         .iter()
@@ -307,6 +314,7 @@ pub fn evpi_from_psa_draws(draws: &[Vec<f64>]) -> Option<f64> {
 /// // £1.2M per decision across 10 comparable rollout decisions = £12M.
 /// assert!((population_evpi(1.2, 10.0) - 12.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn population_evpi(evpi_per_decision: f64, decisions_affected: f64) -> f64 {
     evpi_per_decision * decisions_affected
 }

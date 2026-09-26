@@ -137,6 +137,7 @@ pub enum WhoChoiceBand {
 /// // 10 premature deaths prevented × 20 years each = 200 YLL averted.
 /// assert_eq!(years_of_life_lost(10.0, 20.0), 200.0);
 /// ```
+#[must_use]
 pub fn years_of_life_lost(deaths: f64, life_expectancy_at_death: f64) -> f64 {
     deaths * life_expectancy_at_death
 }
@@ -165,6 +166,7 @@ pub fn years_of_life_lost(deaths: f64, life_expectancy_at_death: f64) -> f64 {
 /// // 200 person-years at disability weight 0.2 = 40 YLD averted.
 /// assert_eq!(years_lived_with_disability(200.0, 0.2), 40.0);
 /// ```
+#[must_use]
 pub fn years_lived_with_disability(prevalence: f64, disability_weight: f64) -> f64 {
     prevalence * disability_weight
 }
@@ -191,6 +193,7 @@ pub fn years_lived_with_disability(prevalence: f64, disability_weight: f64) -> f
 /// // 200 YLL + 40 YLD = 240 DALYs averted per year.
 /// assert_eq!(dalys(200.0, 40.0), 240.0);
 /// ```
+#[must_use]
 pub fn dalys(yll: f64, yld: f64) -> f64 {
     yll + yld
 }
@@ -220,6 +223,7 @@ pub fn dalys(yll: f64, yld: f64) -> f64 {
 /// assert_eq!(cost_per_daly_averted(600_000.0, 240.0), Some(2_500.0));
 /// assert_eq!(cost_per_daly_averted(600_000.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn cost_per_daly_averted(annual_cost: f64, dalys_averted: f64) -> Option<f64> {
     if dalys_averted == 0.0 {
         None
@@ -255,6 +259,7 @@ pub fn cost_per_daly_averted(annual_cost: f64, dalys_averted: f64) -> Option<f64
 /// assert_eq!(who_choice_band(10_000.0, 8_000.0), WhoChoiceBand::CostEffective);
 /// assert_eq!(who_choice_band(30_000.0, 8_000.0), WhoChoiceBand::NotCostEffective);
 /// ```
+#[must_use]
 pub fn who_choice_band(cost_per_daly_averted: f64, gdp_per_capita: f64) -> WhoChoiceBand {
     if cost_per_daly_averted < gdp_per_capita {
         // Below 1× GDP per capita.

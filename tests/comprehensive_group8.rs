@@ -1,12 +1,12 @@
 //! Comprehensive integration tests — group 8.
 //!
 //! Modules under test:
-//! - value_generating_capacity_operational_turnaround
-//! - waiting_list_impact
-//! - wearable_validation
-//! - willingness_to_pay_thresholds
-//! - workforce_retention
-//! - wsjf_and_cd3
+//! - `value_generating_capacity_operational_turnaround`
+//! - `waiting_list_impact`
+//! - `wearable_validation`
+//! - `willingness_to_pay_thresholds`
+//! - `workforce_retention`
+//! - `wsjf_and_cd3`
 //!
 //! Sections:
 //! 1. EDGE CASES — None conditions, zero/empty/boundary inputs, extremes.
@@ -78,7 +78,7 @@ fn edge_capacity_extreme_magnitudes_stay_finite() {
 
 // ---- waiting_list_impact --------------------------------------------------
 
-/// extra_slots returns None exactly when slot_duration_hours is zero.
+/// `extra_slots` returns None exactly when `slot_duration_hours` is zero.
 #[test]
 fn edge_extra_slots_none_only_on_zero_slot_duration() {
     assert!(extra_slots(3_750.0, 0.0, 0.85).is_none());
@@ -108,14 +108,14 @@ fn edge_list_reduction_can_go_negative() {
     assert_close(net, -500.0, TOL);
 }
 
-/// waiting_time_gain is None only at zero service rate; zero backlog gives zero gain.
+/// `waiting_time_gain` is None only at zero service rate; zero backlog gives zero gain.
 #[test]
 fn edge_waiting_time_gain_none_condition() {
     assert!(waiting_time_gain(100.0, 0.0).is_none());
     assert_close(waiting_time_gain(0.0, 24_000.0).unwrap(), 0.0, TOL);
 }
 
-/// wait_reduction_fraction is None only at zero annual capacity.
+/// `wait_reduction_fraction` is None only at zero annual capacity.
 #[test]
 fn edge_wait_reduction_fraction_none_condition() {
     assert!(wait_reduction_fraction(100.0, 0.0).is_none());
@@ -141,7 +141,7 @@ fn edge_waiting_list_extreme_magnitudes_stay_finite() {
 
 // ---- wearable_validation ----------------------------------------------------
 
-/// mape_percent is None for empty slices, length mismatch, or any zero reference.
+/// `mape_percent` is None for empty slices, length mismatch, or any zero reference.
 #[test]
 fn edge_mape_none_conditions() {
     assert!(mape_percent(&[], &[]).is_none());
@@ -181,7 +181,7 @@ fn edge_ccc_single_unequal_pair_is_zero() {
     assert!(concordance_correlation(&[10.0], &[10.0]).is_none());
 }
 
-/// bland_altman needs n ≥ 2 matched pairs; one pair or mismatched lengths give None.
+/// `bland_altman` needs n ≥ 2 matched pairs; one pair or mismatched lengths give None.
 #[test]
 fn edge_bland_altman_none_conditions() {
     assert!(bland_altman(&[1.0], &[1.0]).is_none());
@@ -223,8 +223,8 @@ fn edge_data_completeness_none_and_zero() {
 fn edge_mape_grade_boundary_equality() {
     assert_eq!(classify_heart_rate_mape(5.0), HeartRateMapeGrade::Strict);
     assert_eq!(classify_heart_rate_mape(10.0), HeartRateMapeGrade::Lenient);
-    assert_eq!(classify_heart_rate_mape(5.000001), HeartRateMapeGrade::Lenient);
-    assert_eq!(classify_heart_rate_mape(10.000001), HeartRateMapeGrade::Fail);
+    assert_eq!(classify_heart_rate_mape(5.000_001), HeartRateMapeGrade::Lenient);
+    assert_eq!(classify_heart_rate_mape(10.000_001), HeartRateMapeGrade::Fail);
     assert_eq!(classify_heart_rate_mape(0.0), HeartRateMapeGrade::Strict);
 }
 
@@ -259,7 +259,7 @@ fn edge_wearable_extreme_magnitudes_stay_finite() {
 
 // ---- willingness_to_pay_thresholds -----------------------------------------
 
-/// ICER is None exactly at ΔE = 0; adopt_by_icer inherits the same None condition.
+/// ICER is None exactly at ΔE = 0; `adopt_by_icer` inherits the same None condition.
 #[test]
 fn edge_icer_none_at_zero_effect() {
     assert!(icer(800.0, 0.0).is_none());
@@ -309,7 +309,7 @@ fn edge_wtp_extreme_magnitudes_stay_finite() {
 
 // ---- workforce_retention ----------------------------------------------------
 
-/// An all-zero leaver costs nothing; each component contributes additively to total().
+/// An all-zero leaver costs nothing; each component contributes additively to `total()`.
 #[test]
 fn edge_cost_per_leaver_zero_and_single_component() {
     let zero = CostPerLeaver { recruitment: 0.0, onboarding_ramp: 0.0, vacancy_cover: 0.0 };
@@ -335,7 +335,7 @@ fn edge_turnover_rate_boundaries() {
     assert_close(annual_turnover_cost(1_200.0, 1.0, 18_500.0), 1_200.0 * 18_500.0, TOL);
 }
 
-/// Zero claimed turnover reduction is worth zero; software_value then rests on sickness only.
+/// Zero claimed turnover reduction is worth zero; `software_value` then rests on sickness only.
 #[test]
 fn edge_retention_value_zero_reduction() {
     assert_close(retention_value(1_200.0, 0.0, 18_500.0), 0.0, TOL);
@@ -424,7 +424,7 @@ fn prop_capacity_value_is_linear_in_each_factor() {
     }
 }
 
-/// Consistency: annual_capacity_value equals the manual two-step composition on a grid.
+/// Consistency: `annual_capacity_value` equals the manual two-step composition on a grid.
 #[test]
 fn prop_annual_capacity_value_matches_composition() {
     for staff in [1.0, 10.0, 25.0] {
@@ -480,7 +480,7 @@ fn prop_waiting_time_gain_decreases_with_service_rate() {
     }
 }
 
-/// Linearity: hours_released and activity_value both scale linearly with their inputs.
+/// Linearity: `hours_released` and `activity_value` both scale linearly with their inputs.
 #[test]
 fn prop_waiting_list_scaling_linearity() {
     for staff in [5.0, 20.0, 80.0] {
@@ -510,8 +510,11 @@ fn prop_ccc_bounded_in_minus_one_to_one() {
     // A deterministic LCG supplies varied but reproducible perturbations.
     let mut seed: u64 = 42;
     let mut next = || {
-        seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
-        ((seed >> 33) as f64 / (u32::MAX as f64)) * 20.0 - 10.0
+        seed = seed.wrapping_mul(6_364_136_223_846_793_005).wrapping_add(1_442_695_040_888_963_407);
+        // seed >> 33 fits in 31 bits, well within f64's 52-bit mantissa.
+        #[allow(clippy::cast_precision_loss)]
+        let shifted = (seed >> 33) as f64;
+        (shifted / f64::from(u32::MAX)) * 20.0 - 10.0
     };
     for bias in [-30.0, -5.0, 0.0, 5.0, 30.0] {
         for scale in [-2.0, -1.0, 0.5, 1.0, 3.0] {
@@ -555,7 +558,7 @@ fn prop_bland_altman_limits_bracket_bias() {
             assert!(ba.lower_limit <= ba.mean_bias + TOL);
             assert!(ba.upper_limit >= ba.mean_bias - TOL);
             // Symmetry: bias is the midpoint of the limits.
-            assert_close((ba.lower_limit + ba.upper_limit) / 2.0, ba.mean_bias, 1e-9);
+            assert_close(f64::midpoint(ba.lower_limit, ba.upper_limit), ba.mean_bias, 1e-9);
         }
     }
 }
@@ -600,7 +603,7 @@ fn prop_mape_grade_ordering_is_monotone() {
     }
 }
 
-/// Linearity: absolute_error_at scales linearly in both MAPE and the true value.
+/// Linearity: `absolute_error_at` scales linearly in both MAPE and the true value.
 #[test]
 fn prop_absolute_error_linear() {
     for mape in [1.0, 5.0, 11.4] {
@@ -677,7 +680,7 @@ fn prop_turnover_cost_monotone_in_cost_and_rate() {
     }
 }
 
-/// Consistency: retention_value equals the turnover-cost delta of the rate improvement.
+/// Consistency: `retention_value` equals the turnover-cost delta of the rate improvement.
 #[test]
 fn prop_retention_value_equals_turnover_cost_delta() {
     for headcount in [200.0, 1_200.0] {
@@ -692,7 +695,7 @@ fn prop_retention_value_equals_turnover_cost_delta() {
     }
 }
 
-/// Consistency: software_value decomposes exactly into retention + sickness terms.
+/// Consistency: `software_value` decomposes exactly into retention + sickness terms.
 #[test]
 fn prop_software_value_decomposition() {
     for days in [0.0, 50.0, 100.0, 400.0] {
@@ -704,7 +707,7 @@ fn prop_software_value_decomposition() {
     }
 }
 
-/// Consistency: Feature::cd3() always agrees with the free cd3() function.
+/// Consistency: `Feature::cd3()` always agrees with the free `cd3()` function.
 #[test]
 fn prop_feature_cd3_agrees_with_free_function() {
     for cod in [0.0, 5_000.0, 12_000.0, 30_000.0, 1e9] {
@@ -715,7 +718,7 @@ fn prop_feature_cd3_agrees_with_free_function() {
     }
 }
 
-/// Ordering: sequence_by_cd3 output is non-increasing in CD3 for a grid of backlogs.
+/// Ordering: `sequence_by_cd3` output is non-increasing in CD3 for a grid of backlogs.
 #[test]
 fn prop_sequence_by_cd3_is_sorted_descending() {
     let backlog = [
@@ -771,7 +774,7 @@ fn prop_cd3_optimality_on_second_feature_set() {
     }
 }
 
-/// Consistency: sequencing_savings is exactly given-order cost minus CD3-order cost.
+/// Consistency: `sequencing_savings` is exactly given-order cost minus CD3-order cost.
 #[test]
 fn prop_sequencing_savings_identity() {
     let a = Feature { cost_of_delay_per_week: 30_000.0, duration_weeks: 10.0 };
@@ -806,7 +809,7 @@ fn prop_wsjf_monotone_in_value_and_size() {
 // SECTION 3 — CROSS-MODULE CONSISTENCY
 // ===========================================================================
 
-/// adopt_by_icer and adopt_by_nmb agree for every grid point with ΔE > 0 (incl. ICER == λ).
+/// `adopt_by_icer` and `adopt_by_nmb` agree for every grid point with ΔE > 0 (incl. ICER == λ).
 #[test]
 fn cross_icer_and_nmb_decisions_agree_for_positive_effect() {
     let costs = [-500.0, 0.0, 100.0, 800.0, 1_000.0, 2_000.0, 50_000.0];
@@ -860,7 +863,7 @@ fn cross_icer_recovers_cost_and_zeroes_nmb() {
     }
 }
 
-/// max_defensible_price is the break-even ΔC: pricing at it makes NMB exactly zero.
+/// `max_defensible_price` is the break-even ΔC: pricing at it makes NMB exactly zero.
 #[test]
 fn cross_max_price_is_nmb_break_even() {
     for &lambda in &[4_000.0, 20_000.0, 150_000.0] {
@@ -875,7 +878,7 @@ fn cross_max_price_is_nmb_break_even() {
 }
 
 /// Capacity-module units agree with waiting-list slots when hours convert losslessly:
-/// staff × (h/day ÷ slot-length) × days == extra_slots(hours_released, slot, util=1).
+/// staff × (h/day ÷ slot-length) × days == `extra_slots(hours_released, slot, util=1)`.
 #[test]
 fn cross_capacity_units_agree_with_waiting_list_slots() {
     for &(staff, hours_per_day, days) in &[(20.0, 1.0, 250.0), (8.0, 0.75, 220.0)] {
@@ -895,7 +898,7 @@ fn cross_capacity_units_agree_with_waiting_list_slots() {
 }
 
 /// A MAPE computed from a constant-relative-error series converts back to the
-/// exact per-reading absolute error via absolute_error_at.
+/// exact per-reading absolute error via `absolute_error_at`.
 #[test]
 fn cross_mape_roundtrips_through_absolute_error() {
     let reference = [80.0, 95.0, 110.0];
@@ -910,7 +913,7 @@ fn cross_mape_roundtrips_through_absolute_error() {
 }
 
 /// Health-denominated cost of delay: CoD/week = λ × QALYs-at-stake/week
-/// (via max_defensible_price) feeds CD3 sequencing coherently.
+/// (via `max_defensible_price`) feeds CD3 sequencing coherently.
 #[test]
 fn cross_wtp_denominated_cost_of_delay_drives_cd3() {
     let lambda = 20_000.0;

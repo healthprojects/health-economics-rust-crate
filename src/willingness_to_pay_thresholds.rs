@@ -136,6 +136,7 @@
 /// // Zero incremental effect: no ICER.
 /// assert!(icer(800.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn icer(incremental_cost: f64, incremental_effect: f64) -> Option<f64> {
     if incremental_effect == 0.0 {
         None
@@ -169,6 +170,7 @@ pub fn icer(incremental_cost: f64, incremental_effect: f64) -> Option<f64> {
 /// let nmb = net_monetary_benefit(20_000.0, 0.05, 800.0);
 /// assert_eq!(nmb, 200.0);
 /// ```
+#[must_use]
 pub fn net_monetary_benefit(
     threshold: f64,
     incremental_effect: f64,
@@ -205,6 +207,7 @@ pub fn net_monetary_benefit(
 /// // Zero incremental effect: the ICER rule is undefined.
 /// assert_eq!(adopt_by_icer(800.0, 0.0, 20_000.0), None);
 /// ```
+#[must_use]
 pub fn adopt_by_icer(
     incremental_cost: f64,
     incremental_effect: f64,
@@ -239,6 +242,7 @@ pub fn adopt_by_icer(
 /// // With no health gain, a costly product is never adopted.
 /// assert!(!adopt_by_nmb(20_000.0, 0.0, 800.0));
 /// ```
+#[must_use]
 pub fn adopt_by_nmb(threshold: f64, incremental_effect: f64, incremental_cost: f64) -> bool {
     net_monetary_benefit(threshold, incremental_effect, incremental_cost) > 0.0
 }
@@ -247,7 +251,7 @@ pub fn adopt_by_nmb(threshold: f64, incremental_effect: f64, incremental_cost: f
 ///
 /// The most a jurisdiction with threshold λ can be asked to pay is the
 /// health gain valued at the threshold, plus any cost offsets the product
-/// generates elsewhere: price_max = λ × ΔE + offsets. Same product, three
+/// generates elsewhere: `price_max` = λ × ΔE + offsets. Same product, three
 /// markets, three prices — the threshold *is* the pricing model.
 ///
 /// # Arguments
@@ -275,6 +279,7 @@ pub fn adopt_by_nmb(threshold: f64, incremental_effect: f64, incremental_cost: f
 /// // US commercial framing at $150k/QALY: $7,500 for the same 0.05 QALYs.
 /// assert_eq!(max_defensible_price(150_000.0, 0.05, 0.0), 7_500.0);
 /// ```
+#[must_use]
 pub fn max_defensible_price(threshold: f64, qalys_gained: f64, cost_offsets: f64) -> f64 {
     threshold * qalys_gained + cost_offsets
 }
@@ -306,7 +311,7 @@ mod tests {
 
     // Worked example: "at λ = £20,000, price_max = 0.05 × 20,000 + offsets
     // = £1,000 + offsets".
-    /// At λ = £20,000, price_max = 0.05 × 20,000 + offsets = £1,000 + offsets.
+    /// At λ = £20,000, `price_max` = 0.05 × 20,000 + offsets = £1,000 + offsets.
     #[test]
     fn max_price_in_england_is_1_000_plus_offsets() {
         let price = max_defensible_price(20_000.0, 0.05, 0.0);

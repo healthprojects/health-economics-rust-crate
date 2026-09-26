@@ -1,16 +1,16 @@
 //! Comprehensive integration tests, group 6.
 //!
 //! Modules covered:
-//! - opportunity_cost
-//! - patient_reported_outcomes
-//! - practitioner_time
-//! - prevention_economics
-//! - probabilistic_sensitivity_analysis
-//! - qaly_shortfall_and_severity_modifiers
-//! - quality_adjusted_life_year
-//! - reach_and_equity
-//! - readmission_rate
-//! - referral_to_treatment
+//! - `opportunity_cost`
+//! - `patient_reported_outcomes`
+//! - `practitioner_time`
+//! - `prevention_economics`
+//! - `probabilistic_sensitivity_analysis`
+//! - `qaly_shortfall_and_severity_modifiers`
+//! - `quality_adjusted_life_year`
+//! - `reach_and_equity`
+//! - `readmission_rate`
+//! - `referral_to_treatment`
 //!
 //! Sections:
 //! 1. EDGE CASES
@@ -150,11 +150,11 @@ fn edge_ceac_none_conditions() {
 #[test]
 fn edge_empty_slices_that_sum_to_zero() {
     // An empty instrument has a sum score of 0.
-    assert_eq!(pro::instrument_sum_score(&[]), 0.0);
+    assert!((pro::instrument_sum_score(&[]) - (0.0)).abs() < TOL);
     // An empty health-state stream is 0 QALYs.
-    assert_eq!(qaly::qalys(&[]), 0.0);
+    assert!((qaly::qalys(&[]) - (0.0)).abs() < TOL);
     // An empty pathway has total duration 0 (but no longest stage — see above).
-    assert_eq!(rtt::total_pathway_duration(&[]), 0.0);
+    assert!((rtt::total_pathway_duration(&[]) - (0.0)).abs() < TOL);
 }
 
 // Locks down: opportunity_cost of a single alternative is that alternative; negatives are legal values.
@@ -197,7 +197,7 @@ fn edge_probability_boundaries_in_responder_math() {
     let harm = pro::absolute_risk_reduction(0.0, 1.0);
     assert!((pro::number_needed_to_treat(harm).unwrap() - (-1.0)).abs() < TOL);
     // Zero reach or full reach bracket population impact.
-    assert_eq!(re::population_impact(0.0, 0.02), 0.0);
+    assert!((re::population_impact(0.0, 0.02) - (0.0)).abs() < TOL);
     assert!((re::population_impact(1.0, 0.02) - 0.02).abs() < TOL);
     // Readmission rates of 0% and 100%.
     assert_eq!(rr::readmission_rate_percent(0.0, 2_000.0), Some(0.0));
@@ -208,20 +208,20 @@ fn edge_probability_boundaries_in_responder_math() {
 #[test]
 fn edge_severity_weight_band_boundaries() {
     // Absolute-shortfall edges: 12 is in the ×1.2 band, 18 is in the ×1.7 band (>=, not >).
-    assert_eq!(sev::severity_weight(11.999_999, 0.0), 1.0);
-    assert_eq!(sev::severity_weight(12.0, 0.0), 1.2);
-    assert_eq!(sev::severity_weight(17.999_999, 0.0), 1.2);
-    assert_eq!(sev::severity_weight(18.0, 0.0), 1.7);
+    assert!((sev::severity_weight(11.999_999, 0.0) - (1.0)).abs() < TOL);
+    assert!((sev::severity_weight(12.0, 0.0) - (1.2)).abs() < TOL);
+    assert!((sev::severity_weight(17.999_999, 0.0) - (1.2)).abs() < TOL);
+    assert!((sev::severity_weight(18.0, 0.0) - (1.7)).abs() < TOL);
     // Proportional-shortfall edges: 0.85 → ×1.2 and 0.95 → ×1.7 (>=, not >).
-    assert_eq!(sev::severity_weight(0.0, 0.849_999_9), 1.0);
-    assert_eq!(sev::severity_weight(0.0, 0.85), 1.2);
-    assert_eq!(sev::severity_weight(0.0, 0.949_999_9), 1.2);
-    assert_eq!(sev::severity_weight(0.0, 0.95), 1.7);
+    assert!((sev::severity_weight(0.0, 0.849_999_9) - (1.0)).abs() < TOL);
+    assert!((sev::severity_weight(0.0, 0.85) - (1.2)).abs() < TOL);
+    assert!((sev::severity_weight(0.0, 0.949_999_9) - (1.2)).abs() < TOL);
+    assert!((sev::severity_weight(0.0, 0.95) - (1.7)).abs() < TOL);
     // Whichever measure gives the higher weight applies.
-    assert_eq!(sev::severity_weight(18.0, 0.10), 1.7);
-    assert_eq!(sev::severity_weight(1.0, 0.95), 1.7);
-    assert_eq!(sev::severity_weight(12.0, 0.10), 1.2);
-    assert_eq!(sev::severity_weight(1.0, 0.85), 1.2);
+    assert!((sev::severity_weight(18.0, 0.10) - (1.7)).abs() < TOL);
+    assert!((sev::severity_weight(1.0, 0.95) - (1.7)).abs() < TOL);
+    assert!((sev::severity_weight(12.0, 0.10) - (1.2)).abs() < TOL);
+    assert!((sev::severity_weight(1.0, 0.85) - (1.2)).abs() < TOL);
 }
 
 // Locks down: clears_mcid uses |difference| >= mcid, so exactly the MCID clears, in either direction.
@@ -310,28 +310,28 @@ fn edge_extreme_magnitudes_stay_finite() {
 // Locks down: zero-input degenerate cases produce zeros, not errors, across the multiply-style functions.
 #[test]
 fn edge_zero_inputs_produce_zero_values() {
-    assert_eq!(pt::daily_minutes_saved(0.0, 30.0), 0.0);
-    assert_eq!(pt::annual_hours_saved(0.0, 220.0), 0.0);
-    assert_eq!(pt::wage_basis_value(0.0, 80.0), 0.0);
-    assert_eq!(pt::annual_extra_appointments(0.0, 220.0), 0.0);
-    assert_eq!(pt::output_basis_value(0.0, 42.0), 0.0);
-    assert_eq!(prev::downstream_offsets(0.0, 45_000.0), 0.0);
-    assert_eq!(prev::qalys_gained(0.0, 3.0), 0.0);
-    assert_eq!(pro::extra_responders(0.0, 0.26), 0.0);
-    assert_eq!(pro::cohort_qalys(0.0, 0.03), 0.0);
-    assert_eq!(pro::qalys_from_utility_gain(0.0, 0.5), 0.0);
-    assert_eq!(qaly::population_qalys(0.0, 400.0), 0.0);
-    assert_eq!(rr::avoided_readmissions(0.0, 0.18, 0.14), 0.0);
-    assert_eq!(rr::program_cost(0.0, 60.0), 0.0);
-    assert_eq!(re::equity_weighted_qalys(0.0, 1.5), 0.0);
-    assert_eq!(rtt::qaly_gain_from_wait_reduction(0.0, 5.0, 0.80, 0.68), 0.0);
+    assert!((pt::daily_minutes_saved(0.0, 30.0) - (0.0)).abs() < TOL);
+    assert!((pt::annual_hours_saved(0.0, 220.0) - (0.0)).abs() < TOL);
+    assert!((pt::wage_basis_value(0.0, 80.0) - (0.0)).abs() < TOL);
+    assert!((pt::annual_extra_appointments(0.0, 220.0) - (0.0)).abs() < TOL);
+    assert!((pt::output_basis_value(0.0, 42.0) - (0.0)).abs() < TOL);
+    assert!((prev::downstream_offsets(0.0, 45_000.0) - (0.0)).abs() < TOL);
+    assert!((prev::qalys_gained(0.0, 3.0) - (0.0)).abs() < TOL);
+    assert!((pro::extra_responders(0.0, 0.26) - (0.0)).abs() < TOL);
+    assert!((pro::cohort_qalys(0.0, 0.03) - (0.0)).abs() < TOL);
+    assert!((pro::qalys_from_utility_gain(0.0, 0.5) - (0.0)).abs() < TOL);
+    assert!((qaly::population_qalys(0.0, 400.0) - (0.0)).abs() < TOL);
+    assert!((rr::avoided_readmissions(0.0, 0.18, 0.14) - (0.0)).abs() < TOL);
+    assert!((rr::program_cost(0.0, 60.0) - (0.0)).abs() < TOL);
+    assert!((re::equity_weighted_qalys(0.0, 1.5) - (0.0)).abs() < TOL);
+    assert!((rtt::qaly_gain_from_wait_reduction(0.0, 5.0, 0.80, 0.68) - (0.0)).abs() < TOL);
 }
 
 // Locks down: an instrument scored all-zero sums to zero, and the max PHQ-9 profile sums to 27.
 #[test]
 fn edge_instrument_sum_score_extremes() {
-    assert_eq!(pro::instrument_sum_score(&[0.0; 9]), 0.0);
-    assert_eq!(pro::instrument_sum_score(&[3.0; 9]), 27.0);
+    assert!((pro::instrument_sum_score(&[0.0; 9]) - (0.0)).abs() < TOL);
+    assert!((pro::instrument_sum_score(&[3.0; 9]) - (27.0)).abs() < TOL);
 }
 
 // ============================================================================
@@ -363,14 +363,20 @@ fn prop_psa_determinism_same_seed_identical_different_seed_differs() {
     let mut r1 = psa::Lcg::new(7);
     let mut r2 = psa::Lcg::new(7);
     for _ in 0..100 {
-        assert_eq!(r1.next_uniform(), r2.next_uniform());
+        // Same seed must produce bit-identical output, not merely close —
+        // exact equality is the property under test here, not a computed
+        // value subject to rounding drift.
+        #[allow(clippy::float_cmp)]
+        {
+            assert_eq!(r1.next_uniform(), r2.next_uniform());
+        }
     }
 }
 
 // Locks down: Lcg::uniform(a, b) always lands in [a, b), including negative and tight ranges.
 #[test]
 fn prop_lcg_uniform_always_in_half_open_range() {
-    let ranges = [(0.0, 1.0), (3.0, 6.0), (-10.0, -2.0), (-1.0, 1.0), (5.0, 5.000001)];
+    let ranges = [(0.0, 1.0), (3.0, 6.0), (-10.0, -2.0), (-1.0, 1.0), (5.0, 5.000_001)];
     for (seed, &(lo, hi)) in ranges.iter().enumerate() {
         let mut rng = psa::Lcg::new(seed as u64 + 100);
         for _ in 0..2_000 {
@@ -392,9 +398,9 @@ fn prop_lcg_normal_sample_mean_matches_parameter() {
     let n = 20_000;
     for (seed, &(m, s)) in [(0.0, 1.0), (350_000.0, 150_000.0), (-5.0, 2.0)].iter().enumerate() {
         let mut rng = psa::Lcg::new(seed as u64 + 50);
-        let sample_mean: f64 = (0..n).map(|_| rng.normal(m, s)).sum::<f64>() / n as f64;
+        let sample_mean: f64 = (0..n).map(|_| rng.normal(m, s)).sum::<f64>() / f64::from(n);
         // Tolerance: ~7 standard errors — wide enough to be robust, tight enough to be meaningful.
-        let tol = 7.0 * s / (n as f64).sqrt() + 1e-12;
+        let tol = 7.0 * s / f64::from(n).sqrt() + 1e-12;
         assert!(
             (sample_mean - m).abs() < tol,
             "normal({m}, {s}) sample mean {sample_mean} not within {tol}"
@@ -407,7 +413,7 @@ fn prop_lcg_normal_sample_mean_matches_parameter() {
 fn prop_lcg_gamma_mean_and_positivity() {
     let n = 20_000;
     let mut rng = psa::Lcg::new(4);
-    let m: f64 = (0..n).map(|_| rng.gamma(16.0, 50_000.0)).sum::<f64>() / n as f64;
+    let m: f64 = (0..n).map(|_| rng.gamma(16.0, 50_000.0)).sum::<f64>() / f64::from(n);
     assert!((m - 800_000.0).abs() < 20_000.0);
     // Shape < 1 exercises the boost identity branch; draws must remain positive and finite.
     let mut rng = psa::Lcg::new(5);
@@ -429,8 +435,8 @@ fn prop_gamma_mean_sd_reproduces_parameterization() {
         sum += g;
         sum_sq += g * g;
     }
-    let m = sum / n as f64;
-    let sd = (sum_sq / n as f64 - m * m).sqrt();
+    let m = sum / f64::from(n);
+    let sd = (sum_sq / f64::from(n) - m * m).sqrt();
     assert!((m - 800_000.0).abs() < 10_000.0);
     assert!((sd - 200_000.0).abs() < 10_000.0);
 }
@@ -488,7 +494,7 @@ fn prop_ceac_entries_sum_to_one_and_lie_in_unit_interval() {
                     .collect()
             })
             .collect();
-        let refs: Vec<&[f64]> = nmb_draws.iter().map(|v| v.as_slice()).collect();
+        let refs: Vec<&[f64]> = nmb_draws.iter().map(std::vec::Vec::as_slice).collect();
         let c = psa::ceac(&refs).unwrap();
         assert_eq!(c.len(), 3);
         assert!((c.iter().sum::<f64>() - 1.0).abs() < TOL, "ceac at λ={lambda} must sum to 1");
@@ -553,7 +559,7 @@ fn prop_discount_factor_starts_at_one_and_decreases() {
         assert!((qaly::discount_factor(r, 0.0) - 1.0).abs() < TOL);
         let mut prev = qaly::discount_factor(r, 0.0);
         for year in 1..=30 {
-            let df = qaly::discount_factor(r, year as f64);
+            let df = qaly::discount_factor(r, f64::from(year));
             assert!(df < prev, "discount factor must strictly decrease (r={r}, year={year})");
             assert!(df > 0.0);
             prev = df;
@@ -573,8 +579,13 @@ fn prop_severity_weight_only_three_values_across_sweep() {
         let mut p = 0.0;
         while p <= 1.2 {
             let w = sev::severity_weight(a, p);
+            // severity_weight returns one of exactly these three hardcoded
+            // literal constants, never a computed value, so exact equality
+            // is the correct check, not a rounding-sensitive comparison.
+            #[allow(clippy::float_cmp)]
+            let is_one_of_three = w == 1.0 || w == 1.2 || w == 1.7;
             assert!(
-                w == 1.0 || w == 1.2 || w == 1.7,
+                is_one_of_three,
                 "unexpected weight {w} at absolute={a}, proportional={p}"
             );
             p += 0.01;
@@ -781,7 +792,7 @@ fn prop_readmission_net_benefit_identity() {
 #[test]
 fn prop_avoided_readmissions_sign_follows_rate_direction() {
     assert!(rr::avoided_readmissions(2_000.0, 0.14, 0.18) < 0.0);
-    assert_eq!(rr::avoided_readmissions(2_000.0, 0.18, 0.18), 0.0);
+    assert!((rr::avoided_readmissions(2_000.0, 0.18, 0.18) - (0.0)).abs() < TOL);
 }
 
 // ---- RTT invariants ----
@@ -958,37 +969,37 @@ fn scenario_rtt_acceleration_vs_opportunity_cost_margin() {
 fn scenario_psa_gated_by_severity_weighted_threshold() {
     // Severe condition: general population expects 21 discounted QALYs, patients 2 →
     // absolute shortfall 19 (≥ 18) → top ×1.7 band.
-    let a = sev::absolute_shortfall(21.0, 2.0);
-    assert!((a - 19.0).abs() < TOL);
-    let p = sev::proportional_shortfall(a, 21.0).unwrap();
-    assert!((p - 19.0 / 21.0).abs() < TOL); // 0.9048: below 0.95 — absolute measure drives the band.
-    let w = sev::severity_weight(a, p);
-    assert_eq!(w, 1.7);
+    let shortfall_abs = sev::absolute_shortfall(21.0, 2.0);
+    assert!((shortfall_abs - 19.0).abs() < TOL);
+    let shortfall_prop = sev::proportional_shortfall(shortfall_abs, 21.0).unwrap();
+    assert!((shortfall_prop - 19.0 / 21.0).abs() < TOL); // 0.9048: below 0.95 — absolute measure drives the band.
+    let severity_w = sev::severity_weight(shortfall_abs, shortfall_prop);
+    assert!((severity_w - 1.7).abs() < TOL);
     // Effective threshold: £30,000 × 1.7 = £51,000/QALY.
     let lambda_base = 30_000.0;
-    let lambda_eff = sev::effective_threshold(lambda_base, w);
+    let lambda_eff = sev::effective_threshold(lambda_base, severity_w);
     assert!((lambda_eff - 51_000.0).abs() < TOL);
 
     // PSA: effect ~ Normal(0.5 QALYs, 0.15), cost ~ Gamma(mean £20k, sd £4k), 5,000 draws.
     // Analytic mean NMB: at £30k → 0.5×30k − 20k = −£5,000 (likely rejected);
     //                    at £51k → 0.5×51k − 20k = +£5,500 (likely funded).
-    let n = 5_000;
+    let n_draws = 5_000;
     let mut rng = psa::Lcg::new(2024);
-    let mut effects = Vec::with_capacity(n);
-    let mut costs = Vec::with_capacity(n);
-    for _ in 0..n {
+    let mut effects = Vec::with_capacity(n_draws);
+    let mut costs = Vec::with_capacity(n_draws);
+    for _ in 0..n_draws {
         effects.push(rng.normal(0.5, 0.15));
         costs.push(rng.gamma_mean_sd(20_000.0, 4_000.0).unwrap());
     }
     let nmb_base: Vec<f64> = effects
         .iter()
         .zip(&costs)
-        .map(|(&e, &c)| psa::net_monetary_benefit(lambda_base, e, c))
+        .map(|(&effect, &cost)| psa::net_monetary_benefit(lambda_base, effect, cost))
         .collect();
     let nmb_eff: Vec<f64> = effects
         .iter()
         .zip(&costs)
-        .map(|(&e, &c)| psa::net_monetary_benefit(lambda_eff, e, c))
+        .map(|(&effect, &cost)| psa::net_monetary_benefit(lambda_eff, effect, cost))
         .collect();
 
     // Sample means agree with the analytic values (wide Monte Carlo tolerances).
@@ -1005,11 +1016,11 @@ fn scenario_psa_gated_by_severity_weighted_threshold() {
 
     // CEAC framing: "treat" vs "standard care" (NMB 0 in every draw). Fractions are a
     // valid probability split at both thresholds.
-    let zeros = vec![0.0; n];
+    let zeros = vec![0.0; n_draws];
     for draws in [&nmb_base, &nmb_eff] {
-        let c = psa::ceac(&[draws.as_slice(), zeros.as_slice()]).unwrap();
-        assert!((c[0] + c[1] - 1.0).abs() < TOL);
-        assert!((0.0..=1.0).contains(&c[0]));
+        let fractions = psa::ceac(&[draws.as_slice(), zeros.as_slice()]).unwrap();
+        assert!((fractions[0] + fractions[1] - 1.0).abs() < TOL);
+        assert!((0.0..=1.0).contains(&fractions[0]));
     }
     // Median NMB at the weighted threshold is positive too — the decision is not mean-driven.
     assert!(psa::percentile(&nmb_eff, 50.0).unwrap() > 0.0);
@@ -1017,7 +1028,7 @@ fn scenario_psa_gated_by_severity_weighted_threshold() {
     // Consistency: the same verdicts expressed as effective ICERs. Point-estimate ICER =
     // £20,000 / 0.5 = £40,000/QALY: above £30k unweighted, below £51k after ÷1.7 (≈ £23,529).
     let point_icer = 20_000.0 / 0.5;
-    let eff_icer = sev::effective_icer(point_icer, w).unwrap();
+    let eff_icer = sev::effective_icer(point_icer, severity_w).unwrap();
     assert!(point_icer > lambda_base);
     assert!((eff_icer - 40_000.0 / 1.7).abs() < TOL);
     assert!(eff_icer < lambda_base);

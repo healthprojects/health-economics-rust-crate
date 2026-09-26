@@ -141,6 +141,7 @@ pub struct EvaluatedOption {
 /// let clinics = net_monetary_benefit(32.0, 700_000.0, 20_000.0);
 /// assert!((clinics - -60_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn net_monetary_benefit(delta_effect: f64, delta_cost: f64, lambda: f64) -> f64 {
     delta_effect * lambda - delta_cost
 }
@@ -173,6 +174,7 @@ pub fn net_monetary_benefit(delta_effect: f64, delta_cost: f64, lambda: f64) -> 
 ///
 /// assert!(net_health_benefit(30.0, 400_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn net_health_benefit(delta_effect: f64, delta_cost: f64, lambda: f64) -> Option<f64> {
     if lambda == 0.0 {
         None
@@ -204,6 +206,7 @@ pub fn net_health_benefit(delta_effect: f64, delta_cost: f64, lambda: f64) -> Op
 /// assert!(adopt(200_000.0));   // App + coaching: £200,000 → adopt
 /// assert!(!adopt(-60_000.0));  // Extra clinics: −£60,000 → reject
 /// ```
+#[must_use]
 pub fn adopt(nmb: f64) -> bool {
     nmb > 0.0
 }
@@ -243,6 +246,7 @@ pub fn adopt(nmb: f64) -> bool {
 ///
 /// assert!(best_option_index(&[], 20_000.0).is_none());
 /// ```
+#[must_use]
 pub fn best_option_index(options: &[EvaluatedOption], lambda: f64) -> Option<usize> {
     let mut best: Option<(usize, f64)> = None;
     for (i, opt) in options.iter().enumerate() {

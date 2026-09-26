@@ -134,6 +134,7 @@
 /// // No discharges: undefined.
 /// assert_eq!(readmission_rate_percent(10.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn readmission_rate_percent(
     emergency_readmissions_within_30_days: f64,
     index_discharges: f64,
@@ -172,6 +173,7 @@ pub fn readmission_rate_percent(
 /// // Zero expected count: undefined.
 /// assert_eq!(observed_vs_expected(10.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn observed_vs_expected(observed: f64, expected: f64) -> Option<f64> {
     if expected == 0.0 {
         None
@@ -206,6 +208,7 @@ pub fn observed_vs_expected(observed: f64, expected: f64) -> Option<f64> {
 /// // 2,000 × (0.18 − 0.14) = 80 readmissions avoided per year.
 /// assert!((avoided_readmissions(2_000.0, 0.18, 0.14) - 80.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn avoided_readmissions(
     discharges: f64,
     baseline_rate: f64,
@@ -244,6 +247,7 @@ pub fn avoided_readmissions(
 /// // With £500/readmission penalty exposure: £320,000/year.
 /// assert_eq!(value_of_avoidance(80.0, 3_500.0, 500.0), 320_000.0);
 /// ```
+#[must_use]
 pub fn value_of_avoidance(
     avoided_readmissions: f64,
     cost_per_readmission_spell: f64,
@@ -274,6 +278,7 @@ pub fn value_of_avoidance(
 /// // 2,000 discharges × £60 = £120,000/year.
 /// assert_eq!(program_cost(2_000.0, 60.0), 120_000.0);
 /// ```
+#[must_use]
 pub fn program_cost(discharges: f64, cost_per_discharge: f64) -> f64 {
     discharges * cost_per_discharge
 }
@@ -301,6 +306,7 @@ pub fn program_cost(discharges: f64, cost_per_discharge: f64) -> f64 {
 /// // £280,000 avoided − £120,000 app cost ≈ +£160,000/year.
 /// assert_eq!(net_benefit(280_000.0, 120_000.0), 160_000.0);
 /// ```
+#[must_use]
 pub fn net_benefit(value_of_avoidance: f64, program_cost: f64) -> f64 {
     value_of_avoidance - program_cost
 }

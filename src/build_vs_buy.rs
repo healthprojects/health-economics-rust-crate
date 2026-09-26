@@ -4,7 +4,7 @@
 //! commercial acquisition, on risk-adjusted total cost of ownership (TCO),
 //! time-to-value, and cost of delay. The empirical priors are one-sided:
 //! **actual build costs typically exceed projections by 30–40%**, bought
-//! solutions deploy 40–60% faster, and MIT's 2025 GenAI research found
+//! solutions deploy 40–60% faster, and MIT's 2025 `GenAI` research found
 //! purchased AI tools succeeded ~67% of the time while internal builds
 //! succeeded about a third as often.
 //!
@@ -42,7 +42,7 @@
 //!
 //! ## Example
 //!
-//! A trust needs an e-consent system. Buy: £150k/year SaaS, live in 3
+//! A trust needs an e-consent system. Buy: £150k/year `SaaS`, live in 3
 //! months. Build: estimated £600k + £120k/year maintenance, live in 12
 //! months. Risk-adjusted, the effective comparison is £750k vs £1,785k —
 //! buy wins by ~£1M.
@@ -103,7 +103,7 @@
 //! ## Sources
 //!
 //! - Build-vs-buy TCO analyses. <https://neontri.com/blog/build-vs-buy-software/>
-//! - MIT GenAI divide findings (buy-vs-build success rates).
+//! - MIT `GenAI` divide findings (buy-vs-build success rates).
 //!   <https://blueflame.ai/blog/achieving-ai-roi-key-findings-from-mits-genai-report>
 //! - HM Treasury Green Book (optimism bias).
 //!   <https://www.gov.uk/government/publications/the-green-book-appraisal-and-evaluation-in-central-government/the-green-book-2020>
@@ -134,6 +134,7 @@
 /// // Worked example: £600k estimate × 1.35 = £810k.
 /// assert!((risk_adjusted_build_cost(600_000.0, 1.35) - 810_000.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn risk_adjusted_build_cost(estimated_cost: f64, overrun_factor: f64) -> f64 {
     estimated_cost * overrun_factor
 }
@@ -162,6 +163,7 @@ pub fn risk_adjusted_build_cost(estimated_cost: f64, overrun_factor: f64) -> f64
 /// // Worked example: 12-month build estimate → ≈ 18 months at the 50% prior.
 /// assert!((risk_adjusted_time_to_value(12.0, 0.5) - 18.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn risk_adjusted_time_to_value(estimated_months: f64, delay_uplift: f64) -> f64 {
     estimated_months * (1.0 + delay_uplift)
 }
@@ -170,7 +172,7 @@ pub fn risk_adjusted_time_to_value(estimated_months: f64, delay_uplift: f64) -> 
 /// cost × years.
 ///
 /// Both options must be priced over the same horizon (typically 3–5 years)
-/// for the comparison to be honest. Upfront cost is zero for a pure SaaS
+/// for the comparison to be honest. Upfront cost is zero for a pure `SaaS`
 /// buy; for a build it should already be risk-adjusted.
 ///
 /// # Arguments
@@ -194,6 +196,7 @@ pub fn risk_adjusted_time_to_value(estimated_months: f64, delay_uplift: f64) -> 
 /// // 5-yr build TCO: £810k risk-adjusted build + £120k/yr = £1,410k.
 /// assert!((total_cost_of_ownership(810_000.0, 120_000.0, 5.0) - 1_410_000.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn total_cost_of_ownership(upfront_cost: f64, annual_running_cost: f64, years: f64) -> f64 {
     upfront_cost + annual_running_cost * years
 }
@@ -223,6 +226,7 @@ pub fn total_cost_of_ownership(upfront_cost: f64, annual_running_cost: f64, year
 /// // (18 risk-adjusted vs the buy's 3) → CoD = £375k.
 /// assert!((cost_of_delay(25_000.0, 15.0) - 375_000.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn cost_of_delay(value_per_month: f64, months_later: f64) -> f64 {
     value_per_month * months_later
 }
@@ -254,6 +258,7 @@ pub fn cost_of_delay(value_per_month: f64, months_later: f64) -> f64 {
 /// assert!((build - 1_785_000.0).abs() < 1e-6);
 /// assert!(build - buy > 1_000_000.0); // buy wins by ~£1M
 /// ```
+#[must_use]
 pub fn effective_cost(tco: f64, delay_cost: f64) -> f64 {
     tco + delay_cost
 }

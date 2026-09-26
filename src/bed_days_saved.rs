@@ -129,6 +129,7 @@
 /// let bed_days = bed_days_saved_from_earlier_discharge(600.0, 2.0);
 /// assert!((bed_days - 1_200.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn bed_days_saved_from_earlier_discharge(
     patients_affected: f64,
     length_of_stay_reduction_days: f64,
@@ -160,6 +161,7 @@ pub fn bed_days_saved_from_earlier_discharge(
 /// let bed_days = bed_days_saved_from_avoided_admissions(400.0, 3.0);
 /// assert!((bed_days - 1_200.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn bed_days_saved_from_avoided_admissions(
     admissions_avoided: f64,
     average_length_of_stay_days: f64,
@@ -238,6 +240,7 @@ pub enum FreedCapacityUse {
 /// };
 /// assert!((freed_capacity_value(1_200.0, &slack).unwrap() - 120_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn freed_capacity_value(bed_days_saved: f64, use_of_capacity: &FreedCapacityUse) -> Option<f64> {
     match use_of_capacity {
         FreedCapacityUse::RefilledWithElective {
@@ -286,6 +289,7 @@ pub fn freed_capacity_value(bed_days_saved: f64, use_of_capacity: &FreedCapacity
 ///
 /// assert!(additional_elective_spells(1_200.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn additional_elective_spells(
     bed_days_saved: f64,
     average_elective_stay_days: f64,
@@ -322,6 +326,7 @@ pub fn additional_elective_spells(
 /// let naive = naive_bed_day_value(1_200.0, 400.0);
 /// assert!((naive - 480_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn naive_bed_day_value(bed_days_saved: f64, average_cost_per_bed_day: f64) -> f64 {
     bed_days_saved * average_cost_per_bed_day
 }

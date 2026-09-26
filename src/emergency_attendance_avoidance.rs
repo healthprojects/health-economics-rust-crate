@@ -122,6 +122,7 @@
 /// // Admissions 0.5 → 0.42 per patient-year.
 /// assert!((avoided_events(3_000.0, 0.5, 0.42) - 240.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn avoided_events(population: f64, baseline_rate: f64, intervention_rate: f64) -> f64 {
     population * (baseline_rate - intervention_rate)
 }
@@ -148,6 +149,7 @@ pub fn avoided_events(population: f64, baseline_rate: f64, intervention_rate: f6
 /// // Worked example: 600 avoided attendances × £300 = £180,000.
 /// assert_eq!(gross_saving(600.0, 300.0), 180_000.0);
 /// ```
+#[must_use]
 pub fn gross_saving(avoided_events: f64, unit_cost: f64) -> f64 {
     avoided_events * unit_cost
 }
@@ -178,6 +180,7 @@ pub fn gross_saving(avoided_events: f64, unit_cost: f64) -> f64 {
 /// let gross = gross_saving_attendances_and_admissions(600.0, 300.0, 240.0, 3_800.0);
 /// assert_eq!(gross, 1_092_000.0);
 /// ```
+#[must_use]
 pub fn gross_saving_attendances_and_admissions(
     avoided_attendances: f64,
     attendance_unit_cost: f64,
@@ -212,6 +215,7 @@ pub fn gross_saving_attendances_and_admissions(
 /// // Worked example: £1,092,000 − £600,000 − £150,000 = +£342,000/year.
 /// assert_eq!(net_saving(1_092_000.0, 600_000.0, 150_000.0), 342_000.0);
 /// ```
+#[must_use]
 pub fn net_saving(gross_saving: f64, intervention_cost: f64, new_pathway_cost: f64) -> f64 {
     gross_saving - intervention_cost - new_pathway_cost
 }

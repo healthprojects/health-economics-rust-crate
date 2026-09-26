@@ -1,6 +1,6 @@
 //! # EQ-5D
 //!
-//! EQ-5D is the EuroQol group's standardized questionnaire for measuring
+//! EQ-5D is the `EuroQol` group's standardized questionnaire for measuring
 //! health-related quality of life. It is the instrument that produces the
 //! utility weights inside most QALY calculations — NICE's reference case
 //! names it the preferred measure for adults.
@@ -67,7 +67,7 @@
 //!
 //! - **Instrument it.** EQ-5D at signup and at follow-up intervals is a few
 //!   screens of UI; the payoff is HTA-grade evidence. Get licensing from
-//!   EuroQol (required, free for some uses).
+//!   `EuroQol` (required, free for some uses).
 //! - **Use the right value set** for the deployment country — the same
 //!   answers score differently in the UK vs Germany vs Japan.
 //! - **Design lesson**: a tiny standardized survey plus a published scoring
@@ -87,7 +87,7 @@
 //!
 //! ## Sources
 //!
-//! - EuroQol: EQ-5D-5L.
+//! - `EuroQol`: EQ-5D-5L.
 //!   <https://euroqol.org/information-and-support/euroqol-instruments/eq-5d-5l/>
 //! - NICE health technology evaluations: the manual (PMG36).
 //!   <https://www.nice.org.uk/process/pmg36>
@@ -143,6 +143,7 @@ impl Eq5dProfile {
     /// assert!(Eq5dProfile::new(0, 1, 1, 1, 1).is_none());
     /// assert!(Eq5dProfile::new(1, 1, 6, 1, 1).is_none());
     /// ```
+    #[must_use]
     pub fn new(
         mobility: u8,
         self_care: u8,
@@ -168,6 +169,7 @@ impl Eq5dProfile {
     /// let p = Eq5dProfile::new(2, 1, 2, 2, 1).unwrap();
     /// assert_eq!(p.code(), "21221");
     /// ```
+    #[must_use]
     pub fn code(&self) -> String {
         format!(
             "{}{}{}{}{}",
@@ -190,6 +192,7 @@ impl Eq5dProfile {
     /// assert!(Eq5dProfile::new(1, 1, 1, 1, 1).unwrap().is_full_health());
     /// assert!(!Eq5dProfile::new(2, 1, 2, 2, 1).unwrap().is_full_health());
     /// ```
+    #[must_use]
     pub fn is_full_health(&self) -> bool {
         self.mobility == 1
             && self.self_care == 1
@@ -224,6 +227,7 @@ impl Eq5dProfile {
 /// // One year at the worked example's baseline utility 0.62.
 /// assert!((qalys(1.0, 0.62) - 0.62).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn qalys(duration_years: f64, utility: f64) -> f64 {
     duration_years * utility
 }
@@ -250,6 +254,7 @@ pub fn qalys(duration_years: f64, utility: f64) -> f64 {
 /// let gain = qaly_gain(0.62, 0.71, 1.0);
 /// assert!((gain - 0.09).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn qaly_gain(utility_before: f64, utility_after: f64, duration_years: f64) -> f64 {
     (utility_after - utility_before) * duration_years
 }
@@ -279,6 +284,7 @@ pub fn qaly_gain(utility_before: f64, utility_after: f64, duration_years: f64) -
 /// let a = attributable_qaly_gain(0.09, 0.03);
 /// assert!((a - 0.06).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn attributable_qaly_gain(intervention_gain: f64, control_gain: f64) -> f64 {
     intervention_gain - control_gain
 }
@@ -304,6 +310,7 @@ pub fn attributable_qaly_gain(intervention_gain: f64, control_gain: f64) -> f64 
 /// assert!((monetized_value(0.06, 20_000.0) - 1_200.0).abs() < 1e-6);
 /// assert!((monetized_value(0.06, 30_000.0) - 1_800.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn monetized_value(qalys: f64, threshold_per_qaly: f64) -> f64 {
     qalys * threshold_per_qaly
 }

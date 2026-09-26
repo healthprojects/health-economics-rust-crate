@@ -145,6 +145,7 @@ pub struct HealthState {
 /// ]);
 /// assert!((q - 0.725).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn qalys(states: &[HealthState]) -> f64 {
     states.iter().map(|s| s.duration_years * s.utility).sum()
 }
@@ -174,6 +175,7 @@ pub fn qalys(states: &[HealthState]) -> f64 {
 /// // A 6-month delay at 0.6 instead of 0.85: 0.5 × 0.25 = 0.125 QALYs lost.
 /// assert!((qaly_loss_from_delay(0.5, 0.6, 0.85) - 0.125).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn qaly_loss_from_delay(
     delay_years: f64,
     utility_waiting: f64,
@@ -205,6 +207,7 @@ pub fn qaly_loss_from_delay(
 /// // Treated now (0.85) vs after a 6-month delay (0.725): gain 0.125 QALYs.
 /// assert!((qaly_gain(0.85, 0.725) - 0.125).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn qaly_gain(qalys_with_intervention: f64, qalys_without_intervention: f64) -> f64 {
     qalys_with_intervention - qalys_without_intervention
 }
@@ -228,6 +231,7 @@ pub fn qaly_gain(qalys_with_intervention: f64, qalys_without_intervention: f64) 
 /// // Removing the delay for 400 patients/year at 0.125 QALYs each = 50 QALYs.
 /// assert!((population_qalys(0.125, 400.0) - 50.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn population_qalys(qalys_per_patient: f64, patients: f64) -> f64 {
     qalys_per_patient * patients
 }
@@ -254,6 +258,7 @@ pub fn population_qalys(qalys_per_patient: f64, patients: f64) -> f64 {
 /// assert_eq!(monetized_value(50.0, 20_000.0), 1_000_000.0);
 /// assert_eq!(monetized_value(50.0, 30_000.0), 1_500_000.0);
 /// ```
+#[must_use]
 pub fn monetized_value(qalys: f64, threshold_per_qaly: f64) -> f64 {
     qalys * threshold_per_qaly
 }
@@ -284,6 +289,7 @@ pub fn monetized_value(qalys: f64, threshold_per_qaly: f64) -> f64 {
 /// assert_eq!(discount_factor(0.035, 0.0), 1.0);
 /// assert!((discount_factor(0.035, 1.0) - 1.0 / 1.035).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn discount_factor(rate: f64, year: f64) -> f64 {
     1.0 / (1.0 + rate).powf(year)
 }

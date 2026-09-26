@@ -30,7 +30,7 @@
 //! Industry baselines (CAST Appmarq, 1,400 apps / 550M LOC): historically
 //! ≈ $3.61 of technical-debt principal per line of code, with typical
 //! codebases carrying a debt ratio of 15–20% of rebuild cost, versus a
-//! commonly used health bar of ≤ 5% (SonarQube's "A" grade). The
+//! commonly used health bar of ≤ 5% (`SonarQube`'s "A" grade). The
 //! health-economics frame fits precisely: debt is a chronic condition —
 //! untreated, it progresses, its "interest" compounds as slower delivery
 //! and higher defect rates, and remediation competes for capacity against
@@ -150,6 +150,7 @@ pub enum SqaleGrade {
 /// // Doc: 3,800 hours × £75 = £285k.
 /// assert!((sqale_principal(3_800.0, 75.0) - 285_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn sqale_principal(remediation_hours: f64, cost_per_hour: f64) -> f64 {
     remediation_hours * cost_per_hour
 }
@@ -177,6 +178,7 @@ pub fn sqale_principal(remediation_hours: f64, cost_per_hour: f64) -> f64 {
 /// assert!((tdr - 12.0).abs() < 1e-9);
 /// assert!(technical_debt_ratio_percent(285_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn technical_debt_ratio_percent(
     remediation_cost: f64,
     redevelopment_cost: f64,
@@ -188,7 +190,7 @@ pub fn technical_debt_ratio_percent(
     }
 }
 
-/// Grade a technical debt ratio (in percent) on the SonarQube scale.
+/// Grade a technical debt ratio (in percent) on the `SonarQube` scale.
 ///
 /// Bands: A ≤ 5%, B ≤ 10%, C ≤ 20%, D ≤ 50%, E > 50%.
 ///
@@ -211,6 +213,7 @@ pub fn technical_debt_ratio_percent(
 /// assert_eq!(sqale_grade(5.0), SqaleGrade::A);
 /// assert_eq!(sqale_grade(50.1), SqaleGrade::E);
 /// ```
+#[must_use]
 pub fn sqale_grade(tdr_percent: f64) -> SqaleGrade {
     if tdr_percent <= 5.0 {
         SqaleGrade::A
@@ -255,6 +258,7 @@ pub fn sqale_grade(tdr_percent: f64) -> SqaleGrade {
 /// let interest = annual_interest(6_000.0, 0.40, 75.0, 12.0, 8_000.0);
 /// assert!((interest - 276_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn annual_interest(
     dev_hours_absorbed_per_year: f64,
     velocity_drag_fraction: f64,
@@ -294,6 +298,7 @@ pub fn annual_interest(
 /// let saved = interest_avoided_per_year(276_000.0, 0.60);
 /// assert!((saved - 165_600.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn interest_avoided_per_year(annual_interest: f64, interest_reduction_fraction: f64) -> f64 {
     annual_interest * interest_reduction_fraction
 }
@@ -320,6 +325,7 @@ pub fn interest_avoided_per_year(annual_interest: f64, interest_reduction_fracti
 /// let months = payback_period_years(85_500.0, 165_600.0).unwrap() * 12.0;
 /// assert!((months - 6.0).abs() < 0.5);
 /// ```
+#[must_use]
 pub fn payback_period_years(
     remediation_cost: f64,
     interest_avoided_per_year: f64,
@@ -360,6 +366,7 @@ pub fn payback_period_years(
 /// let pv = pv_of_interest_avoided(165_600.0, 0.035, 3);
 /// assert!(pv < pv0);
 /// ```
+#[must_use]
 pub fn pv_of_interest_avoided(
     interest_avoided_per_year: f64,
     discount_rate: f64,
@@ -367,7 +374,7 @@ pub fn pv_of_interest_avoided(
 ) -> f64 {
     // Standard annuity PV: each year-t saving discounted by (1 + r)^t.
     (1..=horizon_years)
-        .map(|t| interest_avoided_per_year / (1.0 + discount_rate).powi(t as i32))
+        .map(|t| interest_avoided_per_year / (1.0 + discount_rate).powi(t.cast_signed()))
         .sum()
 }
 
@@ -400,6 +407,7 @@ pub fn pv_of_interest_avoided(
 /// let good = paydown_net_value(pv_of_interest_avoided(400_000.0, 0.0, 5), 500_000.0);
 /// assert!(good > 0.0);
 /// ```
+#[must_use]
 pub fn paydown_net_value(pv_interest_avoided: f64, remediation_cost: f64) -> f64 {
     pv_interest_avoided - remediation_cost
 }

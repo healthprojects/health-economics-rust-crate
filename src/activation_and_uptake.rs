@@ -36,13 +36,13 @@
 //! Non-activated users are pure cost: acquisition spend, provisioning, support
 //! surface — zero clinical value. Benchmarks put healthcare software's
 //! activation *below* the cross-industry average (≈24% vs ≈37% for new-user
-//! activation in one SaaS benchmark set; onboarding-checklist completion ~20%),
+//! activation in one `SaaS` benchmark set; onboarding-checklist completion ~20%),
 //! reflecting heavier onboarding (identity, consent, clinical safety). Uptake
 //! carries the population stakes: in the RE-AIM framing, public-health impact
 //! ≈ reach × effectiveness — a superb app adopted by 3% of the eligible
 //! population moves the population needle 3%'s worth. For prescribed digital
 //! therapeutics the uptake gate is visible in national data: ~81% of German
-//! DiGA prescriptions get activated — one in five prescribed-and-paid-for
+//! `DiGA` prescriptions get activated — one in five prescribed-and-paid-for
 //! treatments never starts.
 //!
 //! ## Example
@@ -105,9 +105,9 @@
 //!
 //! ## Sources
 //!
-//! - Activation benchmarks (healthcare SaaS).
+//! - Activation benchmarks (healthcare `SaaS`).
 //!   <https://userpilot.com/blog/healthcare-product-metrics-benchmark-report/>
-//! - DiGA activation data, npj Digital Medicine 2024.
+//! - `DiGA` activation data, npj Digital Medicine 2024.
 //!   <https://www.nature.com/articles/s41746-024-01137-1>
 //! - RE-AIM framework. <https://re-aim.org/>
 //!
@@ -142,6 +142,7 @@
 ///
 /// assert!(activation_rate_percent(5_400.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn activation_rate_percent(users_completing_key_action: f64, sign_ups: f64) -> Option<f64> {
     if sign_ups == 0.0 {
         None
@@ -176,6 +177,7 @@ pub fn activation_rate_percent(users_completing_key_action: f64, sign_ups: f64) 
 ///
 /// assert!(uptake_rate_percent(12_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn uptake_rate_percent(adopters: f64, eligible_population: f64) -> Option<f64> {
     if eligible_population == 0.0 {
         None
@@ -184,10 +186,10 @@ pub fn uptake_rate_percent(adopters: f64, eligible_population: f64) -> Option<f6
     }
 }
 
-/// Digital-therapeutics (DTx) fill rate as a percentage of issued prescriptions.
+/// Digital-therapeutics (`DTx`) fill rate as a percentage of issued prescriptions.
 ///
 /// Activated prescription codes divided by issued prescriptions, times 100.
-/// This is the uptake gate for prescribed digital therapeutics: German DiGA
+/// This is the uptake gate for prescribed digital therapeutics: German `DiGA`
 /// data shows ~81%, i.e. one in five prescribed-and-paid-for treatments never
 /// starts. Both arguments are counts; the result is a percentage.
 ///
@@ -212,6 +214,7 @@ pub fn uptake_rate_percent(adopters: f64, eligible_population: f64) -> Option<f6
 ///
 /// assert!(dtx_fill_rate_percent(81.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn dtx_fill_rate_percent(
     activated_prescription_codes: f64,
     issued_prescriptions: f64,
@@ -249,6 +252,7 @@ pub fn dtx_fill_rate_percent(
 /// let value = value_per_completer(0.03, 20_000.0, 180.0);
 /// assert!((value - 780.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn value_per_completer(
     qalys_per_completer: f64,
     willingness_to_pay_per_qaly: f64,
@@ -291,6 +295,7 @@ pub fn value_per_completer(
 /// let doubled = funnel_population_value(80_000.0, 0.30, 0.45, 1_600.0 / 5_400.0, 780.0);
 /// assert!((doubled / value - 2.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn funnel_population_value(
     eligible_population: f64,
     uptake_fraction: f64,
@@ -330,6 +335,7 @@ pub fn funnel_population_value(
 /// let value = population_value(1_600.0, 780.0);
 /// assert!((value - 1_248_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn population_value(completers: f64, value_per_completer: f64) -> f64 {
     completers * value_per_completer
 }
@@ -361,6 +367,7 @@ pub fn population_value(completers: f64, value_per_completer: f64) -> f64 {
 ///
 /// assert!(per_eligible_person_value(1_248_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn per_eligible_person_value(
     population_value: f64,
     eligible_population: f64,

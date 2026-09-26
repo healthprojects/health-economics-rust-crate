@@ -84,7 +84,7 @@
 //!   a senior engineer costs 6–12 months of loaded salary (recruiting, ramp,
 //!   lost context).
 //! - A 200-person org at 15% attrition burns millions annually on churn.
-//! - Developer-experience investment (SPACE and DevEx) is the direct
+//! - Developer-experience investment (SPACE and `DevEx`) is the direct
 //!   analogue of documentation-burden relief for nurses — justify it the
 //!   same way: measured friction scores, a modest claimed effect on
 //!   attrition, cost per leaver from your own finance data.
@@ -148,6 +148,7 @@ impl CostPerLeaver {
     /// };
     /// assert_eq!(cost.total(), 18_500.0);
     /// ```
+    #[must_use]
     pub fn total(&self) -> f64 {
         self.recruitment + self.onboarding_ramp + self.vacancy_cover
     }
@@ -181,6 +182,7 @@ impl CostPerLeaver {
 /// let cover = vacancy_cover_cost(10_000.0 / 3.0, 4.0, 0.6);
 /// assert!((cover - 8_000.0).abs() < 1.0);
 /// ```
+#[must_use]
 pub fn vacancy_cover_cost(
     agency_premium_per_month: f64,
     vacancy_months: f64,
@@ -214,6 +216,7 @@ pub fn vacancy_cover_cost(
 /// let cost = annual_turnover_cost(1_200.0, 0.11, 18_500.0);
 /// assert_eq!(cost, 2_442_000.0);
 /// ```
+#[must_use]
 pub fn annual_turnover_cost(headcount: f64, turnover_rate: f64, cost_per_leaver: f64) -> f64 {
     headcount * turnover_rate * cost_per_leaver
 }
@@ -247,6 +250,7 @@ pub fn annual_turnover_cost(headcount: f64, turnover_rate: f64, cost_per_leaver:
 /// let value = retention_value(1_200.0, 0.01, 18_500.0);
 /// assert_eq!(value, 222_000.0);
 /// ```
+#[must_use]
 pub fn retention_value(
     headcount: f64,
     turnover_rate_reduction: f64,
@@ -285,6 +289,7 @@ pub fn retention_value(
 /// // Adding 100 avoided absence days at £250/day cover: £247,000/year.
 /// assert_eq!(software_value(1_200.0, 0.01, 18_500.0, 100.0, 250.0), 247_000.0);
 /// ```
+#[must_use]
 pub fn software_value(
     headcount: f64,
     turnover_rate_reduction: f64,

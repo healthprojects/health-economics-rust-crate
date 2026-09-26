@@ -118,6 +118,7 @@ pub const NICE_REFERENCE_RATE: f64 = 0.035;
 /// // Year 5: 100,000 / 1.035^5 = £84,197.
 /// assert!((present_value(100_000.0, NICE_REFERENCE_RATE, 5.0) - 84_197.0).abs() < 0.5);
 /// ```
+#[must_use]
 pub fn present_value(future_value: f64, rate: f64, years: f64) -> f64 {
     future_value / (1.0 + rate).powf(years)
 }
@@ -153,6 +154,7 @@ pub fn present_value(future_value: f64, rate: f64, years: f64) -> f64 {
 /// assert!((pv - 451_505.0).abs() < 1.0);
 /// assert_eq!(annuity_present_value(100_000.0, 0.0, 5.0), 500_000.0);
 /// ```
+#[must_use]
 pub fn annuity_present_value(annual_benefit: f64, rate: f64, years: f64) -> f64 {
     if rate == 0.0 {
         // r → 0 limit of the annuity formula: just B × n.
@@ -191,6 +193,7 @@ pub fn annuity_present_value(annual_benefit: f64, rate: f64, years: f64) -> f64 
 /// let slipped = delayed_present_value(pv, NICE_REFERENCE_RATE, 1.0);
 /// assert!((slipped - 436_000.0).abs() < 500.0);
 /// ```
+#[must_use]
 pub fn delayed_present_value(undelayed_pv: f64, rate: f64, delay_years: f64) -> f64 {
     // Shifting every term later by `delay` discounts the whole PV once more.
     undelayed_pv / (1.0 + rate).powf(delay_years)
@@ -206,7 +209,10 @@ mod tests {
     fn each_year_of_100k_discounts_as_in_the_worked_example() {
         let expected = [96_618.0, 93_351.0, 90_194.0, 87_144.0, 84_197.0];
         for (i, &exp) in expected.iter().enumerate() {
-            let pv = present_value(100_000.0, NICE_REFERENCE_RATE, (i + 1) as f64);
+            // Fixed 5-element array: `i` never approaches f64's precision limit.
+            #[allow(clippy::cast_precision_loss)]
+            let year = (i + 1) as f64;
+            let pv = present_value(100_000.0, NICE_REFERENCE_RATE, year);
             assert!((pv - exp).abs() < 0.5, "year {}: got {}", i + 1, pv);
         }
     }
@@ -215,7 +221,7 @@ mod tests {
     #[test]
     fn total_pv_of_five_years_is_about_451_505() {
         let total: f64 = (1..=5)
-            .map(|t| present_value(100_000.0, NICE_REFERENCE_RATE, t as f64))
+            .map(|t| present_value(100_000.0, NICE_REFERENCE_RATE, f64::from(t)))
             .sum();
         assert!((total - 451_505.0).abs() < 1.0);
     }
@@ -224,7 +230,7 @@ mod tests {
     #[test]
     fn annuity_formula_matches_the_year_by_year_sum() {
         let total: f64 = (1..=5)
-            .map(|t| present_value(100_000.0, NICE_REFERENCE_RATE, t as f64))
+            .map(|t| present_value(100_000.0, NICE_REFERENCE_RATE, f64::from(t)))
             .sum();
         let annuity = annuity_present_value(100_000.0, NICE_REFERENCE_RATE, 5.0);
         assert!((annuity - total).abs() < 1e-6);

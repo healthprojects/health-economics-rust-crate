@@ -83,7 +83,7 @@
 //!   owners, baseline metrics, and a T+6-month review date.
 //! - Realization rates feed back into how much the org discounts that team's
 //!   (or vendor's) next forecast.
-//! - The MIT finding that ~95% of GenAI pilots showed no measurable P&L
+//! - The MIT finding that ~95% of `GenAI` pilots showed no measurable P&L
 //!   return is a benefits-realization result — the pilots that *did* return
 //!   had trackable, owned benefit lines.
 //! - Forecast → measure → recalibrate is the same loop as EVPI-priced
@@ -165,6 +165,7 @@ impl Benefit {
     /// };
     /// assert!((b.realization_rate().unwrap() - 0.64).abs() < 0.005);
     /// ```
+    #[must_use]
     pub fn realization_rate(&self) -> Option<f64> {
         realization_rate(self.realized, self.forecast)
     }
@@ -200,6 +201,7 @@ impl Benefit {
 /// // A zero forecast has no defined rate.
 /// assert!(realization_rate(5.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn realization_rate(realized: f64, forecast: f64) -> Option<f64> {
     if forecast == 0.0 { None } else { Some(realized / forecast) }
 }
@@ -228,6 +230,7 @@ pub fn realization_rate(realized: f64, forecast: f64) -> Option<f64> {
 /// assert!((err - 163_000.0 / 450_000.0).abs() < 1e-9);
 /// assert!(err > 0.36 && err < 0.37);
 /// ```
+#[must_use]
 pub fn optimism_error(forecast: f64, realized: f64) -> Option<f64> {
     if forecast == 0.0 {
         None
@@ -263,6 +266,7 @@ pub fn optimism_error(forecast: f64, realized: f64) -> Option<f64> {
 /// let adjusted = optimism_adjusted_forecast(100_000.0, 0.30);
 /// assert!((adjusted - 70_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn optimism_adjusted_forecast(raw_forecast: f64, optimism_error_rate: f64) -> f64 {
     raw_forecast * (1.0 - optimism_error_rate)
 }

@@ -139,6 +139,7 @@
 /// // 100,000 people × £25/year × 10 years discounted (≈ ×8.3) ≈ £20.8M.
 /// assert_eq!(program_cost(100_000.0, 25.0, 8.3), 20_750_000.0);
 /// ```
+#[must_use]
 pub fn program_cost(
     population: f64,
     annual_cost_per_person: f64,
@@ -172,6 +173,7 @@ pub fn program_cost(
 /// // 400 strokes prevented × £45,000 discounted = £18.0M.
 /// assert_eq!(downstream_offsets(400.0, 45_000.0), 18_000_000.0);
 /// ```
+#[must_use]
 pub fn downstream_offsets(cases_prevented: f64, avoided_cost_per_case: f64) -> f64 {
     cases_prevented * avoided_cost_per_case
 }
@@ -201,6 +203,7 @@ pub fn downstream_offsets(cases_prevented: f64, avoided_cost_per_case: f64) -> f
 /// // £20.75M cost − £18.0M offsets ≈ £2.8M net cost: NOT cost-saving.
 /// assert_eq!(net_cost(20_750_000.0, 18_000_000.0), 2_750_000.0);
 /// ```
+#[must_use]
 pub fn net_cost(program_cost: f64, downstream_offsets: f64) -> f64 {
     program_cost - downstream_offsets
 }
@@ -227,6 +230,7 @@ pub fn net_cost(program_cost: f64, downstream_offsets: f64) -> f64 {
 /// assert!(!is_cost_saving(2_750_000.0));
 /// assert!(is_cost_saving(-500_000.0));
 /// ```
+#[must_use]
 pub fn is_cost_saving(net_cost: f64) -> bool {
     net_cost < 0.0
 }
@@ -262,6 +266,7 @@ pub fn is_cost_saving(net_cost: f64) -> bool {
 /// // 0.4% progression × £45,000 = £180 avoided → not cost-saving.
 /// assert!(!per_person_cost_saving_condition(25.0 * 8.3, 0.004, 45_000.0, 1.0));
 /// ```
+#[must_use]
 pub fn per_person_cost_saving_condition(
     intervention_cost_per_person: f64,
     probability_of_progression: f64,
@@ -293,6 +298,7 @@ pub fn per_person_cost_saving_condition(
 /// // 400 strokes × 3 QALYs lost per stroke = 1,200 QALYs gained.
 /// assert_eq!(qalys_gained(400.0, 3.0), 1_200.0);
 /// ```
+#[must_use]
 pub fn qalys_gained(cases_prevented: f64, qalys_lost_per_case: f64) -> f64 {
     cases_prevented * qalys_lost_per_case
 }
@@ -325,6 +331,7 @@ pub fn qalys_gained(cases_prevented: f64, qalys_lost_per_case: f64) -> f64 {
 /// // No QALYs gained: undefined.
 /// assert!(cost_per_qaly(1_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn cost_per_qaly(net_cost: f64, qalys_gained: f64) -> Option<f64> {
     if qalys_gained == 0.0 {
         None
@@ -354,6 +361,7 @@ pub fn cost_per_qaly(net_cost: f64, qalys_gained: f64) -> Option<f64> {
 /// assert!(is_cost_effective(2_300.0, 20_000.0));
 /// assert!(!is_cost_effective(35_000.0, 30_000.0));
 /// ```
+#[must_use]
 pub fn is_cost_effective(cost_per_qaly: f64, threshold_per_qaly: f64) -> bool {
     cost_per_qaly < threshold_per_qaly
 }

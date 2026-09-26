@@ -122,6 +122,7 @@
 /// assert_eq!(dna_rate_percent(16_000.0, 200_000.0), Some(8.0));
 /// assert_eq!(dna_rate_percent(0.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn dna_rate_percent(dnas: f64, booked_appointments: f64) -> Option<f64> {
     if booked_appointments == 0.0 {
         None
@@ -153,6 +154,7 @@ pub fn dna_rate_percent(dnas: f64, booked_appointments: f64) -> Option<f64> {
 /// // 200,000 × 0.025 = 5,000 slots/year.
 /// assert_eq!(recovered_slots(200_000.0, 2.5), 5_000.0);
 /// ```
+#[must_use]
 pub fn recovered_slots(appointments: f64, dna_rate_reduction_percentage_points: f64) -> f64 {
     // Percentage points / 100 converts to the ΔDNA-rate fraction.
     appointments * dna_rate_reduction_percentage_points / 100.0
@@ -182,6 +184,7 @@ pub fn recovered_slots(appointments: f64, dna_rate_reduction_percentage_points: 
 /// // 5,000 slots × £160 = £800,000/year of recovered activity.
 /// assert_eq!(value_of_reduction(5_000.0, 160.0), 800_000.0);
 /// ```
+#[must_use]
 pub fn value_of_reduction(recovered_slots: f64, value_per_recovered_slot: f64) -> f64 {
     recovered_slots * value_per_recovered_slot
 }
@@ -208,6 +211,7 @@ pub fn value_of_reduction(recovered_slots: f64, value_per_recovered_slot: f64) -
 /// // 200,000 × £0.40 = £80,000/year.
 /// assert_eq!(service_cost(200_000.0, 0.40), 80_000.0);
 /// ```
+#[must_use]
 pub fn service_cost(appointments: f64, cost_per_appointment: f64) -> f64 {
     appointments * cost_per_appointment
 }
@@ -235,6 +239,7 @@ pub fn service_cost(appointments: f64, cost_per_appointment: f64) -> f64 {
 /// assert_eq!(return_ratio(800_000.0, 80_000.0), Some(10.0));
 /// assert_eq!(return_ratio(800_000.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn return_ratio(recovered_value: f64, service_cost: f64) -> Option<f64> {
     if service_cost == 0.0 {
         None
@@ -268,6 +273,7 @@ pub fn return_ratio(recovered_value: f64, service_cost: f64) -> Option<f64> {
 /// assert!((rel - 0.3125).abs() < 1e-9);
 /// assert!((0.25..=0.40).contains(&rel));
 /// ```
+#[must_use]
 pub fn relative_reduction(dna_rate_before: f64, dna_rate_after: f64) -> Option<f64> {
     if dna_rate_before == 0.0 {
         None

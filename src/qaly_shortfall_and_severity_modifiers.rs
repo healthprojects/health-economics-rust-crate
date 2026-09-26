@@ -129,6 +129,7 @@
 /// let a = absolute_shortfall(14.2, 2.1);
 /// assert!((a - 12.1).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn absolute_shortfall(
     general_population_qalys: f64,
     qalys_with_condition: f64,
@@ -166,6 +167,7 @@ pub fn absolute_shortfall(
 /// // Zero general-population QALYs: undefined.
 /// assert!(proportional_shortfall(1.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn proportional_shortfall(
     absolute_shortfall: f64,
     general_population_qalys: f64,
@@ -208,6 +210,7 @@ pub fn proportional_shortfall(
 /// // Below both cut-offs: no modifier.
 /// assert_eq!(severity_weight(5.0, 0.40), 1.0);
 /// ```
+#[must_use]
 pub fn severity_weight(absolute_shortfall: f64, proportional_shortfall: f64) -> f64 {
     if absolute_shortfall >= 18.0 || proportional_shortfall >= 0.95 {
         1.7
@@ -246,6 +249,7 @@ pub fn severity_weight(absolute_shortfall: f64, proportional_shortfall: f64) -> 
 /// // A zero weight is undefined.
 /// assert!(effective_icer(26_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn effective_icer(icer: f64, severity_weight: f64) -> Option<f64> {
     if severity_weight == 0.0 {
         None
@@ -279,6 +283,7 @@ pub fn effective_icer(icer: f64, severity_weight: f64) -> Option<f64> {
 /// assert_eq!(effective_threshold(20_000.0, 1.7), 34_000.0);
 /// assert_eq!(effective_threshold(30_000.0, 1.7), 51_000.0);
 /// ```
+#[must_use]
 pub fn effective_threshold(threshold: f64, severity_weight: f64) -> f64 {
     threshold * severity_weight
 }

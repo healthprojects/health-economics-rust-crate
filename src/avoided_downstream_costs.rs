@@ -137,6 +137,7 @@
 /// let events = attributable_events_avoided(5_000.0, 0.040, 0.031);
 /// assert!((events - 45.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn attributable_events_avoided(
     population: f64,
     baseline_event_rate: f64,
@@ -174,6 +175,7 @@ pub fn attributable_events_avoided(
 /// // and fails the marginal-costing test.
 /// assert!((offset_value(45.0, 5_800.0) - 261_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn offset_value(events_avoided: f64, marginal_cost_per_event: f64) -> f64 {
     events_avoided * marginal_cost_per_event
 }
@@ -198,6 +200,7 @@ pub fn offset_value(events_avoided: f64, marginal_cost_per_event: f64) -> f64 {
 /// let cost = intervention_cost(5_000.0, 20.0);
 /// assert!((cost - 100_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn intervention_cost(population: f64, cost_per_person: f64) -> f64 {
     population * cost_per_person
 }
@@ -229,6 +232,7 @@ pub fn intervention_cost(population: f64, cost_per_person: f64) -> f64 {
 /// assert!((net - (-44_000.0)).abs() < 1e-9);
 /// assert!(net < 0.0);
 /// ```
+#[must_use]
 pub fn net_cost(intervention_cost: f64, offsets: &[f64]) -> f64 {
     intervention_cost - offsets.iter().sum::<f64>()
 }
@@ -263,6 +267,7 @@ pub fn net_cost(intervention_cost: f64, offsets: &[f64]) -> f64 {
 /// // At 10% the same year-4 cost is worth even less today.
 /// assert!(discount_factor(0.10, 4.0) < df);
 /// ```
+#[must_use]
 pub fn discount_factor(annual_discount_rate: f64, years: f64) -> f64 {
     // Compound discounting: each year divides by (1 + rate) once more.
     1.0 / (1.0 + annual_discount_rate).powf(years)
@@ -301,6 +306,7 @@ pub fn discount_factor(annual_discount_rate: f64, years: f64) -> f64 {
 /// // Silent 100% probability would overstate the claim.
 /// assert!(offset < probability_weighted_offset(1.0, 500_000.0, df));
 /// ```
+#[must_use]
 pub fn probability_weighted_offset(
     probability_of_future_event: f64,
     counterfactual_cost: f64,

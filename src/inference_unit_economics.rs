@@ -136,6 +136,7 @@ pub struct LlmCall {
 /// let draft = LlmCall { input_tokens: 12_000.0, output_tokens: 1_200.0 };
 /// assert!((cost_per_call(&draft, 3.0, 15.0) - 0.054).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn cost_per_call(call: &LlmCall, input_rate_per_million: f64, output_rate_per_million: f64) -> f64 {
     // Rates are per million tokens, so scale each side down by 1e6:
     // input term + output term, priced independently (output ≈ 4× input).
@@ -173,6 +174,7 @@ pub fn cost_per_call(call: &LlmCall, input_rate_per_million: f64, output_rate_pe
 /// let per_summary = cost_per_unit(&calls, 3.0, 15.0);
 /// assert!((per_summary - 0.0765).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn cost_per_unit(calls: &[LlmCall], input_rate_per_million: f64, output_rate_per_million: f64) -> f64 {
     calls
         .iter()
@@ -203,6 +205,7 @@ pub fn cost_per_unit(calls: &[LlmCall], input_rate_per_million: f64, output_rate
 /// let got = annual_cost(0.0765, 100_000.0);
 /// assert!((got - 7_650.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn annual_cost(cost_per_unit: f64, units_per_year: f64) -> f64 {
     cost_per_unit * units_per_year
 }
@@ -235,6 +238,7 @@ pub fn annual_cost(cost_per_unit: f64, units_per_year: f64) -> f64 {
 ///
 /// assert!(cost_share_of_value(0.0765, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn cost_share_of_value(cost_per_unit: f64, value_per_unit: f64) -> Option<f64> {
     if value_per_unit == 0.0 {
         None
@@ -272,6 +276,7 @@ pub fn cost_share_of_value(cost_per_unit: f64, value_per_unit: f64) -> Option<f6
 /// assert!((projected_cost(1_000.0, 0.3, 1.0) - 300.0).abs() < 1e-9);
 /// assert!((projected_cost(1_000.0, 0.7, 1.0) - 700.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn projected_cost(cost_0: f64, annual_decline_ratio: f64, years: f64) -> f64 {
     // Geometric decay: the ratio compounds annually, cost_t = cost_0 × d^t.
     cost_0 * annual_decline_ratio.powf(years)
@@ -349,7 +354,7 @@ mod tests {
         assert!((share - 0.0025).abs() < 0.0005);
     }
 
-    /// Price-decline scenario: cost_t = cost_0 × d^t, e.g. d = 0.5 halves the
+    /// Price-decline scenario: `cost_t` = `cost_0` × d^t, e.g. d = 0.5 halves the
     /// cost each year (×0.25 after two years).
     #[test]
     fn price_decline_scenario_compounds_annually() {

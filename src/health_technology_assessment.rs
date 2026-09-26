@@ -128,6 +128,7 @@
 /// // Undefined at zero incremental effect.
 /// assert!(icer(450.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn icer(delta_cost: f64, delta_effect: f64) -> Option<f64> {
     if delta_effect == 0.0 {
         None
@@ -161,6 +162,7 @@ pub fn icer(delta_cost: f64, delta_effect: f64) -> Option<f64> {
 /// assert!(meets_threshold(15_000.0, 20_000.0));
 /// assert!(!meets_threshold(36_000.0, 20_000.0));
 /// ```
+#[must_use]
 pub fn meets_threshold(icer_value: f64, threshold: f64) -> bool {
     icer_value < threshold
 }
@@ -195,6 +197,7 @@ pub fn meets_threshold(icer_value: f64, threshold: f64) -> bool {
 ///
 /// assert!(probability_cost_effective(&[], 20_000.0).is_none());
 /// ```
+#[must_use]
 pub fn probability_cost_effective(psa_draws: &[(f64, f64)], lambda: f64) -> Option<f64> {
     if psa_draws.is_empty() {
         return None;
@@ -206,6 +209,9 @@ pub fn probability_cost_effective(psa_draws: &[(f64, f64)], lambda: f64) -> Opti
         .iter()
         .filter(|(dc, de)| de * lambda - dc > 0.0)
         .count();
+    // Draw counts fit comfortably in f64's 52-bit mantissa for any realistic
+    // simulation size.
+    #[allow(clippy::cast_precision_loss)]
     Some(favorable as f64 / psa_draws.len() as f64)
 }
 
@@ -254,6 +260,7 @@ impl ReferenceCaseChecklist {
     /// };
     /// assert!(!strawman.passes());
     /// ```
+    #[must_use]
     pub fn passes(&self) -> bool {
         self.utilities_from_mandated_instrument
             && self.comparator_is_current_care_pathway
@@ -302,6 +309,7 @@ impl ReferenceCaseChecklist {
 /// };
 /// assert!(!recommend_routine_commissioning(&strawman, 9_000.0, 20_000.0));
 /// ```
+#[must_use]
 pub fn recommend_routine_commissioning(
     checklist: &ReferenceCaseChecklist,
     icer_value: f64,

@@ -133,6 +133,7 @@
 /// // Induced demand raises the net cost: 300 − 120 + 40 = £220.
 /// assert!((net_cost_per_patient(300.0, 120.0, 40.0) - 220.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn net_cost_per_patient(
     intervention_cost: f64,
     displaced_care_cost: f64,
@@ -175,6 +176,7 @@ impl PatientGroup {
     /// };
     /// assert!((group.cost() - 1_080_000.0).abs() < 1e-6);
     /// ```
+    #[must_use]
     pub fn cost(&self) -> f64 {
         self.eligible_population * self.uptake * self.net_cost_per_patient
     }
@@ -233,6 +235,7 @@ pub fn scenario_cost(groups: &[PatientGroup]) -> f64 {
 /// // in the current scenario's books → BI = £1.08M.
 /// assert!((budget_impact(1_080_000.0, 0.0) - 1_080_000.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn budget_impact(cost_scenario_with_new: f64, cost_scenario_current: f64) -> f64 {
     cost_scenario_with_new - cost_scenario_current
 }

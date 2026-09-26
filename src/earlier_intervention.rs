@@ -125,6 +125,7 @@
 /// let events = progression_events_avoided(4_000.0, 0.02, 4.0 / 12.0);
 /// assert!((events - 27.0).abs() < 0.5);
 /// ```
+#[must_use]
 pub fn progression_events_avoided(
     patients: f64,
     annual_progression_rate: f64,
@@ -164,6 +165,7 @@ pub fn progression_events_avoided(
 /// let v = value_per_avoided_progression(4_000.0, 0.0, 0.8, 0.0, 20_000.0);
 /// assert_eq!(v, 20_000.0);
 /// ```
+#[must_use]
 pub fn value_per_avoided_progression(
     cost_late: f64,
     cost_early: f64,
@@ -207,6 +209,7 @@ pub fn value_per_avoided_progression(
 /// // ≈ £133 per waiting patient; × 4,000 patients ≈ £533k.
 /// assert!((v * 4_000.0 - 533_333.33).abs() < 1.0);
 /// ```
+#[must_use]
 pub fn value_per_patient(
     cost_late: f64,
     cost_early: f64,
@@ -246,6 +249,7 @@ pub fn value_per_patient(
 /// let v = total_backlog_value(27.0, 20_000.0);
 /// assert_eq!(v, 540_000.0);
 /// ```
+#[must_use]
 pub fn total_backlog_value(events_avoided: f64, value_per_event: f64) -> f64 {
     events_avoided * value_per_event
 }

@@ -1,8 +1,8 @@
-//! # Cloud Unit Economics (FinOps)
+//! # Cloud Unit Economics (`FinOps`)
 //!
 //! Cloud unit economics translate raw cloud spend into **cost per unit of
 //! output** — per customer, per transaction, per case resolved, per token.
-//! It is the FinOps capability that turns "our AWS bill is £400k/month" into
+//! It is the `FinOps` capability that turns "our AWS bill is £400k/month" into
 //! "serving one patient costs £0.83."
 //!
 //! Two families of unit: resource-efficiency units (cost/GB stored,
@@ -89,9 +89,9 @@
 //!
 //! ## Sources
 //!
-//! - FinOps Foundation, unit economics.
+//! - `FinOps` Foundation, unit economics.
 //!   <https://www.finops.org/framework/capabilities/unit-economics/>
-//! - FinOps Foundation, introduction to cloud unit economics.
+//! - `FinOps` Foundation, introduction to cloud unit economics.
 //!   <https://www.finops.org/wg/introduction-cloud-unit-economics/>
 //!
 //! Topic doc: health-economics-metrics/topics/cloud-unit-economics.md
@@ -123,6 +123,7 @@ impl CloudSpend {
     /// let spend = CloudSpend { compute: 30_000.0, data: 18_000.0, shared_platform: 14_000.0 };
     /// assert!((spend.total() - 62_000.0).abs() < 1e-9);
     /// ```
+    #[must_use]
     pub fn total(&self) -> f64 {
         self.compute + self.data + self.shared_platform
     }
@@ -154,6 +155,7 @@ impl CloudSpend {
 /// assert!((cost - 0.163).abs() < 5e-4);
 /// assert!(unit_cost(62_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn unit_cost(total_allocated_cost: f64, units_delivered: f64) -> Option<f64> {
     if units_delivered == 0.0 {
         None
@@ -187,6 +189,7 @@ pub fn unit_cost(total_allocated_cost: f64, units_delivered: f64) -> Option<f64>
 /// assert!((ratio - 0.02).abs() < 0.005);
 /// assert!(unit_cost_ratio(1.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn unit_cost_ratio(unit_cost_a: f64, unit_cost_b: f64) -> Option<f64> {
     if unit_cost_b == 0.0 { None } else { Some(unit_cost_a / unit_cost_b) }
 }
@@ -216,6 +219,7 @@ pub fn unit_cost_ratio(unit_cost_a: f64, unit_cost_b: f64) -> Option<f64> {
 /// assert!(change < 0.0);
 /// assert!(unit_cost_change(0.0, 1.0).is_none());
 /// ```
+#[must_use]
 pub fn unit_cost_change(previous: f64, current: f64) -> Option<f64> {
     if previous == 0.0 {
         None

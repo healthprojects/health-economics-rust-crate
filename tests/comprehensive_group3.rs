@@ -1,16 +1,16 @@
 //! Comprehensive integration tests, group 3.
 //!
 //! Modules under test:
-//! - cost_of_delay
-//! - cost_utility_analysis
-//! - did_not_attend_rate
-//! - diga_fast_track
-//! - digital_endpoints_and_biomarkers
-//! - disability_adjusted_life_year
-//! - discounting_and_time_preference
-//! - dominance_and_efficiency_frontier
-//! - dora_metrics
-//! - downstream_resource_optimization
+//! - `cost_of_delay`
+//! - `cost_utility_analysis`
+//! - `did_not_attend_rate`
+//! - `diga_fast_track`
+//! - `digital_endpoints_and_biomarkers`
+//! - `disability_adjusted_life_year`
+//! - `discounting_and_time_preference`
+//! - `dominance_and_efficiency_frontier`
+//! - `dora_metrics`
+//! - `downstream_resource_optimization`
 //!
 //! Sections:
 //!   1. EDGE CASES
@@ -53,8 +53,8 @@ fn approx(a: f64, b: f64, tol: f64) -> bool {
 // Edge: zero saving or zero throughput yields zero CoD, and 1e12 magnitudes stay finite.
 #[test]
 fn edge_cod_operational_zero_and_extreme() {
-    assert_eq!(cod::operational_cost_of_delay(0.0, 50.0), 0.0);
-    assert_eq!(cod::operational_cost_of_delay(200.0, 0.0), 0.0);
+    assert!(approx(cod::operational_cost_of_delay(0.0, 50.0), 0.0, 1e-9));
+    assert!(approx(cod::operational_cost_of_delay(200.0, 0.0), 0.0, 1e-9));
     let huge = cod::operational_cost_of_delay(1e12, 1e12);
     assert!(huge.is_finite() && huge > 0.0);
 }
@@ -62,7 +62,7 @@ fn edge_cod_operational_zero_and_extreme() {
 // Edge: zero delay loses nothing; negative delay (early delivery) flips the sign of the loss.
 #[test]
 fn edge_cod_total_delay_loss_zero_and_negative_delay() {
-    assert_eq!(cod::total_delay_loss(10_000.0, 0.0), 0.0);
+    assert!(approx(cod::total_delay_loss(10_000.0, 0.0), 0.0, 1e-9));
     assert!(approx(cod::total_delay_loss(10_000.0, -2.0), -20_000.0, 1e-9));
     assert!(cod::total_delay_loss(1e12, 1e12).is_finite());
 }
@@ -71,23 +71,23 @@ fn edge_cod_total_delay_loss_zero_and_negative_delay() {
 // utility gain (new state worse) gives a negative QALY gain.
 #[test]
 fn edge_cod_qaly_gain_zero_and_negative_utility_gain() {
-    assert_eq!(cod::qaly_gain_per_patient(0.0, 0.12), 0.0);
-    assert_eq!(cod::qaly_gain_per_patient(5.0, 0.0), 0.0);
+    assert!(approx(cod::qaly_gain_per_patient(0.0, 0.12), 0.0, 1e-9));
+    assert!(approx(cod::qaly_gain_per_patient(5.0, 0.0), 0.0, 1e-9));
     assert!(cod::qaly_gain_per_patient(5.0, -0.12) < 0.0);
 }
 
 // Edge: health CoD is zero with no patients or no per-patient gain.
 #[test]
 fn edge_cod_health_zero_inputs() {
-    assert_eq!(cod::cost_of_delay_health(0.0, 0.0115), 0.0);
-    assert_eq!(cod::cost_of_delay_health(100.0, 0.0), 0.0);
+    assert!(approx(cod::cost_of_delay_health(0.0, 0.0115), 0.0, 1e-9));
+    assert!(approx(cod::cost_of_delay_health(100.0, 0.0), 0.0, 1e-9));
 }
 
 // Edge: money CoD with all-zero terms is zero, and the operational term alone passes through.
 #[test]
 fn edge_cod_money_zero_and_operational_only() {
-    assert_eq!(cod::cost_of_delay_money(0.0, 20_000.0, 0.0), 0.0);
-    assert_eq!(cod::cost_of_delay_money(0.0, 20_000.0, 5_000.0), 5_000.0);
+    assert!(approx(cod::cost_of_delay_money(0.0, 20_000.0, 0.0), 0.0, 1e-9));
+    assert!(approx(cod::cost_of_delay_money(0.0, 20_000.0, 5_000.0), 5_000.0, 1e-9));
     assert!(cod::cost_of_delay_money(1e12, 1e12, 1e12).is_finite());
 }
 
@@ -96,7 +96,7 @@ fn edge_cod_money_zero_and_operational_only() {
 // Edge: an empty pathway accrues zero QALYs; a single state accrues duration × utility.
 #[test]
 fn edge_cua_total_qalys_empty_and_single() {
-    assert_eq!(cua::total_qalys(&[]), 0.0);
+    assert!(approx(cua::total_qalys(&[]), 0.0, 1e-9));
     let one = [HealthState { duration_years: 2.0, utility: 0.5 }];
     assert!(approx(cua::total_qalys(&one), 1.0, 1e-12));
 }
@@ -108,7 +108,7 @@ fn edge_cua_total_qalys_utility_boundaries_and_negative() {
     let dead = [HealthState { duration_years: 3.0, utility: 0.0 }];
     let full = [HealthState { duration_years: 3.0, utility: 1.0 }];
     let worse = [HealthState { duration_years: 1.0, utility: -0.2 }];
-    assert_eq!(cua::total_qalys(&dead), 0.0);
+    assert!(approx(cua::total_qalys(&dead), 0.0, 1e-9));
     assert!(approx(cua::total_qalys(&full), 3.0, 1e-12));
     assert!(approx(cua::total_qalys(&worse), -0.2, 1e-12));
 }
@@ -116,14 +116,14 @@ fn edge_cua_total_qalys_utility_boundaries_and_negative() {
 // Edge: two empty pathways have zero QALY difference.
 #[test]
 fn edge_cua_delta_qalys_empty_vs_empty() {
-    assert_eq!(cua::delta_qalys(&[], &[]), 0.0);
+    assert!(approx(cua::delta_qalys(&[], &[]), 0.0, 1e-9));
 }
 
 // Edge: displacement fraction boundaries 0.0 (no saving) and 1.0 (full comparator cost).
 #[test]
 fn edge_cua_displaced_care_saving_fraction_boundaries() {
-    assert_eq!(cua::displaced_care_saving(0.0, 1_700.0), 0.0);
-    assert_eq!(cua::displaced_care_saving(1.0, 1_700.0), 1_700.0);
+    assert!(approx(cua::displaced_care_saving(0.0, 1_700.0), 0.0, 1e-9));
+    assert!(approx(cua::displaced_care_saving(1.0, 1_700.0), 1_700.0, 1e-9));
 }
 
 // Edge: icur is None exactly when ΔQALYs == 0.0 (including -0.0); nonzero ΔE gives Some.
@@ -156,7 +156,7 @@ fn edge_dna_rate_none_and_bounds() {
 // Edge: zero-point reduction recovers no slots; a worsening (negative reduction) is negative.
 #[test]
 fn edge_dna_recovered_slots_zero_and_negative() {
-    assert_eq!(dna::recovered_slots(200_000.0, 0.0), 0.0);
+    assert!(approx(dna::recovered_slots(200_000.0, 0.0), 0.0, 1e-9));
     assert!(dna::recovered_slots(200_000.0, -1.0) < 0.0);
     assert!(dna::recovered_slots(1e12, 100.0).is_finite());
 }
@@ -164,15 +164,15 @@ fn edge_dna_recovered_slots_zero_and_negative() {
 // Edge: zero slots or zero per-slot value recovers zero value.
 #[test]
 fn edge_dna_value_of_reduction_zero_inputs() {
-    assert_eq!(dna::value_of_reduction(0.0, 160.0), 0.0);
-    assert_eq!(dna::value_of_reduction(5_000.0, 0.0), 0.0);
+    assert!(approx(dna::value_of_reduction(0.0, 160.0), 0.0, 1e-9));
+    assert!(approx(dna::value_of_reduction(5_000.0, 0.0), 0.0, 1e-9));
 }
 
 // Edge: a free service or no appointments costs nothing.
 #[test]
 fn edge_dna_service_cost_zero_inputs() {
-    assert_eq!(dna::service_cost(0.0, 0.40), 0.0);
-    assert_eq!(dna::service_cost(200_000.0, 0.0), 0.0);
+    assert!(approx(dna::service_cost(0.0, 0.40), 0.0, 1e-9));
+    assert!(approx(dna::service_cost(200_000.0, 0.0), 0.0, 1e-9));
 }
 
 // Edge: return ratio is None only when the service cost is zero; zero value gives 0.
@@ -195,24 +195,24 @@ fn edge_dna_relative_reduction_none_and_negative() {
 // Edge: activation-rate boundaries 0.0 (no revenue) and 1.0 (every script reimbursed).
 #[test]
 fn edge_diga_revenue_activation_boundaries() {
-    assert_eq!(diga::revenue(20_000.0, 0.0, 450.0), 0.0);
-    assert_eq!(diga::revenue(20_000.0, 1.0, 450.0), 9_000_000.0);
+    assert!(approx(diga::revenue(20_000.0, 0.0, 450.0), 0.0, 1e-9));
+    assert!(approx(diga::revenue(20_000.0, 1.0, 450.0), 9_000_000.0, 1e-9));
     assert!(diga::revenue(1e12, 1.0, 1e12).is_finite());
 }
 
 // Edge: zero prescriptions activate to zero; rate boundaries pass through.
 #[test]
 fn edge_diga_activated_prescriptions_boundaries() {
-    assert_eq!(diga::activated_prescriptions(0.0, 0.81), 0.0);
-    assert_eq!(diga::activated_prescriptions(20_000.0, 0.0), 0.0);
-    assert_eq!(diga::activated_prescriptions(20_000.0, 1.0), 20_000.0);
+    assert!(approx(diga::activated_prescriptions(0.0, 0.81), 0.0, 1e-9));
+    assert!(approx(diga::activated_prescriptions(20_000.0, 0.0), 0.0, 1e-9));
+    assert!(approx(diga::activated_prescriptions(20_000.0, 1.0), 20_000.0, 1e-9));
 }
 
 // Edge: probability boundaries — P = 0 loses exactly the RCT cost, P = 1 nets revenue − cost.
 #[test]
 fn edge_diga_expected_value_probability_boundaries() {
-    assert_eq!(diga::expected_value(0.0, 18_468_000.0, 2_000_000.0), -2_000_000.0);
-    assert_eq!(diga::expected_value(1.0, 18_468_000.0, 2_000_000.0), 16_468_000.0);
+    assert!(approx(diga::expected_value(0.0, 18_468_000.0, 2_000_000.0), -2_000_000.0, 1e-9));
+    assert!(approx(diga::expected_value(1.0, 18_468_000.0, 2_000_000.0), 16_468_000.0, 1e-9));
 }
 
 // Edge: the financing test is inclusive — revenue exactly equal to the RCT cost counts (>=).
@@ -243,8 +243,8 @@ fn edge_deb_sampling_density_ratio_none_and_zero() {
 // Edge: a 1× (no) variance fall improves nothing; 0× collapses to 0; 1e12 stays finite.
 #[test]
 fn edge_deb_detectable_effect_improvement_boundaries() {
-    assert_eq!(deb::detectable_effect_improvement(1.0), 1.0);
-    assert_eq!(deb::detectable_effect_improvement(0.0), 0.0);
+    assert!(approx(deb::detectable_effect_improvement(1.0), 1.0, 1e-9));
+    assert!(approx(deb::detectable_effect_improvement(0.0), 0.0, 1e-9));
     assert!(approx(deb::detectable_effect_improvement(1e12), 1e6, 1e-3));
 }
 
@@ -258,8 +258,8 @@ fn edge_deb_sample_size_ratio_none_and_zero() {
 // Edge: cutting zero patients (or free patients) saves nothing.
 #[test]
 fn edge_deb_trial_cost_saving_zero_inputs() {
-    assert_eq!(deb::trial_cost_saving(0.0, 25_000.0), 0.0);
-    assert_eq!(deb::trial_cost_saving(200.0, 0.0), 0.0);
+    assert!(approx(deb::trial_cost_saving(0.0, 25_000.0), 0.0, 1e-9));
+    assert!(approx(deb::trial_cost_saving(200.0, 0.0), 0.0, 1e-9));
     assert!(deb::trial_cost_saving(1e12, 1e12).is_finite());
 }
 
@@ -268,22 +268,22 @@ fn edge_deb_trial_cost_saving_zero_inputs() {
 // Edge: zero deaths or zero remaining life expectancy loses zero life years.
 #[test]
 fn edge_daly_yll_zero_inputs() {
-    assert_eq!(daly::years_of_life_lost(0.0, 20.0), 0.0);
-    assert_eq!(daly::years_of_life_lost(10.0, 0.0), 0.0);
+    assert!(approx(daly::years_of_life_lost(0.0, 20.0), 0.0, 1e-9));
+    assert!(approx(daly::years_of_life_lost(10.0, 0.0), 0.0, 1e-9));
 }
 
 // Edge: disability-weight boundaries — 0 (full health) yields no YLD, 1 (death-equivalent)
 // yields the full prevalence.
 #[test]
 fn edge_daly_yld_weight_boundaries() {
-    assert_eq!(daly::years_lived_with_disability(200.0, 0.0), 0.0);
-    assert_eq!(daly::years_lived_with_disability(200.0, 1.0), 200.0);
+    assert!(approx(daly::years_lived_with_disability(200.0, 0.0), 0.0, 1e-9));
+    assert!(approx(daly::years_lived_with_disability(200.0, 1.0), 200.0, 1e-9));
 }
 
 // Edge: zero burden on both components gives zero DALYs; large components stay finite.
 #[test]
 fn edge_daly_dalys_zero_and_extreme() {
-    assert_eq!(daly::dalys(0.0, 0.0), 0.0);
+    assert!(approx(daly::dalys(0.0, 0.0), 0.0, 1e-9));
     assert!(daly::dalys(1e12, 1e12).is_finite());
 }
 
@@ -313,8 +313,8 @@ fn edge_daly_who_choice_exact_boundaries() {
 // Edge: year 0 leaves any amount undiscounted (factor exactly 1.0).
 #[test]
 fn edge_disc_present_value_year_zero_is_identity() {
-    assert_eq!(disc::present_value(100_000.0, disc::NICE_REFERENCE_RATE, 0.0), 100_000.0);
-    assert_eq!(disc::present_value(1.0, 0.5, 0.0), 1.0);
+    assert!(approx(disc::present_value(100_000.0, disc::NICE_REFERENCE_RATE, 0.0), 100_000.0, 1e-9));
+    assert!(approx(disc::present_value(1.0, 0.5, 0.0), 1.0, 1e-9));
 }
 
 // Edge: a 0.0 rate never discounts, at any horizon.
@@ -328,15 +328,15 @@ fn edge_disc_present_value_zero_rate_is_identity() {
 // Edge: annuity r = 0 limit is exactly B × n, and a 0-year annuity is worth 0 at any rate.
 #[test]
 fn edge_disc_annuity_rate_zero_limit_and_zero_years() {
-    assert_eq!(disc::annuity_present_value(100_000.0, 0.0, 5.0), 500_000.0);
-    assert_eq!(disc::annuity_present_value(100_000.0, 0.0, 0.0), 0.0);
+    assert!(approx(disc::annuity_present_value(100_000.0, 0.0, 5.0), 500_000.0, 1e-9));
+    assert!(approx(disc::annuity_present_value(100_000.0, 0.0, 0.0), 0.0, 1e-9));
     assert!(approx(disc::annuity_present_value(100_000.0, 0.035, 0.0), 0.0, 1e-9));
 }
 
 // Edge: a zero-year delay leaves the PV unchanged; extreme horizons stay finite and positive.
 #[test]
 fn edge_disc_delayed_pv_zero_delay_and_extreme_horizon() {
-    assert_eq!(disc::delayed_present_value(451_505.0, 0.035, 0.0), 451_505.0);
+    assert!(approx(disc::delayed_present_value(451_505.0, 0.035, 0.0), 451_505.0, 1e-9));
     let far = disc::present_value(1e12, 0.035, 100.0);
     assert!(far.is_finite() && far > 0.0);
 }
@@ -427,23 +427,23 @@ fn edge_dora_cfr_none_and_bounds() {
 // Edge: 0 days is 0 weeks and 7 days is exactly 1 week.
 #[test]
 fn edge_dora_days_to_weeks_boundaries() {
-    assert_eq!(dora::days_to_weeks(0.0), 0.0);
-    assert_eq!(dora::days_to_weeks(7.0), 1.0);
+    assert!(approx(dora::days_to_weeks(0.0), 0.0, 1e-9));
+    assert!(approx(dora::days_to_weeks(7.0), 1.0, 1e-9));
 }
 
 // Edge: a worsened lead time yields a negative reduction.
 #[test]
 fn edge_dora_lead_time_reduction_negative_when_worse() {
     assert!(approx(dora::lead_time_reduction_weeks(2.0, 6.0), -4.0, 1e-12));
-    assert_eq!(dora::lead_time_reduction_weeks(6.0, 6.0), 0.0);
+    assert!(approx(dora::lead_time_reduction_weeks(6.0, 6.0), 0.0, 1e-9));
 }
 
 // Edge: value pulled forward is zero whenever any factor is zero, finite at 1e12.
 #[test]
 fn edge_dora_value_pulled_forward_zeros_and_extreme() {
-    assert_eq!(dora::value_pulled_forward(0.0, 5.4, 4_000.0), 0.0);
-    assert_eq!(dora::value_pulled_forward(30.0, 0.0, 4_000.0), 0.0);
-    assert_eq!(dora::value_pulled_forward(30.0, 5.4, 0.0), 0.0);
+    assert!(approx(dora::value_pulled_forward(0.0, 5.4, 4_000.0), 0.0, 1e-9));
+    assert!(approx(dora::value_pulled_forward(30.0, 0.0, 4_000.0), 0.0, 1e-9));
+    assert!(approx(dora::value_pulled_forward(30.0, 5.4, 0.0), 0.0, 1e-9));
     assert!(dora::value_pulled_forward(1e12, 1.0, 1e12).is_finite());
 }
 
@@ -452,21 +452,21 @@ fn edge_dora_value_pulled_forward_zeros_and_extreme() {
 fn edge_dora_failed_changes_avoided_negative_when_cfr_worsens() {
     assert!(approx(dora::failed_changes_avoided(30.0, 0.05, 0.25), -6.0, 1e-12));
     assert!(dora::failure_cost_avoided(30.0, 0.05, 0.25, 15_000.0) < 0.0);
-    assert_eq!(dora::failed_changes_avoided(30.0, 0.25, 0.25), 0.0);
+    assert!(approx(dora::failed_changes_avoided(30.0, 0.25, 0.25), 0.0, 1e-9));
 }
 
 // Edge: instant recovery or a harmless outage costs nothing.
 #[test]
 fn edge_dora_downtime_harm_zero_inputs() {
-    assert_eq!(dora::downtime_harm(0.0, 1_000.0), 0.0);
-    assert_eq!(dora::downtime_harm(48.0, 0.0), 0.0);
+    assert!(approx(dora::downtime_harm(0.0, 1_000.0), 0.0, 1e-9));
+    assert!(approx(dora::downtime_harm(48.0, 0.0), 0.0, 1e-9));
 }
 
 // Edge: SLO attainment boundaries — 0.0 delivers nothing, 1.0 delivers the full modeled benefit.
 #[test]
 fn edge_dora_reliability_adjusted_benefit_boundaries() {
-    assert_eq!(dora::reliability_adjusted_benefit(500_000.0, 0.0), 0.0);
-    assert_eq!(dora::reliability_adjusted_benefit(500_000.0, 1.0), 500_000.0);
+    assert!(approx(dora::reliability_adjusted_benefit(500_000.0, 0.0), 0.0, 1e-9));
+    assert!(approx(dora::reliability_adjusted_benefit(500_000.0, 1.0), 500_000.0, 1e-9));
 }
 
 // ---- downstream_resource_optimization -------------------------------------------
@@ -475,31 +475,31 @@ fn edge_dora_reliability_adjusted_benefit_boundaries() {
 // (the non-gating-role contrast), and empty releases with a gain keep the pathway term.
 #[test]
 fn edge_dro_value_of_unblocking_empty_and_pathway_only() {
-    assert_eq!(dro::value_of_unblocking(&[], 0.0, 300.0), 0.0);
-    assert_eq!(dro::value_of_unblocking(&[], 10.0, 300.0), 3_000.0);
+    assert!(approx(dro::value_of_unblocking(&[], 0.0, 300.0), 0.0, 1e-9));
+    assert!(approx(dro::value_of_unblocking(&[], 10.0, 300.0), 3_000.0, 1e-9));
     let free_role = [DownstreamRelease { blocked_hours_released: 100.0, unit_cost_per_hour: 0.0 }];
-    assert_eq!(dro::value_of_unblocking(&free_role, 0.0, 0.0), 0.0);
+    assert!(approx(dro::value_of_unblocking(&free_role, 0.0, 0.0), 0.0, 1e-9));
 }
 
 // Edge: a gating task that got slower saves negative minutes.
 #[test]
 fn edge_dro_gating_task_negative_when_slower() {
     assert!(approx(dro::gating_task_minutes_saved(20.0, 90.0), -70.0, 1e-12));
-    assert_eq!(dro::gating_task_minutes_saved(90.0, 90.0), 0.0);
+    assert!(approx(dro::gating_task_minutes_saved(90.0, 90.0), 0.0, 1e-9));
 }
 
 // Edge: annualizing zero per-day or zero operating days yields zero; 1e12 stays finite.
 #[test]
 fn edge_dro_annualize_zero_and_extreme() {
-    assert_eq!(dro::annualize(0.0, 365.0), 0.0);
-    assert_eq!(dro::annualize(3.0, 0.0), 0.0);
+    assert!(approx(dro::annualize(0.0, 365.0), 0.0, 1e-9));
+    assert!(approx(dro::annualize(3.0, 0.0), 0.0, 1e-9));
     assert!(dro::annualize(1e12, 365.0).is_finite());
 }
 
 // Edge: recovering zero late discharges avoids zero bed days.
 #[test]
 fn edge_dro_bed_days_zero_recovered() {
-    assert_eq!(dro::bed_days_avoided_per_year(0.0, 365.0), 0.0);
+    assert!(approx(dro::bed_days_avoided_per_year(0.0, 365.0), 0.0, 1e-9));
 }
 
 // =========================================================================
@@ -513,7 +513,7 @@ fn prop_disc_discount_factor_in_unit_interval_and_decreasing() {
     for &r in &[0.0, 0.015, 0.035, 0.10, 0.50] {
         let mut prev = f64::INFINITY;
         for t in 0..=30 {
-            let f = disc::present_value(1.0, r, t as f64);
+            let f = disc::present_value(1.0, r, f64::from(t));
             assert!(f > 0.0 && f <= 1.0, "factor out of (0,1]: r={r} t={t} f={f}");
             if r > 0.0 {
                 assert!(f < prev, "not strictly decreasing: r={r} t={t}");
@@ -545,8 +545,8 @@ fn prop_disc_delay_strictly_reduces_present_value() {
 fn prop_disc_annuity_equals_year_by_year_sum() {
     for &r in &[0.015, 0.035, 0.08, 0.20] {
         for &n in &[1u32, 2, 5, 10, 30] {
-            let sum: f64 = (1..=n).map(|t| disc::present_value(1_000.0, r, t as f64)).sum();
-            let annuity = disc::annuity_present_value(1_000.0, r, n as f64);
+            let sum: f64 = (1..=n).map(|t| disc::present_value(1_000.0, r, f64::from(t))).sum();
+            let annuity = disc::annuity_present_value(1_000.0, r, f64::from(n));
             assert!(approx(annuity, sum, 1e-6), "annuity != sum at r={r} n={n}");
         }
     }
@@ -832,7 +832,7 @@ fn prop_diga_expected_value_linear_in_probability() {
     let lo = diga::expected_value(0.0, rev, 2_000_000.0);
     let hi = diga::expected_value(1.0, rev, 2_000_000.0);
     let mid = diga::expected_value(0.5, rev, 2_000_000.0);
-    assert!(approx(mid, (lo + hi) / 2.0, 1e-6));
+    assert!(approx(mid, f64::midpoint(lo, hi), 1e-6));
 }
 
 // Property: DiGA revenue equals activated prescriptions × price, over a grid.
@@ -956,10 +956,10 @@ fn cross_icur_agrees_with_frontier_icer() {
     for &dc in &[-500.0, -1.0, 0.0, 0.5, 80.0, 1e6] {
         for &de in &[-0.5, 0.01, 0.04, 1.0, 250.0] {
             let next = Alternative::new("next", base.cost + dc, base.effect + de);
-            let via_icer = dom::icer(&next, &base).unwrap();
-            let via_icur = cua::icur(dc, de).unwrap();
-            let tol = 1e-9 * via_icur.abs().max(1.0);
-            assert!(approx(via_icer, via_icur, tol), "dc={dc} de={de}");
+            let frontier_ratio = dom::icer(&next, &base).unwrap();
+            let cua_ratio = cua::icur(dc, de).unwrap();
+            let tol = 1e-9 * cua_ratio.abs().max(1.0);
+            assert!(approx(frontier_ratio, cua_ratio, tol), "dc={dc} de={de}");
         }
     }
     // Both agree that ΔE = 0 has no ratio.
@@ -975,7 +975,7 @@ fn cross_present_value_matches_all_discount_factors() {
     let fv = 100_000.0;
     for &r in &[0.0, 0.015, disc::NICE_REFERENCE_RATE, 0.10] {
         for t in 0..=20 {
-            let t = t as f64;
+            let t = f64::from(t);
             let pv = disc::present_value(fv, r, t);
             assert!(approx(pv, fv * cba::discount_factor(r, t), 1e-6));
             assert!(approx(pv, fv * qalym::discount_factor(r, t), 1e-6));
@@ -1069,7 +1069,7 @@ fn scenario_diga_launch_profit_and_loss() {
     let pv3 = disc::annuity_present_value(steady, disc::NICE_REFERENCE_RATE, 3.0);
     assert!(approx(pv3, 35_860_953.36, 1.0));
     let year_by_year: f64 = (1..=3)
-        .map(|t| disc::present_value(steady, disc::NICE_REFERENCE_RATE, t as f64))
+        .map(|t| disc::present_value(steady, disc::NICE_REFERENCE_RATE, f64::from(t)))
         .sum();
     assert!(approx(pv3, year_by_year, 1e-6));
 
@@ -1204,8 +1204,9 @@ fn scenario_global_health_platform_dalys_and_downstream() {
     assert!(approx(dro::gating_task_minutes_saved(60.0, 15.0), 45.0, 1e-12));
     let bed_days = dro::bed_days_avoided_per_year(2.0, 365.0);
     assert!(approx(bed_days, 730.0, 1e-9));
-    let released = dro::annualize(2.0, 365.0);
-    let releases = [DownstreamRelease { blocked_hours_released: released, unit_cost_per_hour: 25.0 }];
+    let hours_released = dro::annualize(2.0, 365.0);
+    let releases =
+        [DownstreamRelease { blocked_hours_released: hours_released, unit_cost_per_hour: 25.0 }];
     // 730 hrs × $25 + 730 bed days × $200 = $18,250 + $146,000 = $164,250.
     let unblock_value = dro::value_of_unblocking(&releases, bed_days, 200.0);
     assert!(approx(unblock_value, 164_250.0, 1e-6));

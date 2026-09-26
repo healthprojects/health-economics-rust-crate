@@ -109,6 +109,7 @@
 /// // Admitted day 10, discharged day 16 → a 6-day spell (the trust's mean).
 /// assert!((length_of_stay_days(10.0, 16.0) - 6.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn length_of_stay_days(admission_day: f64, discharge_day: f64) -> f64 {
     discharge_day - admission_day
 }
@@ -139,6 +140,7 @@ pub fn length_of_stay_days(admission_day: f64, discharge_day: f64) -> f64 {
 ///
 /// assert!(average_length_of_stay(240.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn average_length_of_stay(occupied_bed_days: f64, discharges: f64) -> Option<f64> {
     if discharges == 0.0 {
         None
@@ -172,10 +174,14 @@ pub fn average_length_of_stay(occupied_bed_days: f64, discharges: f64) -> Option
 ///
 /// assert!(mean_length_of_stay(&[]).is_none());
 /// ```
+#[must_use]
 pub fn mean_length_of_stay(spells: &[f64]) -> Option<f64> {
     if spells.is_empty() {
         None
     } else {
+        // Spell counts fit comfortably in f64's 52-bit mantissa for any
+        // realistic caseload.
+        #[allow(clippy::cast_precision_loss)]
         Some(spells.iter().sum::<f64>() / spells.len() as f64)
     }
 }
@@ -206,18 +212,19 @@ pub fn mean_length_of_stay(spells: &[f64]) -> Option<f64> {
 ///
 /// assert!(median_length_of_stay(&[]).is_none());
 /// ```
+#[must_use]
 pub fn median_length_of_stay(spells: &[f64]) -> Option<f64> {
     if spells.is_empty() {
         return None;
     }
     let mut sorted = spells.to_vec();
-    sorted.sort_by(|a, b| a.partial_cmp(b).expect("LOS values must be comparable"));
+    sorted.sort_by(f64::total_cmp);
     let n = sorted.len();
     if n % 2 == 1 {
         Some(sorted[n / 2])
     } else {
         // Even count: midpoint of the two central order statistics.
-        Some((sorted[n / 2 - 1] + sorted[n / 2]) / 2.0)
+        Some(f64::midpoint(sorted[n / 2 - 1], sorted[n / 2]))
     }
 }
 
@@ -243,6 +250,7 @@ pub fn median_length_of_stay(spells: &[f64]) -> Option<f64> {
 /// // 40 emergency admissions/day at mean LOS 6.0 days → 240 beds occupied.
 /// assert!((beds_occupied(40.0, 6.0) - 240.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn beds_occupied(admissions_per_day: f64, average_los_days: f64) -> f64 {
     admissions_per_day * average_los_days
 }
@@ -271,6 +279,7 @@ pub fn beds_occupied(admissions_per_day: f64, average_los_days: f64) -> f64 {
 /// // A 0.4-day LOS cut at 40 admissions/day frees 16 beds continuously.
 /// assert!((beds_freed(40.0, 6.0, 5.6) - 16.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn beds_freed(admissions_per_day: f64, los_before_days: f64, los_after_days: f64) -> f64 {
     beds_occupied(admissions_per_day, los_before_days)
         - beds_occupied(admissions_per_day, los_after_days)
@@ -297,6 +306,7 @@ pub fn beds_freed(admissions_per_day: f64, los_before_days: f64, los_after_days:
 /// // 16 beds freed × 365 = 5,840 bed days/year.
 /// assert!((annual_bed_days_freed(16.0) - 5_840.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn annual_bed_days_freed(beds_freed: f64) -> f64 {
     beds_freed * 365.0
 }

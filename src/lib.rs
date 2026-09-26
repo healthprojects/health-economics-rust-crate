@@ -1,15 +1,21 @@
 //! # Health Economics
 //!
-//! Rust implementations of 76 health-economics metrics and their software
+//! Rust implementations of 85 health-economics metrics and their software
 //! engineering analogues — one module per topic. Each module implements the
 //! formulas from its source topic document (`health-economics-metrics/topics/*.md`),
 //! documents them with runnable examples, and reproduces the document's
 //! worked example in its unit tests.
 //!
-//! The crate is `std`-only: no external dependencies, all quantities are
-//! `f64`, and functions return `Option<f64>` wherever a denominator can be
-//! zero. Randomness (for probabilistic sensitivity analysis) uses a seeded,
-//! deterministic generator so results are reproducible.
+//! Almost every module is plain `f64` in, `f64`/`Option<f64>` out (`None`
+//! wherever a denominator can be zero) with zero dependencies. Three
+//! modules — [`exact_cents_cost_allocation`], [`currency_safe_cost_rollup`],
+//! and [`cross_currency_icer_comparison`] — instead use the [`rusty_money`]
+//! crate's `Money` type for exact decimal currency arithmetic, because
+//! summing or allocating money in binary floating point is a real
+//! correctness bug class (see those modules' rustdoc). That's this crate's
+//! only reason to depend on anything outside `std`. Randomness (for
+//! probabilistic sensitivity analysis) uses a seeded, deterministic
+//! generator so results are reproducible.
 //!
 //! ## Quickstart
 //!
@@ -44,24 +50,29 @@
 //! **Health outcome measures** —
 //! [`quality_adjusted_life_year`], [`eq_5d`], [`disability_adjusted_life_year`],
 //! [`life_years_gained`], [`health_adjusted_life_expectancy`],
-//! [`patient_reported_outcomes`], [`number_needed_to_treat`]
+//! [`patient_reported_outcomes`], [`number_needed_to_treat`],
+//! [`work_productivity_and_activity_impairment`]
 //!
 //! **Economic evaluation frameworks** —
 //! [`cost_effectiveness_analysis`], [`cost_utility_analysis`],
 //! [`cost_benefit_analysis`], [`cost_minimization_analysis`],
 //! [`cost_consequence_analysis`], [`budget_impact_analysis`],
-//! [`social_return_on_investment`], [`health_technology_assessment`]
+//! [`social_return_on_investment`], [`health_technology_assessment`],
+//! [`human_capital_and_friction_cost`]
 //!
 //! **Decision rules and thresholds** —
 //! [`incremental_cost_effectiveness_ratio`], [`net_monetary_benefit`],
 //! [`willingness_to_pay_thresholds`], [`dominance_and_efficiency_frontier`],
 //! [`qaly_shortfall_and_severity_modifiers`], [`opportunity_cost`],
 //! [`analysis_perspective`], [`time_horizon`], [`discounting_and_time_preference`],
-//! [`marginal_vs_average_cost`]
+//! [`marginal_vs_average_cost`], [`value_of_a_statistical_life`],
+//! [`cross_currency_icer_comparison`],
+//! [`multi_criteria_decision_analysis`], [`carbon_footprint_per_qaly`]
 //!
 //! **Uncertainty and evidence** —
 //! [`sensitivity_analysis`], [`probabilistic_sensitivity_analysis`],
-//! [`expected_value_of_perfect_information`], [`benefits_realization`]
+//! [`expected_value_of_perfect_information`],
+//! [`expected_value_of_sample_information`], [`benefits_realization`]
 //!
 //! **Healthcare operations** —
 //! [`bed_days_saved`], [`length_of_stay`], [`readmission_rate`],
@@ -90,7 +101,8 @@
 //! **Software engineering economics** —
 //! [`dora_metrics`], [`flow_metrics`], [`space_and_devex`], [`technical_debt`],
 //! [`cost_of_delay`], [`wsjf_and_cd3`], [`return_on_investment`],
-//! [`total_cost_of_ownership`], [`build_vs_buy`], [`cloud_unit_economics`]
+//! [`total_cost_of_ownership`], [`build_vs_buy`], [`cloud_unit_economics`],
+//! [`exact_cents_cost_allocation`], [`currency_safe_cost_rollup`]
 
 /// Long-form tutorials rendered into rustdoc. Each walks a complete
 /// analysis with runnable, doctested code.
@@ -123,6 +135,7 @@ pub mod bed_days_saved;
 pub mod benefits_realization;
 pub mod budget_impact_analysis;
 pub mod build_vs_buy;
+pub mod carbon_footprint_per_qaly;
 pub mod cash_releasing_vs_non_cash_releasing;
 pub mod clinical_ai_evaluation;
 pub mod cloud_unit_economics;
@@ -132,6 +145,8 @@ pub mod cost_effectiveness_analysis;
 pub mod cost_minimization_analysis;
 pub mod cost_of_delay;
 pub mod cost_utility_analysis;
+pub mod cross_currency_icer_comparison;
+pub mod currency_safe_cost_rollup;
 pub mod did_not_attend_rate;
 pub mod diga_fast_track;
 pub mod digital_endpoints_and_biomarkers;
@@ -144,18 +159,22 @@ pub mod earlier_intervention;
 pub mod emergency_attendance_avoidance;
 pub mod engagement_metrics;
 pub mod eq_5d;
+pub mod exact_cents_cost_allocation;
 pub mod expected_value_of_perfect_information;
+pub mod expected_value_of_sample_information;
 pub mod flow_metrics;
 pub mod gds_service_metrics;
 pub mod hard_cash_releasing_savings_deficit_defense;
 pub mod health_adjusted_life_expectancy;
 pub mod health_app_unit_economics;
 pub mod health_technology_assessment;
+pub mod human_capital_and_friction_cost;
 pub mod incremental_cost_effectiveness_ratio;
 pub mod inference_unit_economics;
 pub mod length_of_stay;
 pub mod life_years_gained;
 pub mod marginal_vs_average_cost;
+pub mod multi_criteria_decision_analysis;
 pub mod national_tariff_and_unit_costs;
 pub mod net_monetary_benefit;
 pub mod nice_evidence_standards_framework;
@@ -181,8 +200,10 @@ pub mod technical_debt;
 pub mod time_horizon;
 pub mod total_cost_of_ownership;
 pub mod value_generating_capacity_operational_turnaround;
+pub mod value_of_a_statistical_life;
 pub mod waiting_list_impact;
 pub mod wearable_validation;
 pub mod willingness_to_pay_thresholds;
+pub mod work_productivity_and_activity_impairment;
 pub mod workforce_retention;
 pub mod wsjf_and_cd3;

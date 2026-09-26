@@ -150,6 +150,7 @@ pub struct BenefitLine {
 /// assert!((r - 0.50).abs() < 1e-9);
 /// assert!(roi(100.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn roi(benefits: f64, costs: f64) -> Option<f64> {
     if costs == 0.0 {
         None
@@ -183,6 +184,7 @@ pub fn roi(benefits: f64, costs: f64) -> Option<f64> {
 /// let p = payback_period_years(500_000.0, 250_000.0).unwrap();
 /// assert!((p - 2.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn payback_period_years(costs: f64, annual_net_benefit: f64) -> Option<f64> {
     if annual_net_benefit == 0.0 {
         None
@@ -219,6 +221,7 @@ pub fn payback_period_years(costs: f64, annual_net_benefit: f64) -> Option<f64> 
 /// let cash = total_benefits(&lines, &[BenefitClass::CashReleasing]);
 /// assert!((cash - 450_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn total_benefits(lines: &[BenefitLine], include: &[BenefitClass]) -> f64 {
     lines
         .iter()
@@ -256,6 +259,7 @@ pub fn total_benefits(lines: &[BenefitLine], include: &[BenefitClass]) -> f64 {
 /// let r = strict_financial_roi(&lines, 500_000.0).unwrap();
 /// assert!((r - (-0.10)).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn strict_financial_roi(lines: &[BenefitLine], costs: f64) -> Option<f64> {
     roi(total_benefits(lines, &[BenefitClass::CashReleasing]), costs)
 }
@@ -289,6 +293,7 @@ pub fn strict_financial_roi(lines: &[BenefitLine], costs: f64) -> Option<f64> {
 /// let r = economic_roi(&lines, 500_000.0).unwrap();
 /// assert!((r - 1.10).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn economic_roi(lines: &[BenefitLine], costs: f64) -> Option<f64> {
     roi(
         total_benefits(lines, &[BenefitClass::CashReleasing, BenefitClass::Capacity]),

@@ -38,7 +38,7 @@
 //! ## Example
 //!
 //! Two options for an e-observations system over a 5-year horizon — vendor
-//! SaaS (£250k licence, £180k integration, £120k/yr, £60k exit) versus
+//! `SaaS` (£250k licence, £180k integration, £120k/yr, £60k exit) versus
 //! in-house build (£900k build, £150k integration, £190k/yr, £30k exit):
 //!
 //! ```rust
@@ -94,8 +94,8 @@
 //! - Free-internal-labor fallacy: in-house maintenance costed at zero
 //!   because "the team's already paid" — see opportunity cost.
 //! - Ignoring exit costs: data egress, contract termination, and parallel
-//!   running are where "cheap" SaaS gets expensive.
-//! - Same-horizon violations: comparing a 3-year SaaS TCO against a
+//!   running are where "cheap" `SaaS` gets expensive.
+//! - Same-horizon violations: comparing a 3-year `SaaS` TCO against a
 //!   10-year build amortization.
 //!
 //! ## Sources
@@ -150,10 +150,11 @@ impl TcoProfile {
     /// };
     /// assert!((saas.undiscounted_tco() - 1_090_000.0).abs() < 1e-9);
     /// ```
+    #[must_use]
     pub fn undiscounted_tco(&self) -> f64 {
         self.initial_cost
             + self.integration_and_training
-            + self.annual_run_cost * self.horizon_years as f64
+            + self.annual_run_cost * f64::from(self.horizon_years)
             + self.decommission_cost
     }
 
@@ -189,14 +190,16 @@ impl TcoProfile {
     /// assert!(saas.discounted_tco(0.035) < saas.undiscounted_tco());
     /// assert!((saas.discounted_tco(0.0) - saas.undiscounted_tco()).abs() < 1e-9);
     /// ```
+    #[must_use]
     pub fn discounted_tco(&self, discount_rate: f64) -> f64 {
         // Running costs: year-t cost discounted by (1 + r)^t, t = 1..=horizon.
         let running: f64 = (1..=self.horizon_years)
-            .map(|t| self.annual_run_cost / (1.0 + discount_rate).powi(t as i32))
+            .map(|t| self.annual_run_cost / (1.0 + discount_rate).powi(t.cast_signed()))
             .sum();
         // Exit cost falls at the end of the horizon, so it gets the
         // horizon-year discount factor.
-        let exit = self.decommission_cost / (1.0 + discount_rate).powi(self.horizon_years as i32);
+        let exit =
+            self.decommission_cost / (1.0 + discount_rate).powi(self.horizon_years.cast_signed());
         self.initial_cost + self.integration_and_training + running + exit
     }
 
@@ -226,6 +229,7 @@ impl TcoProfile {
     /// let share = build.initial_cost_share().unwrap();
     /// assert!((share - 0.44).abs() < 0.005);
     /// ```
+    #[must_use]
     pub fn initial_cost_share(&self) -> Option<f64> {
         let tco = self.undiscounted_tco();
         if tco == 0.0 {
@@ -268,6 +272,7 @@ impl TcoProfile {
 /// };
 /// assert!((tco_advantage(&saas, &build) - 940_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn tco_advantage(a: &TcoProfile, b: &TcoProfile) -> f64 {
     b.undiscounted_tco() - a.undiscounted_tco()
 }
@@ -296,6 +301,7 @@ pub fn tco_advantage(a: &TcoProfile, b: &TcoProfile) -> f64 {
 /// assert!((annual_maintenance_benchmark(1_000_000.0, 0.15) - 150_000.0).abs() < 1e-9);
 /// assert!((annual_maintenance_benchmark(1_000_000.0, 0.20) - 200_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn annual_maintenance_benchmark(build_cost: f64, maintenance_fraction: f64) -> f64 {
     build_cost * maintenance_fraction
 }

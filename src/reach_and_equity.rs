@@ -147,6 +147,7 @@ impl Stratum {
     /// let q1 = Stratum { reach: 0.22, effectiveness: 0.02 };
     /// assert!((q1.impact() - 0.0044).abs() < 1e-9);
     /// ```
+    #[must_use]
     pub fn impact(&self) -> f64 {
         self.reach * self.effectiveness
     }
@@ -180,6 +181,7 @@ impl Stratum {
 /// // Zero eligible population: undefined.
 /// assert_eq!(reach(10.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn reach(participants: f64, eligible_population: f64) -> Option<f64> {
     if eligible_population == 0.0 {
         None
@@ -211,6 +213,7 @@ pub fn reach(participants: f64, eligible_population: f64) -> Option<f64> {
 /// // → 0.0024 QALYs/eligible person.
 /// assert!((population_impact(0.12, 0.02) - 0.0024).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn population_impact(reach: f64, effectiveness: f64) -> f64 {
     reach * effectiveness
 }
@@ -239,6 +242,7 @@ pub fn population_impact(reach: f64, effectiveness: f64) -> f64 {
 /// // Q1 0.0044 vs Q5 0.0010 → gap 0.0034 QALYs per eligible person.
 /// assert!((equity_gap(0.0044, 0.0010) - 0.0034).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn equity_gap(impact_top_group: f64, impact_bottom_group: f64) -> f64 {
     impact_top_group - impact_bottom_group
 }
@@ -270,6 +274,7 @@ pub fn equity_gap(impact_top_group: f64, impact_bottom_group: f64) -> f64 {
 /// // Zero bottom-group impact: undefined.
 /// assert_eq!(impact_ratio(0.0044, 0.0), None);
 /// ```
+#[must_use]
 pub fn impact_ratio(impact_top_group: f64, impact_bottom_group: f64) -> Option<f64> {
     if impact_bottom_group == 0.0 {
         None
@@ -302,6 +307,7 @@ pub fn impact_ratio(impact_top_group: f64, impact_bottom_group: f64) -> Option<f
 /// // 10 QALYs to the worst-off at weight 1.5 count as 15.
 /// assert_eq!(equity_weighted_qalys(10.0, 1.5), 15.0);
 /// ```
+#[must_use]
 pub fn equity_weighted_qalys(qalys: f64, equity_weight: f64) -> f64 {
     qalys * equity_weight
 }

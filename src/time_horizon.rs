@@ -65,7 +65,7 @@
 //!   (costs back-loaded).
 //! - AI coding-assistant pilots measured in week 2 capture peak novelty,
 //!   not steady state.
-//! - Contract length ≠ benefit horizon: a 1-year SaaS contract can still be
+//! - Contract length ≠ benefit horizon: a 1-year `SaaS` contract can still be
 //!   appraised over 5 years if you realistically expect renewal — but say so.
 //! - Legacy replacement cases should run to the credible end-of-life of the
 //!   old system, not to an arbitrary round number.
@@ -118,12 +118,19 @@
 /// let npv = net_present_value(&flows, 0.035);
 /// assert!(npv < 2_000_000.0 && npv > 0.0);
 /// ```
+#[must_use]
 pub fn net_present_value(net_flows: &[f64], discount_rate: f64) -> f64 {
     net_flows
         .iter()
         .enumerate()
-        // Year-t flow discounted by (1 + r)^t; t = 0 is undiscounted.
-        .map(|(t, flow)| flow / (1.0 + discount_rate).powi(t as i32))
+        // Year-t flow discounted by (1 + r)^t; t = 0 is undiscounted. `t` is
+        // a year index into a real-world cash-flow schedule, always far
+        // below i32::MAX, so the cast never truncates or wraps in practice.
+        .map(|(t, flow)| {
+            #[allow(clippy::cast_possible_truncation, clippy::cast_possible_wrap)]
+            let year = t as i32;
+            flow / (1.0 + discount_rate).powi(year)
+        })
         .sum()
 }
 
@@ -151,6 +158,7 @@ pub fn net_present_value(net_flows: &[f64], discount_rate: f64) -> f64 {
 /// let net = net_benefit_at_horizon(2_000_000.0, 600_000.0, 200_000.0, 5.0);
 /// assert!(net.abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn net_benefit_at_horizon(
     implementation_cost: f64,
     annual_benefit: f64,
@@ -187,6 +195,7 @@ pub fn net_benefit_at_horizon(
 /// let t = break_even_horizon_years(2_000_000.0, 600_000.0, 200_000.0).unwrap();
 /// assert!((t - 5.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn break_even_horizon_years(
     implementation_cost: f64,
     annual_benefit: f64,
@@ -224,6 +233,7 @@ pub fn break_even_horizon_years(
 /// assert!((report[0].1 - (-1_600_000.0)).abs() < 1e-9);
 /// assert!((report[3].1 - 2_000_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn net_benefit_by_horizons(
     implementation_cost: f64,
     annual_benefit: f64,

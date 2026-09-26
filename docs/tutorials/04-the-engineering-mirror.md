@@ -129,7 +129,7 @@ assert!(payback < 0.5); // pays back in under six months
 | WIP via Little's Law | Bed occupancy | `flow_metrics`, `length_of_stay` |
 | Change failure rate | Readmission rate | `dora_metrics`, `readmission_rate` |
 | Tech-debt interest | Preventable deterioration | `technical_debt`, `prevention_economics` |
-| DevEx survey weights | EQ-5D utility weights | `space_and_devex`, `eq_5d` |
+| `DevEx` survey weights | EQ-5D utility weights | `space_and_devex`, `eq_5d` |
 
 ## Where to go next
 

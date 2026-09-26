@@ -121,6 +121,7 @@
 ///
 /// assert!(ncc_unit_cost(16_000_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn ncc_unit_cost(total_cost: f64, activity_volume: f64) -> Option<f64> {
     if activity_volume == 0.0 {
         None
@@ -155,6 +156,7 @@ pub fn ncc_unit_cost(total_cost: f64, activity_volume: f64) -> Option<f64> {
 /// let price = tariff_price(160.0, 1.15);
 /// assert!((price - 184.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn tariff_price(national_average_unit_cost: f64, market_forces_factor: f64) -> f64 {
     national_average_unit_cost * market_forces_factor
 }
@@ -184,6 +186,7 @@ pub fn tariff_price(national_average_unit_cost: f64, market_forces_factor: f64) 
 /// let payment = blended_payment(1_000_000.0, 160.0, 500.0);
 /// assert!((payment - 1_080_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn blended_payment(fixed_element: f64, variable_price_per_unit: f64, activity_units: f64) -> f64 {
     fixed_element + variable_price_per_unit * activity_units
 }
@@ -214,6 +217,7 @@ pub fn blended_payment(fixed_element: f64, variable_price_per_unit: f64, activit
 /// let value = staff_capacity_value(1.0, 250.0, 31.0);
 /// assert!((value - 7_750.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn staff_capacity_value(
     hours_freed_per_day: f64,
     working_days_per_year: f64,
@@ -247,6 +251,7 @@ pub fn staff_capacity_value(
 /// let value = redeployed_activity_value(2.0, 250.0, 160.0);
 /// assert!((value - 80_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn redeployed_activity_value(
     extra_units_per_day: f64,
     working_days_per_year: f64,
@@ -280,6 +285,7 @@ pub fn redeployed_activity_value(
 ///
 /// assert!(valuation_ratio(80_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn valuation_ratio(higher_claim: f64, lower_claim: f64) -> Option<f64> {
     if lower_claim == 0.0 {
         None

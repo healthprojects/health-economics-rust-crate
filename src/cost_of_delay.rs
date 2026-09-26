@@ -1,11 +1,11 @@
-//! # Cost of Delay (CoD)
+//! # Cost of Delay (`CoD`)
 //!
 //! Cost of Delay is the economic value lost per unit time that a feature,
 //! product, or service is *not* delivered. It is the single strongest bridge
 //! between software delivery metrics and health economics: it converts "we
 //! shipped late" into currency — or into QALYs.
 //!
-//! For clinical software, CoD can be denominated in health as well as money:
+//! For clinical software, `CoD` can be denominated in health as well as money:
 //! every week a pathway improvement is delayed, patients wait longer in worse
 //! health states, and that health loss can be priced at the willingness-to-pay
 //! threshold.
@@ -31,16 +31,16 @@
 //! Delay." Most organizations know what a project costs but not what a month
 //! of delay costs, so they optimize budgets while hemorrhaging time-value. For
 //! healthcare software the stakes are literal: every week a pathway
-//! improvement is delayed, patients wait longer in worse health states. CoD is
+//! improvement is delayed, patients wait longer in worse health states. `CoD` is
 //! the strongest mathematical framework to present to NHS stakeholders because
 //! it prices the *absence* of your software (benchmark for scale: Black Swan
-//! Farming's Maersk analysis found single features with CoD ≈ $200k/week that
+//! Farming's Maersk analysis found single features with `CoD` ≈ $200k/week that
 //! had waited 38 weeks).
 //!
 //! ## Example
 //!
 //! The topic doc's worked example: software saves £200 per patient on a
-//! pathway processing 50 patients/week (CoD = £10,000/week; a 10-week
+//! pathway processing 50 patients/week (`CoD` = £10,000/week; a 10-week
 //! procurement delay wastes £100,000), and a triage improvement that removes
 //! 5 weeks of waiting (utility 0.68 → 0.80) for 100 patients/week is worth
 //! ~1.15 QALYs/week ≈ £23,000/week at £20,000/QALY.
@@ -71,26 +71,26 @@
 //!
 //! ## Software engineering connection
 //!
-//! - CoD makes DORA lead time and flow efficiency financially legible:
-//!   lead time × CoD = money (or health) burned in queues.
+//! - `CoD` makes DORA lead time and flow efficiency financially legible:
+//!   lead time × `CoD` = money (or health) burned in queues.
 //! - **Prioritization**: rank work by CoD/duration (WSJF/CD3) instead of by
 //!   loudest stakeholder.
 //! - **Process economics**: a 2-week release cadence has an expected delay
-//!   cost of ~1 week × CoD per feature versus continuous delivery — price the
+//!   cost of ~1 week × `CoD` per feature versus continuous delivery — price the
 //!   batch.
-//! - **Procurement**: NHS procurement cycles of 6–18 months have a CoD;
+//! - **Procurement**: NHS procurement cycles of 6–18 months have a `CoD`;
 //!   showing it changes urgency conversations.
 //!
 //! ## Pitfalls
 //!
-//! - **Assuming linear CoD**: some work has deadline-shaped value (regulatory
-//!   dates — infinite CoD after the date, zero before) or decaying value
+//! - **Assuming linear `CoD`**: some work has deadline-shaped value (regulatory
+//!   dates — infinite `CoD` after the date, zero before) or decaying value
 //!   (first-mover windows). Classify the urgency profile before multiplying.
-//! - **CoD on outputs nobody wants**: delay only costs if the thing has
+//! - **`CoD` on outputs nobody wants**: delay only costs if the thing has
 //!   value; garbage delayed is free.
 //! - **Double counting delay and discounting**: discounting already prices
-//!   time on multi-year horizons; CoD is the within-horizon operational
-//!   version. Use CoD for weeks/months, NPV shift for years.
+//!   time on multi-year horizons; `CoD` is the within-horizon operational
+//!   version. Use `CoD` for weeks/months, NPV shift for years.
 //!
 //! ## Sources
 //!
@@ -124,6 +124,7 @@
 /// // £200 per patient × 50 patients/week = £10,000/week.
 /// assert_eq!(operational_cost_of_delay(200.0, 50.0), 10_000.0);
 /// ```
+#[must_use]
 pub fn operational_cost_of_delay(saving_per_patient: f64, patients_per_week: f64) -> f64 {
     saving_per_patient * patients_per_week
 }
@@ -136,12 +137,12 @@ pub fn operational_cost_of_delay(saving_per_patient: f64, patients_per_week: f64
 ///
 /// # Arguments
 ///
-/// * `cost_of_delay_per_week` — CoD per week (£/week or QALYs/week).
+/// * `cost_of_delay_per_week` — `CoD` per week (£/week or QALYs/week).
 /// * `delay_weeks` — delay duration, in weeks.
 ///
 /// # Returns
 ///
-/// Total delay loss, in the same value unit as the CoD (£ or QALYs).
+/// Total delay loss, in the same value unit as the `CoD` (£ or QALYs).
 ///
 /// # Examples
 ///
@@ -151,6 +152,7 @@ pub fn operational_cost_of_delay(saving_per_patient: f64, patients_per_week: f64
 /// // A 10-week procurement delay at £10,000/week costs £100,000.
 /// assert_eq!(total_delay_loss(10_000.0, 10.0), 100_000.0);
 /// ```
+#[must_use]
 pub fn total_delay_loss(cost_of_delay_per_week: f64, delay_weeks: f64) -> f64 {
     cost_of_delay_per_week * delay_weeks
 }
@@ -180,6 +182,7 @@ pub fn total_delay_loss(cost_of_delay_per_week: f64, delay_weeks: f64) -> f64 {
 /// let gain = qaly_gain_per_patient(5.0, 0.12);
 /// assert!((gain - 0.0115).abs() < 1e-4);
 /// ```
+#[must_use]
 pub fn qaly_gain_per_patient(waiting_weeks_removed: f64, utility_gain: f64) -> f64 {
     // Convert weeks to years (52 weeks/year) before applying the utility gain.
     (waiting_weeks_removed / 52.0) * utility_gain
@@ -212,19 +215,20 @@ pub fn qaly_gain_per_patient(waiting_weeks_removed: f64, utility_gain: f64) -> f
 /// let cod_health = cost_of_delay_health(100.0, gain);
 /// assert!((cod_health - 1.15).abs() < 5e-3);
 /// ```
+#[must_use]
 pub fn cost_of_delay_health(patients_per_week: f64, qaly_gain_per_patient: f64) -> f64 {
     patients_per_week * qaly_gain_per_patient
 }
 
 /// Money-denominated cost of delay (£/week).
 ///
-/// Monetizes the health CoD at the willingness-to-pay threshold λ
+/// Monetizes the health `CoD` at the willingness-to-pay threshold λ
 /// (typically £20,000–30,000 per QALY in NICE terms), then adds any
 /// operational savings per week that are also forgone while undelivered.
 ///
 /// # Arguments
 ///
-/// * `cost_of_delay_health_qalys_per_week` — health CoD, QALYs/week (see
+/// * `cost_of_delay_health_qalys_per_week` — health `CoD`, QALYs/week (see
 ///   [`cost_of_delay_health`]).
 /// * `willingness_to_pay_per_qaly` — λ, in £/QALY.
 /// * `operational_savings_per_week` — operational £/week additionally forgone
@@ -243,6 +247,7 @@ pub fn cost_of_delay_health(patients_per_week: f64, qaly_gain_per_patient: f64) 
 /// let cod_money = cost_of_delay_money(1.15, 20_000.0, 0.0);
 /// assert!((cod_money - 23_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn cost_of_delay_money(
     cost_of_delay_health_qalys_per_week: f64,
     willingness_to_pay_per_qaly: f64,

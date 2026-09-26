@@ -1,14 +1,14 @@
-//! # SPACE and DevEx
+//! # SPACE and `DevEx`
 //!
 //! SPACE (Satisfaction & well-being, Performance, Activity, Communication &
-//! collaboration, Efficiency & flow) and DevEx (feedback loops, cognitive
+//! collaboration, Efficiency & flow) and `DevEx` (feedback loops, cognitive
 //! load, flow state) are frameworks for measuring developer productivity
 //! multi-dimensionally — the field's answer to the discovery that no single
 //! metric survives contact with reality.
 //!
 //! Neither framework is a formula; both are measurement designs. The
 //! quantifiable parts are the SPACE composition rule and the worked
-//! example's capacity-value arithmetic for a DevEx investment.
+//! example's capacity-value arithmetic for a `DevEx` investment.
 //!
 //! ## Formula
 //!
@@ -42,7 +42,7 @@
 //!
 //! ## Example
 //!
-//! A platform team justifies a DevEx investment (CI speedup + docs
+//! A platform team justifies a `DevEx` investment (CI speedup + docs
 //! overhaul) for 300 developers. CI p75 falls from 28 to 9 minutes;
 //! survey agreement with "I lose focus waiting for builds" falls 62% → 24%:
 //!
@@ -84,7 +84,7 @@
 //!   (consistent survey, published scoring), elicited before the
 //!   comparison, never tuned to flatter a favored tool.
 //! - The SF-6D vs EQ-5D lesson applies: different instruments give
-//!   systematically different numbers, so never compare DevEx indices
+//!   systematically different numbers, so never compare `DevEx` indices
 //!   across vendors' instruments.
 //!
 //! ## Pitfalls
@@ -104,7 +104,7 @@
 //!
 //! - Forsgren N, et al. "The SPACE of Developer Productivity." ACM Queue
 //!   2021. <https://queue.acm.org/detail.cfm?id=3454124>
-//! - Noda A, Forsgren N, Storey MA, Greiler M. "DevEx: What Actually Drives
+//! - Noda A, Forsgren N, Storey MA, Greiler M. "`DevEx`: What Actually Drives
 //!   Productivity." ACM Queue 2023.
 //!   <https://queue.acm.org/detail.cfm?id=3595878>
 //!
@@ -189,6 +189,7 @@ pub struct SpaceMetric {
 /// ];
 /// assert!(!space_rule_satisfied(&telemetry_only));
 /// ```
+#[must_use]
 pub fn space_rule_satisfied(metrics: &[SpaceMetric]) -> bool {
     let mut dimensions: Vec<SpaceDimension> = Vec::new();
     let mut has_perceptual = false;
@@ -233,6 +234,7 @@ pub fn space_rule_satisfied(metrics: &[SpaceMetric]) -> bool {
 /// let minutes = time_reclaimed_minutes_per_day(6.0, 28.0 - 9.0, 0.4);
 /// assert!((minutes - 45.6).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn time_reclaimed_minutes_per_day(
     builds_per_day: f64,
     minutes_saved_per_build: f64,
@@ -266,6 +268,7 @@ pub fn time_reclaimed_minutes_per_day(
 /// let value = capacity_value_per_year(300.0, 0.75, 220.0, 60.0);
 /// assert!((value - 2_970_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn capacity_value_per_year(
     developers: f64,
     hours_reclaimed_per_day: f64,
@@ -300,6 +303,7 @@ pub fn capacity_value_per_year(
 /// let minutes = vendor_index_minutes_per_week(1.0, 13.0);
 /// assert!((minutes - 13.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn vendor_index_minutes_per_week(index_points_gained: f64, minutes_per_point: f64) -> f64 {
     index_points_gained * minutes_per_point
 }

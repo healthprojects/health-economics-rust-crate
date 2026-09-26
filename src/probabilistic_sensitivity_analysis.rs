@@ -140,11 +140,12 @@ impl Lcg {
     /// let mut b = Lcg::new(42);
     /// assert_eq!(a.next_uniform(), b.next_uniform());
     /// ```
+    #[must_use]
     pub fn new(seed: u64) -> Self {
         Lcg {
             // One LCG step applied to the seed itself, so consecutive seeds
             // start from well-separated states.
-            state: seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407),
+            state: seed.wrapping_mul(6_364_136_223_846_793_005).wrapping_add(1_442_695_040_888_963_407),
         }
     }
 
@@ -153,13 +154,13 @@ impl Lcg {
         // increment 1442695040888963407 give a full period of 2^64.
         self.state = self
             .state
-            .wrapping_mul(6364136223846793005)
-            .wrapping_add(1442695040888963407);
+            .wrapping_mul(6_364_136_223_846_793_005)
+            .wrapping_add(1_442_695_040_888_963_407);
         // Mix the high bits down; raw LCG low bits are weak.
-        let x = self.state;
+        let mixed = self.state;
         // xorshift then multiply by the 64-bit golden-ratio constant
         // (0x9E3779B97F4A7C15) — a cheap avalanche step.
-        (x ^ (x >> 31)).wrapping_mul(0x9E3779B97F4A7C15)
+        (mixed ^ (mixed >> 31)).wrapping_mul(0x9E37_79B9_7F4A_7C15)
     }
 
     /// Uniform draw in [0, 1).
@@ -180,8 +181,13 @@ impl Lcg {
     /// ```
     pub fn next_uniform(&mut self) -> f64 {
         // Keep the top 53 bits so the result is an exact multiple of 2^-53:
-        // uniform on [0, 1) without rounding bias.
-        (self.next_u64() >> 11) as f64 / (1u64 << 53) as f64
+        // uniform on [0, 1) without rounding bias. Both operands are at most
+        // 2^53, which is exactly representable in an f64's 52-bit mantissa
+        // (2^53 itself rounds evenly), so no precision is lost.
+        #[allow(clippy::cast_precision_loss)]
+        {
+            (self.next_u64() >> 11) as f64 / (1u64 << 53) as f64
+        }
     }
 
     /// Uniform draw in [low, high).
@@ -283,26 +289,28 @@ impl Lcg {
             let u = self.next_uniform().max(f64::MIN_POSITIVE);
             return self.gamma(shape + 1.0, scale) * u.powf(1.0 / shape);
         }
-        // Marsaglia–Tsang constants: d = k − 1/3 and c = 1/√(9d) define the
-        // squeeze transformation v = (1 + c·x)³.
-        let d = shape - 1.0 / 3.0;
-        let c = 1.0 / (9.0 * d).sqrt();
-        // Rejection loop: propose x ~ N(0,1), accept d·v with high probability
-        // (the method accepts >95% of proposals for shape ≥ 1).
+        // Marsaglia–Tsang constants: shift = k − 1/3 and tail_scale = 1/√(9·shift)
+        // define the squeeze transformation squeeze = (1 + tail_scale·normal_sample)³.
+        let shift = shape - 1.0 / 3.0;
+        let tail_scale = 1.0 / (9.0 * shift).sqrt();
+        // Rejection loop: propose normal_sample ~ N(0,1), accept shift·squeeze
+        // with high probability (the method accepts >95% of proposals for
+        // shape ≥ 1).
         loop {
-            let x = self.normal(0.0, 1.0);
-            let v = (1.0 + c * x).powi(3);
-            if v <= 0.0 {
-                // v must be positive to be a valid Gamma candidate.
+            let normal_sample = self.normal(0.0, 1.0);
+            let squeeze = (1.0 + tail_scale * normal_sample).powi(3);
+            if squeeze <= 0.0 {
+                // squeeze must be positive to be a valid Gamma candidate.
                 continue;
             }
-            let u = self.next_uniform();
+            let accept = self.next_uniform();
             // Fast squeeze check first (avoids the logs); fall back to the
             // exact log acceptance test.
-            if u < 1.0 - 0.0331 * x.powi(4)
-                || u.ln() < 0.5 * x * x + d * (1.0 - v + v.ln())
+            if accept < 1.0 - 0.0331 * normal_sample.powi(4)
+                || accept.ln()
+                    < 0.5 * normal_sample * normal_sample + shift * (1.0 - squeeze + squeeze.ln())
             {
-                return d * v * scale;
+                return shift * squeeze * scale;
             }
         }
     }
@@ -373,6 +381,7 @@ impl Lcg {
 /// // At λ = £30,000/QALY, 2 QALYs costing £24,000 give NMB = £36,000.
 /// assert_eq!(net_monetary_benefit(30_000.0, 2.0, 24_000.0), 36_000.0);
 /// ```
+#[must_use]
 pub fn net_monetary_benefit(threshold: f64, effect: f64, cost: f64) -> f64 {
     threshold * effect - cost
 }
@@ -410,6 +419,7 @@ pub fn net_monetary_benefit(threshold: f64, effect: f64, cost: f64) -> f64 {
 /// // No options: undefined.
 /// assert!(ceac(&[]).is_none());
 /// ```
+#[must_use]
 pub fn ceac(option_nmb_draws: &[&[f64]]) -> Option<Vec<f64>> {
     let n = option_nmb_draws.first()?.len();
     if n == 0 || option_nmb_draws.iter().any(|d| d.len() != n) {
@@ -428,6 +438,9 @@ pub fn ceac(option_nmb_draws: &[&[f64]]) -> Option<Vec<f64>> {
         wins[best] += 1;
     }
     // CEAC_j = wins_j / N: the probability option j is the best choice.
+    // Win counts and draw counts are simulation draw tallies, far below
+    // f64's 52-bit mantissa limit, so the conversion is exact in practice.
+    #[allow(clippy::cast_precision_loss)]
     Some(wins.iter().map(|&w| w as f64 / n as f64).collect())
 }
 
@@ -452,10 +465,14 @@ pub fn ceac(option_nmb_draws: &[&[f64]]) -> Option<Vec<f64>> {
 /// assert_eq!(mean(&[700_000.0, 850_000.0]), Some(775_000.0));
 /// assert!(mean(&[]).is_none());
 /// ```
+#[must_use]
 pub fn mean(draws: &[f64]) -> Option<f64> {
     if draws.is_empty() {
         None
     } else {
+        // Draw count fits comfortably in f64's 52-bit mantissa for any
+        // realistic simulation size.
+        #[allow(clippy::cast_precision_loss)]
         Some(draws.iter().sum::<f64>() / draws.len() as f64)
     }
 }
@@ -480,10 +497,14 @@ pub fn mean(draws: &[f64]) -> Option<f64> {
 /// assert_eq!(probability_positive(&[100.0, -50.0, 200.0, 1.0]), Some(0.75));
 /// assert!(probability_positive(&[]).is_none());
 /// ```
+#[must_use]
 pub fn probability_positive(draws: &[f64]) -> Option<f64> {
     if draws.is_empty() {
         None
     } else {
+        // Draw counts fit comfortably in f64's 52-bit mantissa for any
+        // realistic simulation size.
+        #[allow(clippy::cast_precision_loss)]
         Some(draws.iter().filter(|&&x| x > 0.0).count() as f64 / draws.len() as f64)
     }
 }
@@ -512,17 +533,27 @@ pub fn probability_positive(draws: &[f64]) -> Option<f64> {
 /// assert_eq!(percentile(&draws, 25.0), Some(20.0));
 /// assert!(percentile(&[], 50.0).is_none());
 /// ```
+#[must_use]
 pub fn percentile(draws: &[f64], p: f64) -> Option<f64> {
     if draws.is_empty() {
         return None;
     }
     let mut sorted = draws.to_vec();
-    sorted.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    sorted.sort_by(f64::total_cmp);
     // Fractional rank over the n−1 gaps between order statistics; lo/hi are
     // the neighboring order statistics and frac interpolates between them.
+    // Draw counts fit comfortably in f64's 52-bit mantissa for any realistic
+    // simulation size.
+    #[allow(clippy::cast_precision_loss)]
     let rank = (p / 100.0).clamp(0.0, 1.0) * (sorted.len() - 1) as f64;
+    // rank is a non-negative fractional index by construction (clamped
+    // above), so truncating/rounding it to an order-statistic index is
+    // intentional, not lossy in any way that matters here.
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     let lo = rank.floor() as usize;
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     let hi = rank.ceil() as usize;
+    #[allow(clippy::cast_precision_loss)]
     let frac = rank - lo as f64;
     Some(sorted[lo] + (sorted[hi] - sorted[lo]) * frac)
 }
@@ -592,6 +623,7 @@ pub struct MigrationCase {
 /// let again = simulate_migration_net_benefits(&case, 10_000, 42).unwrap();
 /// assert_eq!(draws, again);
 /// ```
+#[must_use]
 pub fn simulate_migration_net_benefits(
     case: &MigrationCase,
     n: usize,
@@ -664,7 +696,7 @@ mod tests {
         assert!(p95 >= 1_900_000.0, "95th percentile {p95} should reach £1.9M+");
     }
 
-    /// NMB_j(θ) = λ × Effect_j(θ) − Cost_j(θ).
+    /// `NMB_j(θ)` = λ × `Effect_j(θ)` − `Cost_j(θ)`.
     #[test]
     fn nmb_is_threshold_times_effect_minus_cost() {
         // Doc math: "compute NMB_j(θ) = λ × Effect_j(θ) − Cost_j(θ)."
@@ -710,8 +742,8 @@ mod tests {
             sum += g;
             sum_sq += g * g;
         }
-        let m = sum / n as f64;
-        let sd = (sum_sq / n as f64 - m * m).sqrt();
+        let m = sum / f64::from(n);
+        let sd = (sum_sq / f64::from(n) - m * m).sqrt();
         assert!((m - 800_000.0).abs() < 10_000.0);
         assert!((sd - 200_000.0).abs() < 10_000.0);
 

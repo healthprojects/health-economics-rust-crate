@@ -105,7 +105,7 @@ pub enum Selection {
 }
 
 /// True when two outcomes are equivalent within the pre-specified margin δ:
-/// |effect_a − effect_b| ≤ margin.
+/// |`effect_a` − `effect_b`| ≤ margin.
 ///
 /// The margin must be agreed before the pilot, not fitted afterwards, and
 /// all three arguments share the outcome's own units (percentage points,
@@ -133,6 +133,7 @@ pub enum Selection {
 /// // A 3-point gap would fail the same margin.
 /// assert!(!outcomes_equivalent(94.1, 91.0, 2.0));
 /// ```
+#[must_use]
 pub fn outcomes_equivalent(effect_a: f64, effect_b: f64, margin: f64) -> bool {
     (effect_a - effect_b).abs() <= margin
 }
@@ -165,6 +166,7 @@ impl CostLines {
     /// let b = CostLines { licences: 210_000.0, integration: 150_000.0, training_support: 90_000.0 };
     /// assert!((b.total() - 450_000.0).abs() < 1e-6);
     /// ```
+    #[must_use]
     pub fn total(&self) -> f64 {
         self.licences + self.integration + self.training_support
     }
@@ -205,6 +207,7 @@ impl CostLines {
 /// // No evidenced equivalence → CMA invalid, no selection.
 /// assert!(cost_minimization(500_000.0, 450_000.0, false).is_none());
 /// ```
+#[must_use]
 pub fn cost_minimization(
     cost_a: f64,
     cost_b: f64,
@@ -217,7 +220,7 @@ pub fn cost_minimization(
     Some(if cost_b < cost_a { Selection::OptionB } else { Selection::OptionA })
 }
 
-/// Cost saving of choosing the cheaper option: |cost_a − cost_b|.
+/// Cost saving of choosing the cheaper option: |`cost_a` − `cost_b`|.
 ///
 /// # Arguments
 ///
@@ -236,6 +239,7 @@ pub fn cost_minimization(
 /// // Platform B wins by £50,000 (£500k vs £450k).
 /// assert!((cost_saving(500_000.0, 450_000.0) - 50_000.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn cost_saving(cost_a: f64, cost_b: f64) -> f64 {
     (cost_a - cost_b).abs()
 }

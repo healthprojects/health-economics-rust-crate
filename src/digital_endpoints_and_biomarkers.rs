@@ -109,7 +109,7 @@
 //! - Coravos A, Khozin S, Mandl KD. "Developing and adopting safe and
 //!   effective digital biomarkers to improve patient outcomes." npj Digital
 //!   Medicine 2019. <https://www.nature.com/articles/s41746-019-0090-4>
-//! - Digital Medicine Society (DiMe), digital endpoints resources.
+//! - Digital Medicine Society (`DiMe`), digital endpoints resources.
 //!   <https://dimesociety.org/>
 //!
 //! Topic doc: health-economics-metrics/topics/digital-endpoints-and-biomarkers.md
@@ -141,6 +141,7 @@
 /// assert_eq!(required_sample_size(1.0, 1.0, 16.0), Some(16.0));
 /// assert_eq!(required_sample_size(1.0, 0.0, 16.0), None);
 /// ```
+#[must_use]
 pub fn required_sample_size(variance: f64, detectable_effect: f64, k: f64) -> Option<f64> {
     if detectable_effect == 0.0 {
         None
@@ -175,6 +176,7 @@ pub fn required_sample_size(variance: f64, detectable_effect: f64, k: f64) -> Op
 /// // ~200 passive vs 4 clinic measurements/patient/year: 50× denser.
 /// assert_eq!(sampling_density_ratio(200.0, 4.0), Some(50.0));
 /// ```
+#[must_use]
 pub fn sampling_density_ratio(
     digital_measurements_per_year: f64,
     clinic_measurements_per_year: f64,
@@ -209,6 +211,7 @@ pub fn sampling_density_ratio(
 /// // A 5× variance fall improves the detectable effect √5 ≈ 2.2×.
 /// assert!((detectable_effect_improvement(5.0) - 2.236).abs() < 1e-3);
 /// ```
+#[must_use]
 pub fn detectable_effect_improvement(variance_reduction_fold: f64) -> f64 {
     // Δ ∝ σ = √(σ²): a fold-change in variance improves Δ by its square root.
     variance_reduction_fold.sqrt()
@@ -216,7 +219,7 @@ pub fn detectable_effect_improvement(variance_reduction_fold: f64) -> f64 {
 
 /// Sample size ratio (new/old) at a fixed hypothesis Δ when variance changes.
 ///
-/// Since N ∝ σ² at fixed Δ and power, the ratio is σ²_new / σ²_old; a value
+/// Since N ∝ σ² at fixed Δ and power, the ratio is `σ²_new` / `σ²_old`; a value
 /// of 0.2 means the new design needs one fifth of the patients.
 ///
 /// # Arguments
@@ -237,6 +240,7 @@ pub fn detectable_effect_improvement(variance_reduction_fold: f64) -> f64 {
 /// // Variance falling 5× cuts N to 1/5 at the same Δ.
 /// assert_eq!(sample_size_ratio(1.0, 5.0), Some(0.2));
 /// ```
+#[must_use]
 pub fn sample_size_ratio(variance_new: f64, variance_old: f64) -> Option<f64> {
     if variance_old == 0.0 {
         None
@@ -269,6 +273,7 @@ pub fn sample_size_ratio(variance_new: f64, variance_old: f64) -> Option<f64> {
 /// // the commercial case for a £1–2M validation investment.
 /// assert_eq!(trial_cost_saving(200.0, 25_000.0), 5_000_000.0);
 /// ```
+#[must_use]
 pub fn trial_cost_saving(patients_cut: f64, cost_per_enrolled_patient: f64) -> f64 {
     patients_cut * cost_per_enrolled_patient
 }

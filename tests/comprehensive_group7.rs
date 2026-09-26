@@ -1,16 +1,16 @@
 //! Comprehensive integration tests, group 7.
 //!
 //! Modules under test:
-//! - remote_patient_monitoring_economics
-//! - retention_and_churn
-//! - return_on_investment
-//! - screening_economics
-//! - sensitivity_analysis
-//! - social_return_on_investment
-//! - space_and_devex
-//! - technical_debt
-//! - time_horizon
-//! - total_cost_of_ownership
+//! - `remote_patient_monitoring_economics`
+//! - `retention_and_churn`
+//! - `return_on_investment`
+//! - `screening_economics`
+//! - `sensitivity_analysis`
+//! - `social_return_on_investment`
+//! - `space_and_devex`
+//! - `technical_debt`
+//! - `time_horizon`
+//! - `total_cost_of_ownership`
 //!
 //! Sections: 1. EDGE CASES, 2. PROPERTIES / INVARIANTS,
 //! 3. CROSS-MODULE CONSISTENCY, 4. DOMAIN SCENARIOS.
@@ -381,8 +381,12 @@ fn prop_roi_positive_iff_benefits_exceed_costs() {
         for costs in [1e-3, 50.0, 100.0, 1e6] {
             let r = roi(benefits, costs).unwrap();
             assert_eq!(r > 0.0, benefits > costs, "b={benefits} c={costs} r={r}");
-            // And roi == 0 exactly at break-even.
-            if benefits == costs {
+            // And roi == 0 exactly at break-even. `benefits`/`costs` are the
+            // loop's own literal values here, not computed results, so exact
+            // equality correctly detects the break-even case in the list.
+            #[allow(clippy::float_cmp)]
+            let at_break_even = benefits == costs;
+            if at_break_even {
                 assert!(r.abs() < 1e-12);
             }
         }
@@ -626,7 +630,7 @@ fn prop_td_payback_is_cost_over_avoided() {
 fn prop_pv_of_interest_below_undiscounted_for_positive_rates() {
     let annual = 165_600.0;
     for years in [1u32, 3, 10, 30] {
-        let undiscounted = annual * years as f64;
+        let undiscounted = annual * f64::from(years);
         assert!(close(pv_of_interest_avoided(annual, 0.0, years), undiscounted, 1e-12));
         for r in [0.01, 0.035, 0.10, 0.50] {
             let pv = pv_of_interest_avoided(annual, r, years);
@@ -1001,7 +1005,12 @@ fn prop_retention_improvement_matches_component_chain() {
                 20_000.0,
             );
             assert!(close(direct, via_chain, 1e-9), "from {from} to {to}");
-            if from == to {
+            // `from`/`to` are the loop's own literal tuple values here, not
+            // computed results, so exact equality correctly detects the
+            // no-change case in the list.
+            #[allow(clippy::float_cmp)]
+            let unchanged = from == to;
+            if unchanged {
                 assert!(direct.abs() < 1e-9);
             }
             if to < from {
@@ -1156,7 +1165,7 @@ fn scenario_rpm_panel_profit_and_loss() {
 
     // ROI framing of the steady-state year: (196,618.5 − 120,000) / 120,000 = 63.85%.
     let service_roi = roi(annual, 120_000.0).unwrap();
-    assert!((service_roi - 0.6384875).abs() < 1e-9);
+    assert!((service_roi - 0.638_487_5).abs() < 1e-9);
 
     // Engineering lever: sync reliability moves 16-day compliance 0.80 → 0.90:
     // 250 × 0.10 × 43.03 × 12 = $12,909/year.

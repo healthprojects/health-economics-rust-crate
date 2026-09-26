@@ -123,6 +123,7 @@
 /// assert_eq!(cost_per_transaction(500_000.0, 2_000_000.0), Some(0.25));
 /// assert!(cost_per_transaction(1_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn cost_per_transaction(total_service_cost: f64, completed_transactions: f64) -> Option<f64> {
     if completed_transactions == 0.0 {
         None
@@ -154,6 +155,7 @@ pub fn cost_per_transaction(total_service_cost: f64, completed_transactions: f64
 /// assert_eq!(completion_rate_percent(84.0, 100.0), Some(84.0));
 /// assert_eq!(completion_rate_percent(93.0, 100.0), Some(93.0));
 /// ```
+#[must_use]
 pub fn completion_rate_percent(completed: f64, started: f64) -> Option<f64> {
     if started == 0.0 { None } else { Some(completed / started * 100.0) }
 }
@@ -181,6 +183,7 @@ pub fn completion_rate_percent(completed: f64, started: f64) -> Option<f64> {
 /// let take_up = digital_take_up_percent(1_100_000.0, 2_000_000.0).unwrap();
 /// assert!((take_up - 55.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn digital_take_up_percent(digital_transactions: f64, all_channel_transactions: f64) -> Option<f64> {
     if all_channel_transactions == 0.0 {
         None
@@ -214,6 +217,7 @@ pub fn digital_take_up_percent(digital_transactions: f64, all_channel_transactio
 /// assert_eq!(user_satisfaction_percent(80.0, 100.0), Some(80.0));
 /// assert!(user_satisfaction_percent(1.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn user_satisfaction_percent(
     satisfied_or_very_satisfied: f64,
     respondents: f64,
@@ -249,6 +253,7 @@ pub fn user_satisfaction_percent(
 /// let s = channel_shift_saving(2_000_000.0, 0.25, 3.20, 0.25);
 /// assert!((s - 1_475_000.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn channel_shift_saving(
     volume: f64,
     take_up_shift: f64,
@@ -284,6 +289,7 @@ pub fn channel_shift_saving(
 /// let c = failure_demand_cost(2_000_000.0, 0.30, 0.84, 3.20);
 /// assert!((c - 307_200.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn failure_demand_cost(
     volume: f64,
     digital_share: f64,

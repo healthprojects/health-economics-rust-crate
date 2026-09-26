@@ -131,6 +131,7 @@
 /// assert!((d30 - 8.0).abs() < 1e-9);
 /// assert!(retention_percent(1.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn retention_percent(users_active_on_day_n: f64, cohort_size: f64) -> Option<f64> {
     if cohort_size == 0.0 {
         None
@@ -163,6 +164,7 @@ pub fn retention_percent(users_active_on_day_n: f64, cohort_size: f64) -> Option
 /// let churn = churn_rate_percent(92_000.0, 100_000.0).unwrap();
 /// assert!((churn - 92.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn churn_rate_percent(users_lost_in_period: f64, users_at_period_start: f64) -> Option<f64> {
     if users_at_period_start == 0.0 {
         None
@@ -171,7 +173,7 @@ pub fn churn_rate_percent(users_lost_in_period: f64, users_at_period_start: f64)
     }
 }
 
-/// Expected benefit per acquired user: Σ_t retention(t) × benefit rate(t).
+/// Expected benefit per acquired user: `Σ_t` retention(t) × benefit rate(t).
 ///
 /// This is the benefit-weighting move: approximately the area under the
 /// retention curve times the per-time benefit — NOT trial benefit × 100% of
@@ -198,6 +200,7 @@ pub fn churn_rate_percent(users_lost_in_period: f64, users_at_period_start: f64)
 /// let expected = expected_benefit_per_acquired_user(&[1.0, 0.25, 0.08, 0.04], &[4.0; 4]);
 /// assert!((expected - 5.48).abs() < 1e-9); // 1.37 × 4
 /// ```
+#[must_use]
 pub fn expected_benefit_per_acquired_user(
     retention_fractions: &[f64],
     benefit_rates: &[f64],
@@ -234,6 +237,7 @@ pub fn expected_benefit_per_acquired_user(
 /// let cost = cost_per_retained_user(5.0, 0.04).unwrap();
 /// assert!((cost - 125.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn cost_per_retained_user(cac: f64, retention_fraction: f64) -> Option<f64> {
     if retention_fraction == 0.0 {
         None
@@ -264,6 +268,7 @@ pub fn cost_per_retained_user(cac: f64, retention_fraction: f64) -> Option<f64> 
 /// // Doc: 100,000 × 0.04 = 4,000 completers.
 /// assert!((completers(100_000.0, 0.04) - 4_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn completers(cohort_size: f64, completion_fraction: f64) -> f64 {
     cohort_size * completion_fraction
 }
@@ -290,6 +295,7 @@ pub fn completers(cohort_size: f64, completion_fraction: f64) -> f64 {
 /// // Doc: 4,000 × 0.02 = 80 QALYs (not 100,000 × 0.02 = 2,000).
 /// assert!((qalys_delivered(4_000.0, 0.02) - 80.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn qalys_delivered(completers: f64, qalys_per_completer: f64) -> f64 {
     completers * qalys_per_completer
 }
@@ -313,6 +319,7 @@ pub fn qalys_delivered(completers: f64, qalys_per_completer: f64) -> f64 {
 /// // Doc: 80 QALYs at £20,000/QALY = £1.6M of health value (not £40M).
 /// assert!((monetized_health_value(80.0, 20_000.0) - 1_600_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn monetized_health_value(qalys: f64, value_per_qaly: f64) -> f64 {
     qalys * value_per_qaly
 }
@@ -341,6 +348,7 @@ pub fn monetized_health_value(qalys: f64, value_per_qaly: f64) -> f64 {
 /// let per = health_value_per_download(1_600_000.0, 100_000.0).unwrap();
 /// assert!((per - 16.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn health_value_per_download(total_value: f64, cohort_size: f64) -> Option<f64> {
     if cohort_size == 0.0 {
         None
@@ -376,6 +384,7 @@ pub fn health_value_per_download(total_value: f64, cohort_size: f64) -> Option<f
 /// let gain = retention_improvement_value(100_000.0, 0.04, 0.06, 0.02, 20_000.0);
 /// assert!((gain - 800_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn retention_improvement_value(
     cohort_size: f64,
     from_fraction: f64,

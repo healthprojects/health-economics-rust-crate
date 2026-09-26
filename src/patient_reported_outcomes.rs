@@ -161,6 +161,7 @@ pub const GAD7_MCID: f64 = 4.0;
 /// let items = [3.0, 3.0, 2.0, 2.0, 1.0, 1.0, 0.0, 0.0, 3.0];
 /// assert_eq!(instrument_sum_score(&items), 15.0);
 /// ```
+#[must_use]
 pub fn instrument_sum_score(item_responses: &[f64]) -> f64 {
     item_responses.iter().sum()
 }
@@ -188,6 +189,7 @@ pub fn instrument_sum_score(item_responses: &[f64]) -> f64 {
 /// // Baseline SD of 8 points → distribution-based MCID of 4 points.
 /// assert_eq!(distribution_based_mcid(8.0), 4.0);
 /// ```
+#[must_use]
 pub fn distribution_based_mcid(baseline_score_sd: f64) -> f64 {
     0.5 * baseline_score_sd
 }
@@ -218,6 +220,7 @@ pub fn distribution_based_mcid(baseline_score_sd: f64) -> f64 {
 /// let d = adjusted_difference(-6.2, -2.1);
 /// assert!((d - (-4.1)).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn adjusted_difference(treatment_change: f64, control_change: f64) -> f64 {
     treatment_change - control_change
 }
@@ -250,6 +253,7 @@ pub fn adjusted_difference(treatment_change: f64, control_change: f64) -> f64 {
 /// // A −5.5-point difference would clear it.
 /// assert!(clears_mcid(-5.5, PHQ9_MCID));
 /// ```
+#[must_use]
 pub fn clears_mcid(mean_difference: f64, mcid: f64) -> bool {
     mean_difference.abs() >= mcid
 }
@@ -280,6 +284,7 @@ pub fn clears_mcid(mean_difference: f64, mcid: f64) -> bool {
 /// let arr = absolute_risk_reduction(0.48, 0.22);
 /// assert!((arr - 0.26).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn absolute_risk_reduction(
     responder_rate_treatment: f64,
     responder_rate_control: f64,
@@ -315,6 +320,7 @@ pub fn absolute_risk_reduction(
 /// // Identical arms: NNT undefined.
 /// assert!(number_needed_to_treat(0.0).is_none());
 /// ```
+#[must_use]
 pub fn number_needed_to_treat(absolute_risk_reduction: f64) -> Option<f64> {
     if absolute_risk_reduction == 0.0 {
         None
@@ -346,6 +352,7 @@ pub fn number_needed_to_treat(absolute_risk_reduction: f64) -> Option<f64> {
 /// // Per 1,000 users at ARR 26%: 260 extra responders.
 /// assert_eq!(extra_responders(1_000.0, 0.26), 260.0);
 /// ```
+#[must_use]
 pub fn extra_responders(cohort_size: f64, absolute_risk_reduction: f64) -> f64 {
     cohort_size * absolute_risk_reduction
 }
@@ -373,6 +380,7 @@ pub fn extra_responders(cohort_size: f64, absolute_risk_reduction: f64) -> f64 {
 /// // An EQ-5D gain of 0.06 sustained 6 months = 0.03 QALYs per responder.
 /// assert!((qalys_from_utility_gain(0.06, 0.5) - 0.03).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn qalys_from_utility_gain(utility_gain: f64, duration_years: f64) -> f64 {
     utility_gain * duration_years
 }
@@ -398,6 +406,7 @@ pub fn qalys_from_utility_gain(utility_gain: f64, duration_years: f64) -> f64 {
 /// // 260 extra responders × 0.03 QALYs = 7.8 QALYs.
 /// assert!((cohort_qalys(260.0, 0.03) - 7.8).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn cohort_qalys(extra_responders: f64, qalys_per_responder: f64) -> f64 {
     extra_responders * qalys_per_responder
 }
@@ -423,6 +432,7 @@ pub fn cohort_qalys(extra_responders: f64, qalys_per_responder: f64) -> f64 {
 /// assert_eq!(monetized_value(7.8, 20_000.0), 156_000.0);
 /// assert_eq!(monetized_value(7.8, 30_000.0), 234_000.0);
 /// ```
+#[must_use]
 pub fn monetized_value(qalys: f64, threshold_per_qaly: f64) -> f64 {
     qalys * threshold_per_qaly
 }

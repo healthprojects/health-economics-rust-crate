@@ -114,6 +114,7 @@
 ///
 /// assert!(average_cost(400_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn average_cost(total_cost: f64, quantity: f64) -> Option<f64> {
     if quantity == 0.0 {
         None
@@ -148,6 +149,7 @@ pub fn average_cost(total_cost: f64, quantity: f64) -> Option<f64> {
 /// let naive = naive_average_cost_saving(1_000.0, 400.0);
 /// assert!((naive - 400_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn naive_average_cost_saving(units_freed: f64, average_cost_per_unit: f64) -> f64 {
     units_freed * average_cost_per_unit
 }
@@ -175,6 +177,7 @@ pub fn naive_average_cost_saving(units_freed: f64, average_cost_per_unit: f64) -
 /// let saving = marginal_saving(1_000.0, 120.0);
 /// assert!((saving - 120_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn marginal_saving(units_freed: f64, marginal_cost_per_unit: f64) -> f64 {
     units_freed * marginal_cost_per_unit
 }
@@ -203,6 +206,7 @@ pub fn marginal_saving(units_freed: f64, marginal_cost_per_unit: f64) -> f64 {
 /// let saving = step_change_saving(10_000_000.0, 8_500_000.0);
 /// assert!((saving - 1_500_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn step_change_saving(total_cost_before: f64, total_cost_after: f64) -> f64 {
     total_cost_before - total_cost_after
 }
@@ -228,6 +232,7 @@ pub fn step_change_saving(total_cost_before: f64, total_cost_after: f64) -> f64 
 /// // A 20-bed ward is 7,300 bed days/year.
 /// assert!((ward_bed_days_per_year(20.0) - 7_300.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn ward_bed_days_per_year(beds: f64) -> f64 {
     beds * 365.0
 }
@@ -258,6 +263,7 @@ pub fn ward_bed_days_per_year(beds: f64) -> f64 {
 /// assert!(crosses_capacity_step(7_300.0, step));
 /// assert!(!crosses_capacity_step(1_000.0, step));
 /// ```
+#[must_use]
 pub fn crosses_capacity_step(units_freed: f64, units_per_capacity_step: f64) -> bool {
     units_freed >= units_per_capacity_step
 }

@@ -132,6 +132,7 @@
 /// assert_eq!(cac(38_000.0, 1_000.0), Some(38.0));
 /// assert!(cac(1.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn cac(sales_and_marketing_spend: f64, new_paying_customers: f64) -> Option<f64> {
     if new_paying_customers == 0.0 {
         None
@@ -159,6 +160,7 @@ pub fn cac(sales_and_marketing_spend: f64, new_paying_customers: f64) -> Option<
 /// // £6,990/month across 1,000 subscribers = £6.99 ARPU.
 /// assert_eq!(arpu(6_990.0, 1_000.0), Some(6.99));
 /// ```
+#[must_use]
 pub fn arpu(revenue: f64, active_users: f64) -> Option<f64> {
     if active_users == 0.0 { None } else { Some(revenue / active_users) }
 }
@@ -189,6 +191,7 @@ pub fn arpu(revenue: f64, active_users: f64) -> Option<f64> {
 /// assert!((v - 38.8).abs() < 0.05);
 /// assert!(ltv(6.99, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn ltv(arpu: f64, churn_rate: f64) -> Option<f64> {
     // LTV = ARPU × average lifetime, and average lifetime = 1 / churn.
     if churn_rate == 0.0 { None } else { Some(arpu / churn_rate) }
@@ -214,6 +217,7 @@ pub fn ltv(arpu: f64, churn_rate: f64) -> Option<f64> {
 /// let r = ltv_cac_ratio(38.83, 38.0).unwrap();
 /// assert!((r - 1.0).abs() < 0.05);
 /// ```
+#[must_use]
 pub fn ltv_cac_ratio(ltv: f64, cac: f64) -> Option<f64> {
     if cac == 0.0 { None } else { Some(ltv / cac) }
 }
@@ -241,6 +245,7 @@ pub fn ltv_cac_ratio(ltv: f64, cac: f64) -> Option<f64> {
 /// assert!(!is_viable_ltv_cac(38.83, 38.0));
 /// assert!(is_viable_ltv_cac(114.0, 38.0));
 /// ```
+#[must_use]
 pub fn is_viable_ltv_cac(ltv: f64, cac: f64) -> bool {
     matches!(ltv_cac_ratio(ltv, cac), Some(r) if r >= 3.0)
 }
@@ -268,6 +273,7 @@ pub fn is_viable_ltv_cac(ltv: f64, cac: f64) -> bool {
 /// // Doc figure: at 4% D30 retention, £5 per install = £125 per retained user.
 /// assert_eq!(effective_cac_per_retained_user(5.0, 0.04), Some(125.0));
 /// ```
+#[must_use]
 pub fn effective_cac_per_retained_user(cac: f64, retention_at_t: f64) -> Option<f64> {
     if retention_at_t == 0.0 { None } else { Some(cac / retention_at_t) }
 }
@@ -295,6 +301,7 @@ pub fn effective_cac_per_retained_user(cac: f64, retention_at_t: f64) -> Option<
 /// // Worked example: £1.20 PMPM × 40,000 covered lives = £48k/month.
 /// assert_eq!(pmpm_revenue(1.20, 40_000.0, 1.0), 48_000.0);
 /// ```
+#[must_use]
 pub fn pmpm_revenue(pmpm_rate: f64, enrolled_members: f64, months: f64) -> f64 {
     pmpm_rate * enrolled_members * months
 }
@@ -324,6 +331,7 @@ pub fn pmpm_revenue(pmpm_rate: f64, enrolled_members: f64, months: f64) -> f64 {
 /// // Worked example: £1.20 − £0.30 = £0.90 margin per member-month.
 /// assert!((pmpm_margin(1.20, 0.30) - 0.90).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn pmpm_margin(pmpm_rate: f64, cost_to_serve_pmpm: f64) -> f64 {
     pmpm_rate - cost_to_serve_pmpm
 }
@@ -348,6 +356,7 @@ pub fn pmpm_margin(pmpm_rate: f64, cost_to_serve_pmpm: f64) -> f64 {
 /// let f = pmpm_margin_fraction(1.20, 0.30).unwrap();
 /// assert!((f - 0.75).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn pmpm_margin_fraction(pmpm_rate: f64, cost_to_serve_pmpm: f64) -> Option<f64> {
     if pmpm_rate == 0.0 {
         None
@@ -381,6 +390,7 @@ pub fn pmpm_margin_fraction(pmpm_rate: f64, cost_to_serve_pmpm: f64) -> Option<f
 /// // 0.01 retention-weighted QALYs at £20,000/QALY = £200 per acquired user.
 /// assert_eq!(health_value_per_acquired_user(0.01, 20_000.0), 200.0);
 /// ```
+#[must_use]
 pub fn health_value_per_acquired_user(
     retention_weighted_qalys: f64,
     threshold_per_qaly: f64,

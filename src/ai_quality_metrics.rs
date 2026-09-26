@@ -40,7 +40,7 @@
 //! Medical-domain benchmarks have measured hallucination rates above 60% for
 //! ungrounded LLMs on medical tasks (some open models >80%), while grounding,
 //! retrieval, and reasoning modes cut rates dramatically (e.g., GPT-5's
-//! thinking mode reduced HealthBench hallucinations 3.6% → 1.6% on one
+//! thinking mode reduced `HealthBench` hallucinations 3.6% → 1.6% on one
 //! benchmark). Every hallucination that survives review triggers downstream
 //! cost: acting on wrong information, verification labor, medico-legal
 //! exposure, eroded trust — so it belongs in the harms arm of any economic
@@ -148,6 +148,7 @@
 ///
 /// assert!(hallucination_rate(1.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn hallucination_rate(outputs_with_unsupported_content: f64, total_outputs: f64) -> Option<f64> {
     if total_outputs == 0.0 {
         None
@@ -184,6 +185,7 @@ pub fn hallucination_rate(outputs_with_unsupported_content: f64, total_outputs: 
 ///
 /// assert!(faithfulness(0.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn faithfulness(supported_claims: f64, total_claims: f64) -> Option<f64> {
     if total_claims == 0.0 {
         None
@@ -243,6 +245,7 @@ pub struct ErrorType {
 /// // × 200,000 episodes/year = the £150,000/year expected error cost.
 /// assert!((per_output * 200_000.0 - 150_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn expected_harm_cost_per_output(error_types: &[ErrorType]) -> f64 {
     error_types
         .iter()
@@ -280,6 +283,7 @@ pub fn expected_harm_cost_per_output(error_types: &[ErrorType]) -> f64 {
 /// let uncaught = errors_reaching_submission(200_000.0, 0.02, 0.85);
 /// assert!((uncaught - 600.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn errors_reaching_submission(
     annual_volume: f64,
     material_error_rate: f64,
@@ -311,6 +315,7 @@ pub fn errors_reaching_submission(
 /// let cost = expected_error_cost(600.0, 250.0);
 /// assert!((cost - 150_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn expected_error_cost(uncaught_errors: f64, cost_per_uncaught_error: f64) -> f64 {
     uncaught_errors * cost_per_uncaught_error
 }
@@ -340,6 +345,7 @@ pub fn expected_error_cost(uncaught_errors: f64, cost_per_uncaught_error: f64) -
 /// let cost = review_cost(2.0, 200_000.0, 0.50);
 /// assert!((cost - 200_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn review_cost(
     minutes_per_item: f64,
     annual_volume: f64,

@@ -63,7 +63,7 @@
 //!
 //! ## Software engineering connection
 //!
-//! - **PR sub-stage benchmarks** (LinearB, ~8M PRs): elite pickup time < 7h,
+//! - **PR sub-stage benchmarks** (`LinearB`, ~8M PRs): elite pickup time < 7h,
 //!   review < 6h, total cycle < ~26h — pickup time is pure queue, the first
 //!   thing to attack.
 //! - **Waiting lists** are backlogs; **RTT** is lead time; **bed occupancy**
@@ -91,7 +91,7 @@
 //! - Little's Law and flow metrics overviews.
 //!   <https://agility-at-scale.com/safe/lpm/flow-metrics/> ;
 //!   <https://getdx.com/blog/flow-metrics/>
-//! - LinearB engineering benchmarks.
+//! - `LinearB` engineering benchmarks.
 //!   <https://linearb.io/resources/engineering-benchmarks>
 //! - Reinertsen DG, *The Principles of Product Development Flow*.
 //!
@@ -120,6 +120,7 @@
 /// // Started day 6, finished day 10: 4 days of cycle time.
 /// assert_eq!(cycle_time(10.0, 6.0), 4.0);
 /// ```
+#[must_use]
 pub fn cycle_time(finished: f64, started: f64) -> f64 {
     finished - started
 }
@@ -147,6 +148,7 @@ pub fn cycle_time(finished: f64, started: f64) -> f64 {
 /// // Requested day 2, delivered day 10: 8 days of lead time.
 /// assert_eq!(lead_time(10.0, 2.0), 8.0);
 /// ```
+#[must_use]
 pub fn lead_time(delivered: f64, requested: f64) -> f64 {
     delivered - requested
 }
@@ -171,6 +173,7 @@ pub fn lead_time(delivered: f64, requested: f64) -> f64 {
 /// assert_eq!(throughput(10.0, 1.0), Some(10.0));
 /// assert!(throughput(5.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn throughput(items_completed: f64, period: f64) -> Option<f64> {
     if period == 0.0 { None } else { Some(items_completed / period) }
 }
@@ -199,6 +202,7 @@ pub fn throughput(items_completed: f64, period: f64) -> Option<f64> {
 /// assert_eq!(flow_efficiency_percent(1.0, 9.0), Some(10.0));
 /// assert!(flow_efficiency_percent(0.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn flow_efficiency_percent(active_time: f64, wait_time: f64) -> Option<f64> {
     let total = active_time + wait_time;
     if total == 0.0 { None } else { Some(active_time / total * 100.0) }
@@ -230,6 +234,7 @@ pub fn flow_efficiency_percent(active_time: f64, wait_time: f64) -> Option<f64> 
 /// assert_eq!(littles_law_cycle_time(40.0, 10.0), Some(4.0));
 /// assert_eq!(littles_law_cycle_time(15.0, 10.0), Some(1.5));
 /// ```
+#[must_use]
 pub fn littles_law_cycle_time(wip: f64, throughput: f64) -> Option<f64> {
     if throughput == 0.0 { None } else { Some(wip / throughput) }
 }
@@ -258,6 +263,7 @@ pub fn littles_law_cycle_time(wip: f64, throughput: f64) -> Option<f64> {
 /// // Hospital mirror: 40 admissions/day × 6.0 days LOS = 240 beds occupied.
 /// assert_eq!(littles_law_wip(40.0, 6.0), 240.0);
 /// ```
+#[must_use]
 pub fn littles_law_wip(throughput: f64, average_cycle_time: f64) -> f64 {
     throughput * average_cycle_time
 }
@@ -289,6 +295,7 @@ pub fn littles_law_wip(throughput: f64, average_cycle_time: f64) -> f64 {
 /// // = £75,000/week — from a policy change costing nothing.
 /// assert_eq!(delay_cost_eliminated(10.0, 2.5, 3_000.0), 75_000.0);
 /// ```
+#[must_use]
 pub fn delay_cost_eliminated(
     throughput: f64,
     queue_time_saved_per_item: f64,

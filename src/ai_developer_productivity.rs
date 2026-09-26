@@ -140,6 +140,7 @@
 ///
 /// assert!(acceptance_rate(30.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn acceptance_rate(accepted_suggestions: f64, shown_suggestions: f64) -> Option<f64> {
     if shown_suggestions == 0.0 {
         None
@@ -178,6 +179,7 @@ pub fn acceptance_rate(accepted_suggestions: f64, shown_suggestions: f64) -> Opt
 ///
 /// assert!(retention_rate(88.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn retention_rate(code_surviving_to_merge: f64, accepted_ai_code: f64) -> Option<f64> {
     if accepted_ai_code == 0.0 {
         None
@@ -186,7 +188,7 @@ pub fn retention_rate(code_surviving_to_merge: f64, accepted_ai_code: f64) -> Op
     }
 }
 
-/// Speedup from a controlled comparison: (t_control − t_AI) / t_control.
+/// Speedup from a controlled comparison: (`t_control` − `t_AI`) / `t_control`.
 ///
 /// Use figures from a controlled comparison ONLY — never self-report.
 /// Positive means the AI arm is faster; negative means it is slower (the
@@ -215,6 +217,7 @@ pub fn retention_rate(code_surviving_to_merge: f64, accepted_ai_code: f64) -> Op
 /// let s = speedup(100.0, 119.0).unwrap();
 /// assert!((s - (-0.19)).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn speedup(t_control: f64, t_ai: f64) -> Option<f64> {
     if t_control == 0.0 {
         None
@@ -250,6 +253,7 @@ pub fn speedup(t_control: f64, t_ai: f64) -> Option<f64> {
 ///
 /// assert!(throughput_delta(0.0, 106.0).is_none());
 /// ```
+#[must_use]
 pub fn throughput_delta(merged_prs_before: f64, merged_prs_after: f64) -> Option<f64> {
     if merged_prs_before == 0.0 {
         None
@@ -289,6 +293,7 @@ pub fn throughput_delta(merged_prs_before: f64, merged_prs_after: f64) -> Option
 /// let value = annual_capacity_value(500.0, 0.25, 220.0, 60.0, 0.6);
 /// assert!((value - 990_000.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn annual_capacity_value(
     developers: f64,
     hours_saved_per_dev_per_day: f64,
@@ -329,6 +334,7 @@ pub fn annual_capacity_value(
 /// let cost = annual_tool_cost(500.0, 39.0);
 /// assert!((cost - 234_000.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn annual_tool_cost(developers: f64, monthly_price_per_dev: f64) -> f64 {
     developers * monthly_price_per_dev * 12.0
 }
@@ -360,6 +366,7 @@ pub fn annual_tool_cost(developers: f64, monthly_price_per_dev: f64) -> f64 {
 ///
 /// assert!(net_capacity_ratio(990_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn net_capacity_ratio(annual_capacity_value: f64, annual_tool_cost: f64) -> Option<f64> {
     if annual_tool_cost == 0.0 {
         None
@@ -395,6 +402,7 @@ pub fn net_capacity_ratio(annual_capacity_value: f64, annual_tool_cost: f64) -> 
 ///
 /// assert!(perception_gap_ratio(45.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn perception_gap_ratio(self_reported_saving: f64, measured_saving: f64) -> Option<f64> {
     if measured_saving == 0.0 {
         None

@@ -140,6 +140,7 @@ impl Alternative {
     /// assert_eq!(sms.cost, 20_000.0);
     /// assert_eq!(sms.effect, 2_000.0);
     /// ```
+    #[must_use]
     pub fn new(name: &str, cost: f64, effect: f64) -> Self {
         Alternative { name: name.to_string(), cost, effect }
     }
@@ -147,7 +148,7 @@ impl Alternative {
 
 /// Strict dominance test.
 ///
-/// `a` dominates `b` if Cost_a ≤ Cost_b and Effect_a ≥ Effect_b, with at
+/// `a` dominates `b` if `Cost_a` ≤ `Cost_b` and `Effect_a` ≥ `Effect_b`, with at
 /// least one strict inequality (otherwise the options are identical, and
 /// neither dominates).
 ///
@@ -174,6 +175,7 @@ impl Alternative {
 /// assert!(strictly_dominates(&sms_ai, &phone));
 /// assert!(!strictly_dominates(&phone, &sms_ai));
 /// ```
+#[must_use]
 pub fn strictly_dominates(a: &Alternative, b: &Alternative) -> bool {
     // Weak inequalities on both axes, plus at least one strict inequality —
     // ties on both axes are not dominance.
@@ -181,7 +183,7 @@ pub fn strictly_dominates(a: &Alternative, b: &Alternative) -> bool {
 }
 
 /// Incremental cost-effectiveness ratio of `next` versus `prev`:
-/// ΔCost / ΔEffect.
+/// `ΔCost` / `ΔEffect`.
 ///
 /// On a valid frontier `next` is the next more-effective option after
 /// `prev`, so the ratio reads "£ per extra unit of effect for stepping up".
@@ -208,6 +210,7 @@ pub fn strictly_dominates(a: &Alternative, b: &Alternative) -> bool {
 /// let sms = Alternative::new("SMS reminders", 20_000.0, 2_000.0);
 /// assert_eq!(icer(&sms, &nothing), Some(10.0));
 /// ```
+#[must_use]
 pub fn icer(next: &Alternative, prev: &Alternative) -> Option<f64> {
     let delta_effect = next.effect - prev.effect;
     if delta_effect == 0.0 {
@@ -251,17 +254,13 @@ pub fn icer(next: &Alternative, prev: &Alternative) -> Option<f64> {
 /// let names: Vec<&str> = frontier.iter().map(|o| o.name.as_str()).collect();
 /// assert_eq!(names, vec!["Do nothing", "SMS reminders", "SMS + AI triage"]);
 /// ```
+#[must_use]
 pub fn efficiency_frontier(options: &[Alternative]) -> Vec<Alternative> {
     // Step 1: sort by effect ascending; break effect ties by cost ascending
     // so the cheaper of two equal-effect options comes first (the dearer one
     // will then be removed as strictly dominated).
     let mut sorted: Vec<Alternative> = options.to_vec();
-    sorted.sort_by(|a, b| {
-        a.effect
-            .partial_cmp(&b.effect)
-            .unwrap()
-            .then(a.cost.partial_cmp(&b.cost).unwrap())
-    });
+    sorted.sort_by(|a, b| a.effect.total_cmp(&b.effect).then(a.cost.total_cmp(&b.cost)));
 
     // Step 2: remove strictly dominated options — keep a candidate only if
     // no other option costs no more AND delivers no less (with one strict
@@ -342,6 +341,7 @@ pub fn efficiency_frontier(options: &[Alternative]) -> Vec<Alternative> {
 /// assert!((icers[0] - 10.0).abs() < 1e-9);
 /// assert!((icers[1] - 46.67).abs() < 0.01);
 /// ```
+#[must_use]
 pub fn frontier_icers(frontier: &[Alternative]) -> Vec<Option<f64>> {
     frontier.windows(2).map(|w| icer(&w[1], &w[0])).collect()
 }

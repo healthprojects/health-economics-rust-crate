@@ -116,7 +116,7 @@ pub struct InterventionOption {
     pub effect: f64,
 }
 
-/// ICER = (cost_a − cost_b) / (effect_a − effect_b): £ per additional unit
+/// ICER = (`cost_a` − `cost_b`) / (`effect_a` − `effect_b)`: £ per additional unit
 /// of outcome for option A over comparator B.
 ///
 /// The honest number for an expansion decision; the sign convention assumes
@@ -148,6 +148,7 @@ pub struct InterventionOption {
 /// // Equal effects → undefined ratio.
 /// assert!(icer(400_000.0, 300.0, 150_000.0, 300.0).is_none());
 /// ```
+#[must_use]
 pub fn icer(cost_a: f64, effect_a: f64, cost_b: f64, effect_b: f64) -> Option<f64> {
     let delta_effect = effect_a - effect_b;
     if delta_effect == 0.0 {
@@ -183,6 +184,7 @@ pub fn icer(cost_a: f64, effect_a: f64, cost_b: f64, effect_b: f64) -> Option<f6
 /// assert!((average - 1_475.0).abs() < 0.5);
 /// assert!(average_cost_effectiveness_ratio(100.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn average_cost_effectiveness_ratio(cost: f64, effect: f64) -> Option<f64> {
     if effect == 0.0 { None } else { Some(cost / effect) }
 }
@@ -218,6 +220,7 @@ pub fn average_cost_effectiveness_ratio(cost: f64, effect: f64) -> Option<f64> {
 /// assert!((icers[0].unwrap() - 1_136.0).abs() < 0.5);
 /// assert!((icers[1].unwrap() - 5_556.0).abs() < 0.5);
 /// ```
+#[must_use]
 pub fn incremental_icers(options_sorted_by_effect: &[InterventionOption]) -> Vec<Option<f64>> {
     options_sorted_by_effect
         .windows(2)

@@ -122,6 +122,7 @@
 /// let units = extra_activity_units(25.0, 2.0, 250.0);
 /// assert_eq!(units, 12_500.0);
 /// ```
+#[must_use]
 pub fn extra_activity_units(
     staff_count: f64,
     units_per_staff_per_day: f64,
@@ -157,6 +158,7 @@ pub fn extra_activity_units(
 /// let value = capacity_value(12_500.0, 120.0);
 /// assert_eq!(value, 1_500_000.0);
 /// ```
+#[must_use]
 pub fn capacity_value(extra_activity_units: f64, scheme_value_per_unit: f64) -> f64 {
     extra_activity_units * scheme_value_per_unit
 }
@@ -189,6 +191,7 @@ pub fn capacity_value(extra_activity_units: f64, scheme_value_per_unit: f64) -> 
 /// let value = annual_capacity_value(25.0, 2.0, 250.0, 120.0);
 /// assert_eq!(value, 1_500_000.0);
 /// ```
+#[must_use]
 pub fn annual_capacity_value(
     staff_count: f64,
     units_per_staff_per_day: f64,

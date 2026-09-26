@@ -163,6 +163,7 @@ pub const CPT_99458_ADDITIONAL_20_MIN: f64 = 38.49;
 /// let pmpm = revenue_per_member_per_month(0.70, CPT_99454_DEVICE_SUPPLY, 0.60, CPT_99457_FIRST_20_MIN);
 /// assert!((pmpm - 58.84).abs() < 0.005);
 /// ```
+#[must_use]
 pub fn revenue_per_member_per_month(
     device_compliant_fraction: f64,
     device_supply_rate: f64,
@@ -193,6 +194,7 @@ pub fn revenue_per_member_per_month(
 /// let monthly = monthly_revenue(400.0, 58.84);
 /// assert!((monthly - 23_536.0).abs() < 1.0);
 /// ```
+#[must_use]
 pub fn monthly_revenue(enrolled: f64, revenue_pmpm: f64) -> f64 {
     enrolled * revenue_pmpm
 }
@@ -216,6 +218,7 @@ pub fn monthly_revenue(enrolled: f64, revenue_pmpm: f64) -> f64 {
 /// let annual = annual_revenue(23_537.20);
 /// assert!((annual - 282_446.40).abs() < 0.01);
 /// ```
+#[must_use]
 pub fn annual_revenue(monthly_revenue: f64) -> f64 {
     monthly_revenue * 12.0
 }
@@ -244,6 +247,7 @@ pub fn annual_revenue(monthly_revenue: f64) -> f64 {
 /// let margin = annual_margin(282_446.40, 180_000.0);
 /// assert!((margin - 102_446.40).abs() < 0.01);
 /// ```
+#[must_use]
 pub fn annual_margin(annual_revenue: f64, annual_service_cost: f64) -> f64 {
     annual_revenue - annual_service_cost
 }
@@ -277,6 +281,7 @@ pub fn annual_margin(annual_revenue: f64, annual_service_cost: f64) -> f64 {
 /// let gain = compliance_lever_annual_gain(400.0, 0.85 - 0.70, CPT_99454_DEVICE_SUPPLY);
 /// assert!((gain - 30_981.60).abs() < 0.01);
 /// ```
+#[must_use]
 pub fn compliance_lever_annual_gain(
     enrolled: f64,
     compliance_fraction_increase: f64,
@@ -311,6 +316,7 @@ pub fn compliance_lever_annual_gain(
 /// let value = virtual_ward_gross_annual_value(50.0, 0.80, 150.0);
 /// assert!((value - 2_190_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn virtual_ward_gross_annual_value(
     beds: f64,
     occupancy_fraction: f64,
@@ -349,6 +355,7 @@ pub fn virtual_ward_gross_annual_value(
 /// let value = nhs_style_net_value(0.0, 0.0, 14_600.0, 400.0, 250.0, 0.0);
 /// assert!((value - 2_190_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn nhs_style_net_value(
     admissions_avoided: f64,
     marginal_admission_cost: f64,

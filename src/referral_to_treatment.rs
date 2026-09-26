@@ -129,6 +129,7 @@ pub const RTT_STANDARD_PERCENT: f64 = 92.0;
 /// // Nobody treated: undefined.
 /// assert_eq!(rtt_performance_percent(0.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn rtt_performance_percent(
     treated_within_18_weeks: f64,
     total_treated: f64,
@@ -160,6 +161,7 @@ pub fn rtt_performance_percent(
 /// assert!(meets_rtt_standard(92.0));
 /// assert!(!meets_rtt_standard(91.9));
 /// ```
+#[must_use]
 pub fn meets_rtt_standard(performance_percent: f64) -> bool {
     performance_percent >= RTT_STANDARD_PERCENT
 }
@@ -190,6 +192,7 @@ pub fn meets_rtt_standard(performance_percent: f64) -> bool {
 /// let q = waiting_health_cost_qalys(5.0 / 52.0, 0.80, 0.68);
 /// assert!((q - 5.0 / 52.0 * 0.12).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn waiting_health_cost_qalys(
     wait_duration_years: f64,
     utility_treated: f64,
@@ -225,6 +228,7 @@ pub fn waiting_health_cost_qalys(
 /// let q = qaly_gain_from_wait_reduction(5_000.0, 5.0, 0.80, 0.68);
 /// assert!((q - 57.7).abs() < 0.05);
 /// ```
+#[must_use]
 pub fn qaly_gain_from_wait_reduction(
     patients_per_year: f64,
     weeks_removed: f64,
@@ -255,6 +259,7 @@ pub fn qaly_gain_from_wait_reduction(
 /// assert!((monetized_value(57.7, 20_000.0) - 1_154_000.0).abs() < 1e-6);
 /// assert!((monetized_value(57.7, 30_000.0) - 1_731_000.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn monetized_value(qalys: f64, threshold_per_qaly: f64) -> f64 {
     qalys * threshold_per_qaly
 }
@@ -281,6 +286,7 @@ pub fn monetized_value(qalys: f64, threshold_per_qaly: f64) -> f64 {
 /// let stages = [1.0, 6.0, 9.0, 2.0, 6.0];
 /// assert_eq!(total_pathway_duration(&stages), 24.0);
 /// ```
+#[must_use]
 pub fn total_pathway_duration(stage_durations: &[f64]) -> f64 {
     stage_durations.iter().sum()
 }
@@ -310,6 +316,7 @@ pub fn total_pathway_duration(stage_durations: &[f64]) -> f64 {
 /// // An empty pathway has no longest stage.
 /// assert_eq!(longest_stage(&[]), None);
 /// ```
+#[must_use]
 pub fn longest_stage(stage_durations: &[f64]) -> Option<f64> {
     stage_durations.iter().copied().fold(None, |m, d| match m {
         None => Some(d),

@@ -83,7 +83,7 @@
 //!   controlled-trial-grade evidence before org-wide rollout (Tier C).
 //! - Proportionate evidence stops both failure modes — bureaucracy strangling
 //!   trivial tools, and vibes shipping consequential ones.
-//! - See DiGA fast-track for the "provisional adoption with evidence
+//! - See `DiGA` fast-track for the "provisional adoption with evidence
 //!   deadline" complement.
 //!
 //! ## Pitfalls
@@ -168,6 +168,7 @@ pub enum ClinicalFunction {
 /// assert_eq!(classify_tier(ClinicalFunction::TreatDiagnoseOrGuide), EsfTier::C);
 /// assert_eq!(classify_tier(ClinicalFunction::SystemService), EsfTier::A);
 /// ```
+#[must_use]
 pub fn classify_tier(function: ClinicalFunction) -> EsfTier {
     match function {
         ClinicalFunction::SystemService => EsfTier::A,
@@ -206,6 +207,7 @@ pub fn classify_tier(function: ClinicalFunction) -> EsfTier {
 /// let (b_low, _) = evidence_investment_range(EsfTier::B);
 /// assert!(low / b_low >= 5.0);
 /// ```
+#[must_use]
 pub fn evidence_investment_range(tier: EsfTier) -> (f64, f64) {
     match tier {
         EsfTier::A => (10_000.0, 50_000.0),
@@ -243,6 +245,7 @@ pub fn evidence_investment_range(tier: EsfTier) -> (f64, f64) {
 ///
 /// assert!(years_to_recoup_evidence_cost(600_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn years_to_recoup_evidence_cost(
     evidence_cost: f64,
     incremental_annual_revenue: f64,

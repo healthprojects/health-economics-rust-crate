@@ -10,7 +10,7 @@
 //!
 //! ## Formula
 //!
-//! For each parameter p with plausible range [p_low, p_high]:
+//! For each parameter p with plausible range [`p_low`, `p_high`]:
 //!
 //! ```text
 //! Result_low  = model(p = p_low,  all others at base case)
@@ -160,6 +160,7 @@ impl CodingAssistantCase {
     /// // Doc: 200 × 0.5h × 220 × £60 = £1,320,000
     /// assert!((base.annual_benefit() - 1_320_000.0).abs() < 1e-9);
     /// ```
+    #[must_use]
     pub fn annual_benefit(&self) -> f64 {
         self.developers * self.hours_saved_per_day * self.working_days_per_year
             * self.loaded_cost_per_hour
@@ -186,6 +187,7 @@ impl CodingAssistantCase {
     /// // Doc: 200 × £39 × 12 = £93,600
     /// assert!((base.annual_cost() - 93_600.0).abs() < 1e-9);
     /// ```
+    #[must_use]
     pub fn annual_cost(&self) -> f64 {
         self.developers * self.license_per_dev_per_month * 12.0
     }
@@ -212,6 +214,7 @@ impl CodingAssistantCase {
     /// // Doc: base-case net = £1,226,400
     /// assert!((base.net_benefit() - 1_226_400.0).abs() < 1e-9);
     /// ```
+    #[must_use]
     pub fn net_benefit(&self) -> f64 {
         self.annual_benefit() - self.annual_cost()
     }
@@ -244,6 +247,7 @@ impl CodingAssistantCase {
     /// let minutes = base.threshold_hours_saved_per_day().unwrap() * 60.0;
     /// assert!((minutes - 2.1).abs() < 0.05);
     /// ```
+    #[must_use]
     pub fn threshold_hours_saved_per_day(&self) -> Option<f64> {
         // £ of benefit generated per hour saved per day, per year:
         // developers × working days × loaded cost.
@@ -269,7 +273,7 @@ pub struct OneWayResult {
 }
 
 impl OneWayResult {
-    /// Swing: |Result_high − Result_low|, the bar length in a tornado diagram.
+    /// Swing: |`Result_high` − `Result_low`|, the bar length in a tornado diagram.
     ///
     /// The absolute value matters: for cost-like parameters the high value
     /// lowers the result, so the raw difference is negative.
@@ -287,6 +291,7 @@ impl OneWayResult {
     /// let r = OneWayResult { result_at_low: 170_400.0, result_at_high: 2_546_400.0 };
     /// assert!((r.swing() - 2_376_000.0).abs() < 1e-9);
     /// ```
+    #[must_use]
     pub fn swing(&self) -> f64 {
         (self.result_at_high - self.result_at_low).abs()
     }

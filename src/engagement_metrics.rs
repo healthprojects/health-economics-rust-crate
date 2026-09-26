@@ -124,6 +124,7 @@
 /// assert_eq!(s, 20.0);
 /// assert!(stickiness_percent(1.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn stickiness_percent(daily_active_users: f64, monthly_active_users: f64) -> Option<f64> {
     if monthly_active_users == 0.0 {
         None
@@ -152,6 +153,7 @@ pub fn stickiness_percent(daily_active_users: f64, monthly_active_users: f64) ->
 /// assert_eq!(sessions_per_user(80_000.0, 20_000.0), Some(4.0));
 /// assert!(sessions_per_user(1.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn sessions_per_user(sessions: f64, users: f64) -> Option<f64> {
     if users == 0.0 { None } else { Some(sessions / users) }
 }
@@ -179,6 +181,7 @@ pub fn sessions_per_user(sessions: f64, users: f64) -> Option<f64> {
 /// assert_eq!(average_session_duration(240_000.0, 80_000.0), Some(3.0));
 /// assert!(average_session_duration(1.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn average_session_duration(total_time: f64, sessions: f64) -> Option<f64> {
     if sessions == 0.0 { None } else { Some(total_time / sessions) }
 }
@@ -206,6 +209,7 @@ pub fn average_session_duration(total_time: f64, sessions: f64) -> Option<f64> {
 /// let fe = feature_engagement(7_000.0, 20_000.0).unwrap();
 /// assert!((fe - 0.35).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn feature_engagement(users_performing_key_action: f64, active_users: f64) -> Option<f64> {
     if active_users == 0.0 {
         None
@@ -237,6 +241,7 @@ pub fn feature_engagement(users_performing_key_action: f64, active_users: f64) -
 /// let share = effective_dose_share(7_000.0, 50_000.0).unwrap();
 /// assert!((share - 0.14).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn effective_dose_share(effective_dose_users: f64, registered_users: f64) -> Option<f64> {
     if registered_users == 0.0 {
         None
@@ -271,6 +276,7 @@ pub fn effective_dose_share(effective_dose_users: f64, registered_users: f64) ->
 /// let effect = population_effect(6.0, 0.14);
 /// assert!((effect - 0.84).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn population_effect(trial_effect: f64, effective_dose_share: f64) -> f64 {
     // Zero credit below threshold: realized effect = trial effect × dose share.
     trial_effect * effective_dose_share
@@ -301,6 +307,7 @@ pub fn population_effect(trial_effect: f64, effective_dose_share: f64) -> f64 {
 /// let factor = overstatement_factor(50_000.0, 7_000.0).unwrap();
 /// assert!((factor - 7.0).abs() < 0.2);
 /// ```
+#[must_use]
 pub fn overstatement_factor(registered_users: f64, effective_dose_users: f64) -> Option<f64> {
     if effective_dose_users == 0.0 {
         None

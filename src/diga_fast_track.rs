@@ -1,6 +1,6 @@
-//! # Germany's DiGA Fast-Track
+//! # Germany's `DiGA` Fast-Track
 //!
-//! DiGA (Digitale Gesundheitsanwendungen) is Germany's statutory "apps on
+//! `DiGA` (Digitale Gesundheitsanwendungen) is Germany's statutory "apps on
 //! prescription" pathway — the world's first national system where doctors
 //! prescribe approved health apps and statutory insurance must reimburse
 //! them. It is the leading live experiment in paying for digital therapeutics
@@ -27,8 +27,8 @@
 //!
 //! ## Why it matters
 //!
-//! DiGA answered the question every digital health company asks — "who will
-//! actually pay?" — with legislation (the DVG, 2019). BfArM must decide
+//! `DiGA` answered the question every digital health company asks — "who will
+//! actually pay?" — with legislation (the DVG, 2019). `BfArM` must decide
 //! within 3 months; the manufacturer sets the year-1 price freely, then
 //! negotiates with the insurers' federation (performance-based pricing
 //! elements arriving from 2026). Market reality check (through end-2024):
@@ -74,7 +74,7 @@
 //!
 //! ## Software engineering connection
 //!
-//! - DiGA's pattern — **provisional adoption with a pre-registered success
+//! - `DiGA`'s pattern — **provisional adoption with a pre-registered success
 //!   metric and an automatic sunset** — is directly copyable for
 //!   engineering-tool governance: ship the tool to production users for 12
 //!   months, pre-register the metric (measured time saved, incident
@@ -88,25 +88,25 @@
 //! ## Pitfalls
 //!
 //! - **Treating listing as the finish line** — prescriptions require
-//!   prescriber trust; many listed DiGAs see negligible volume.
+//!   prescriber trust; many listed `DiGAs` see negligible volume.
 //! - **Underpowering the pivotal study** to save money during the revenue
 //!   year — the false economy that explains much of the 50% failure rate.
-//! - **Porting the model without the payer**: DiGA works because
+//! - **Porting the model without the payer**: `DiGA` works because
 //!   reimbursement is statutory; a copy without mandated payment is just a
 //!   pilot program.
 //!
 //! ## Sources
 //!
-//! - Analysis of the DiGA market, npj Digital Medicine 2024.
+//! - Analysis of the `DiGA` market, npj Digital Medicine 2024.
 //!   <https://www.nature.com/articles/s41746-024-01137-1>
-//! - DiGA pricing trends, npj Digital Medicine 2025.
+//! - `DiGA` pricing trends, npj Digital Medicine 2025.
 //!   <https://www.nature.com/articles/s41746-025-01879-6>
-//! - BfArM, Digital Health Applications.
+//! - `BfArM`, Digital Health Applications.
 //!   <https://www.bfarm.de/EN/Medical-devices/Tasks/DiGA-and-DiPA/Digital-Health-Applications/_node.html>
 //!
 //! Topic doc: health-economics-metrics/topics/diga-fast-track.md
 
-/// DiGA revenue for a period.
+/// `DiGA` revenue for a period.
 ///
 /// Only activated prescriptions are reimbursed, so revenue is
 /// prescriptions × activation rate × price per prescription period.
@@ -130,6 +130,7 @@
 /// // Year 1: 20,000 prescriptions × 81% activation × €450 = €7,290,000 ≈ €7.3M.
 /// assert!((revenue(20_000.0, 0.81, 450.0) - 7_290_000.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn revenue(prescriptions: f64, activation_rate: f64, price_per_prescription: f64) -> f64 {
     prescriptions * activation_rate * price_per_prescription
 }
@@ -156,11 +157,12 @@ pub fn revenue(prescriptions: f64, activation_rate: f64, price_per_prescription:
 /// // 20,000 prescriptions at 81% activation = 16,200 activated.
 /// assert!((activated_prescriptions(20_000.0, 0.81) - 16_200.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn activated_prescriptions(prescriptions: f64, activation_rate: f64) -> f64 {
     prescriptions * activation_rate
 }
 
-/// Expected value of the DiGA bet.
+/// Expected value of the `DiGA` bet.
 ///
 /// P(evidence succeeds) × steady-state revenue − evidence (pivotal RCT)
 /// cost. With ~50% conversion failure across the field,
@@ -188,6 +190,7 @@ pub fn activated_prescriptions(prescriptions: f64, activation_rate: f64) -> f64 
 /// // Evidence fails (P = 0): EV is minus the RCT cost.
 /// assert_eq!(expected_value(0.0, 18_468_000.0, 2_000_000.0), -2_000_000.0);
 /// ```
+#[must_use]
 pub fn expected_value(
     probability_evidence_succeeds: f64,
     steady_state_revenue: f64,
@@ -201,7 +204,7 @@ pub fn expected_value(
 /// The pathway's core innovation: revenue earned during the 12-month
 /// provisional listing covers the pivotal RCT cost — in contrast to the
 /// traditional sequence (evidence first, revenue years later), which starves
-/// exactly the products DiGA wants to exist.
+/// exactly the products `DiGA` wants to exist.
 ///
 /// # Arguments
 ///
@@ -224,6 +227,7 @@ pub fn expected_value(
 /// assert!(provisional_year_finances_evidence(year_one, 2_000_000.0));
 /// assert!(!provisional_year_finances_evidence(1_500_000.0, 2_000_000.0));
 /// ```
+#[must_use]
 pub fn provisional_year_finances_evidence(year_one_revenue: f64, evidence_cost: f64) -> bool {
     year_one_revenue >= evidence_cost
 }

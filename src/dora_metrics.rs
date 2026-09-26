@@ -127,6 +127,7 @@
 /// assert_eq!(deployment_frequency(52.0, 1.0), Some(52.0));
 /// assert_eq!(deployment_frequency(1.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn deployment_frequency(deployments: f64, period: f64) -> Option<f64> {
     if period == 0.0 {
         None
@@ -160,6 +161,7 @@ pub fn deployment_frequency(deployments: f64, period: f64) -> Option<f64> {
 /// assert_eq!(change_failure_rate_percent(8.0, 100.0), Some(8.0));
 /// assert_eq!(change_failure_rate_percent(1.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn change_failure_rate_percent(failed_changes: f64, total_changes: f64) -> Option<f64> {
     if total_changes == 0.0 {
         None
@@ -186,6 +188,7 @@ pub fn change_failure_rate_percent(failed_changes: f64, total_changes: f64) -> O
 /// // A 4-day lead time ≈ 0.57 weeks.
 /// assert!((days_to_weeks(4.0) - 0.5714).abs() < 1e-3);
 /// ```
+#[must_use]
 pub fn days_to_weeks(days: f64) -> f64 {
     days / 7.0
 }
@@ -212,6 +215,7 @@ pub fn days_to_weeks(days: f64) -> f64 {
 /// let reduction = lead_time_reduction_weeks(6.0, days_to_weeks(4.0));
 /// assert!((reduction - 5.4).abs() < 0.05);
 /// ```
+#[must_use]
 pub fn lead_time_reduction_weeks(before_weeks: f64, after_weeks: f64) -> f64 {
     before_weeks - after_weeks
 }
@@ -226,7 +230,7 @@ pub fn lead_time_reduction_weeks(before_weeks: f64, after_weeks: f64) -> f64 {
 ///
 /// * `improvements_per_year` — shipped improvements per year.
 /// * `lead_time_reduction_weeks` — weeks each improvement now arrives sooner.
-/// * `value_per_improvement_per_week` — average CoD per improvement, £/week.
+/// * `value_per_improvement_per_week` — average `CoD` per improvement, £/week.
 ///
 /// # Returns
 ///
@@ -240,6 +244,7 @@ pub fn lead_time_reduction_weeks(before_weeks: f64, after_weeks: f64) -> f64 {
 /// // 30 improvements × 5.4 weeks × £4,000/week ≈ £648,000/year.
 /// assert_eq!(value_pulled_forward(30.0, 5.4, 4_000.0), 648_000.0);
 /// ```
+#[must_use]
 pub fn value_pulled_forward(
     improvements_per_year: f64,
     lead_time_reduction_weeks: f64,
@@ -272,6 +277,7 @@ pub fn value_pulled_forward(
 /// let avoided = failed_changes_avoided(30.0, 0.25, 0.08);
 /// assert!((avoided - 5.1).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn failed_changes_avoided(changes_per_year: f64, cfr_before: f64, cfr_after: f64) -> f64 {
     changes_per_year * (cfr_before - cfr_after)
 }
@@ -300,6 +306,7 @@ pub fn failed_changes_avoided(changes_per_year: f64, cfr_before: f64, cfr_after:
 /// // 30 × (0.25 − 0.08) × £15,000 = £76,500/year.
 /// assert_eq!(failure_cost_avoided(30.0, 0.25, 0.08, 15_000.0), 76_500.0);
 /// ```
+#[must_use]
 pub fn failure_cost_avoided(
     changes_per_year: f64,
     cfr_before: f64,
@@ -333,6 +340,7 @@ pub fn failure_cost_avoided(
 /// let after = downtime_harm(2.0, 1_000.0);
 /// assert_eq!(before / after, 24.0);
 /// ```
+#[must_use]
 pub fn downtime_harm(mttr_hours: f64, harm_per_hour: f64) -> f64 {
     mttr_hours * harm_per_hour
 }
@@ -360,6 +368,7 @@ pub fn downtime_harm(mttr_hours: f64, harm_per_hour: f64) -> f64 {
 /// // A service at 99% availability delivers ≈ 99% of its modeled benefit.
 /// assert!((reliability_adjusted_benefit(1.0, 0.99) - 0.99).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn reliability_adjusted_benefit(modeled_benefit: f64, slo_attainment: f64) -> f64 {
     modeled_benefit * slo_attainment
 }

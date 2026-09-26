@@ -134,6 +134,7 @@ pub const GREEN_BOOK_DISCOUNT_RATE: f64 = 0.035;
 /// // £1 in year 1 is worth 1/1.035 ≈ £0.966 today.
 /// assert!((discount_factor(GREEN_BOOK_DISCOUNT_RATE, 1.0) - 1.0 / 1.035).abs() < 1e-12);
 /// ```
+#[must_use]
 pub fn discount_factor(rate: f64, year: f64) -> f64 {
     1.0 / (1.0 + rate).powf(year)
 }
@@ -164,9 +165,10 @@ pub fn discount_factor(rate: f64, year: f64) -> f64 {
 /// let af = annuity_factor(GREEN_BOOK_DISCOUNT_RATE, 5);
 /// assert!((af - 4.515).abs() < 5e-4);
 /// ```
+#[must_use]
 pub fn annuity_factor(rate: f64, years: u32) -> f64 {
     // Σ_{t=1..years} 1/(1+r)^t — flows land at the END of each year.
-    (1..=years).map(|t| discount_factor(rate, t as f64)).sum()
+    (1..=years).map(|t| discount_factor(rate, f64::from(t))).sum()
 }
 
 /// Present value of a stream of cash flows, where index 0 is year 0
@@ -194,12 +196,18 @@ pub fn annuity_factor(rate: f64, years: u32) -> f64 {
 /// let pv = present_value(&flows, GREEN_BOOK_DISCOUNT_RATE);
 /// assert!((pv - 2_555_000.0).abs() < 1_000.0);
 /// ```
+#[must_use]
 pub fn present_value(flows_by_year: &[f64], rate: f64) -> f64 {
     flows_by_year
         .iter()
         .enumerate()
-        // Index doubles as the year: flow_t / (1+r)^t.
-        .map(|(t, flow)| flow * discount_factor(rate, t as f64))
+        // Index doubles as the year: flow_t / (1+r)^t. Year indices fit
+        // comfortably in f64's 52-bit mantissa for any realistic time horizon.
+        .map(|(t, flow)| {
+            #[allow(clippy::cast_precision_loss)]
+            let year = t as f64;
+            flow * discount_factor(rate, year)
+        })
         .sum()
 }
 
@@ -225,6 +233,7 @@ pub fn present_value(flows_by_year: &[f64], rate: f64) -> f64 {
 /// let npv = net_present_value(5_102_000.0, 2_555_000.0);
 /// assert!((npv - 2_547_000.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn net_present_value(pv_benefits: f64, pv_costs: f64) -> f64 {
     pv_benefits - pv_costs
 }
@@ -253,6 +262,7 @@ pub fn net_present_value(pv_benefits: f64, pv_costs: f64) -> f64 {
 /// assert!((bcr - 2.0).abs() < 0.01);
 /// assert!(benefit_cost_ratio(1.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn benefit_cost_ratio(pv_benefits: f64, pv_costs: f64) -> Option<f64> {
     if pv_costs == 0.0 { None } else { Some(pv_benefits / pv_costs) }
 }
@@ -280,6 +290,7 @@ pub fn benefit_cost_ratio(pv_benefits: f64, pv_costs: f64) -> Option<f64> {
 /// // +40% on the £1.2M build cost → £1.68M.
 /// assert!((optimism_bias_cost_uplift(1_200_000.0, 0.40) - 1_680_000.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn optimism_bias_cost_uplift(cost: f64, uplift: f64) -> f64 {
     cost * (1.0 + uplift)
 }
@@ -308,6 +319,7 @@ pub fn optimism_bias_cost_uplift(cost: f64, uplift: f64) -> f64 {
 /// let adjusted = optimism_bias_benefit_haircut(5_102_000.0, 0.20);
 /// assert!((adjusted - 4_081_600.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn optimism_bias_benefit_haircut(benefit: f64, haircut: f64) -> f64 {
     benefit * (1.0 - haircut)
 }

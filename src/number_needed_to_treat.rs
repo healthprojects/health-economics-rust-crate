@@ -91,7 +91,7 @@
 //! - Laupacis A, Sackett DL, Roberts RS. "An assessment of clinically useful
 //!   measures of the consequences of treatment." NEJM 1988.
 //!   <https://pubmed.ncbi.nlm.nih.gov/3374545/>
-//! - TheNNT explained. <https://www.thennt.com/thennt-explained/>
+//! - `TheNNT` explained. <https://www.thennt.com/thennt-explained/>
 //!
 //! Topic doc: health-economics-metrics/topics/number-needed-to-treat.md
 
@@ -120,6 +120,7 @@
 /// let arr = absolute_risk_reduction(0.032, 0.024);
 /// assert!((arr - 0.008).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn absolute_risk_reduction(control_event_rate: f64, treatment_event_rate: f64) -> f64 {
     control_event_rate - treatment_event_rate
 }
@@ -151,6 +152,7 @@ pub fn absolute_risk_reduction(control_event_rate: f64, treatment_event_rate: f6
 ///
 /// assert!(relative_risk_reduction(0.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn relative_risk_reduction(control_event_rate: f64, treatment_event_rate: f64) -> Option<f64> {
     if control_event_rate == 0.0 {
         None
@@ -186,6 +188,7 @@ pub fn relative_risk_reduction(control_event_rate: f64, treatment_event_rate: f6
 ///
 /// assert!(number_needed_to_treat(0.0).is_none());
 /// ```
+#[must_use]
 pub fn number_needed_to_treat(absolute_risk_reduction: f64) -> Option<f64> {
     if absolute_risk_reduction == 0.0 {
         None
@@ -221,6 +224,7 @@ pub fn number_needed_to_treat(absolute_risk_reduction: f64) -> Option<f64> {
 ///
 /// assert!(number_needed_to_harm(0.02, 0.02).is_none());
 /// ```
+#[must_use]
 pub fn number_needed_to_harm(harm_rate_treatment: f64, harm_rate_control: f64) -> Option<f64> {
     // Excess harm attributable to treatment; NNH inverts it just as NNT
     // inverts the ARR.
@@ -255,6 +259,7 @@ pub fn number_needed_to_harm(harm_rate_treatment: f64, harm_rate_control: f64) -
 /// let cost = cost_per_event_prevented(125.0, 40.0);
 /// assert!((cost - 5_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn cost_per_event_prevented(nnt: f64, cost_per_treatment_course: f64) -> f64 {
     nnt * cost_per_treatment_course
 }
@@ -286,6 +291,7 @@ pub fn cost_per_event_prevented(nnt: f64, cost_per_treatment_course: f64) -> f64
 ///
 /// assert!(prevention_payoff_ratio(12_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn prevention_payoff_ratio(cost_of_event: f64, cost_per_event_prevented: f64) -> Option<f64> {
     if cost_per_event_prevented == 0.0 {
         None

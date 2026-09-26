@@ -1,16 +1,16 @@
 //! Comprehensive integration tests — group 5.
 //!
 //! Modules under test:
-//! - health_technology_assessment
-//! - incremental_cost_effectiveness_ratio
-//! - inference_unit_economics
-//! - length_of_stay
-//! - life_years_gained
-//! - marginal_vs_average_cost
-//! - national_tariff_and_unit_costs
-//! - net_monetary_benefit
-//! - nice_evidence_standards_framework
-//! - number_needed_to_treat
+//! - `health_technology_assessment`
+//! - `incremental_cost_effectiveness_ratio`
+//! - `inference_unit_economics`
+//! - `length_of_stay`
+//! - `life_years_gained`
+//! - `marginal_vs_average_cost`
+//! - `national_tariff_and_unit_costs`
+//! - `net_monetary_benefit`
+//! - `nice_evidence_standards_framework`
+//! - `number_needed_to_treat`
 //!
 //! Sections: 1. EDGE CASES, 2. PROPERTIES / INVARIANTS,
 //! 3. CROSS-MODULE CONSISTENCY, 4. DOMAIN SCENARIOS.
@@ -37,7 +37,7 @@ const TOL: f64 = 1e-9;
 // 1. EDGE CASES
 // =========================================================================
 
-/// Locks down: both icer() functions return None exactly when ΔE == 0, and only then.
+/// Locks down: both `icer()` functions return None exactly when ΔE == 0, and only then.
 #[test]
 fn edge_icer_none_exactly_at_zero_delta_effect() {
     assert!(hta::icer(450.0, 0.0).is_none());
@@ -71,7 +71,7 @@ fn edge_icer_extreme_magnitudes_stay_finite() {
     assert!((small - 1e-24).abs() < 1e-30);
 }
 
-/// Locks down: meets_threshold / adopt_at_threshold are strict — equality does not clear.
+/// Locks down: `meets_threshold` / `adopt_at_threshold` are strict — equality does not clear.
 #[test]
 fn edge_threshold_comparisons_are_strict_at_equality() {
     assert!(!hta::meets_threshold(20_000.0, 20_000.0));
@@ -80,7 +80,7 @@ fn edge_threshold_comparisons_are_strict_at_equality() {
     assert!(icer_mod::adopt_at_threshold(-5.0, 0.0)); // negative ICER clears a zero threshold
 }
 
-/// Locks down: probability_cost_effective is None only for an empty draw set; 0 and 1 are reachable.
+/// Locks down: `probability_cost_effective` is None only for an empty draw set; 0 and 1 are reachable.
 #[test]
 fn edge_probability_cost_effective_empty_and_saturated() {
     assert!(hta::probability_cost_effective(&[], 20_000.0).is_none());
@@ -99,7 +99,7 @@ fn edge_probability_cost_effective_boundary_draw_is_unfavorable() {
     assert!((p - 0.0).abs() < TOL);
 }
 
-/// Locks down: ReferenceCaseChecklist fails on any single false; recommend requires pass AND strict threshold.
+/// Locks down: `ReferenceCaseChecklist` fails on any single false; recommend requires pass AND strict threshold.
 #[test]
 fn edge_checklist_single_failure_and_boundary_icer_reject() {
     let all_true = hta::ReferenceCaseChecklist {
@@ -121,7 +121,7 @@ fn edge_checklist_single_failure_and_boundary_icer_reject() {
     assert!(!hta::recommend_routine_commissioning(&all_true, 20_000.0, 20_000.0));
 }
 
-/// Locks down: classify_quadrant's ΔE = 0 axis is OnAxis for every sign of ΔC.
+/// Locks down: `classify_quadrant`'s ΔE = 0 axis is `OnAxis` for every sign of ΔC.
 #[test]
 fn edge_classify_quadrant_zero_effect_axis() {
     for dc in [-5.0, 0.0, 5.0, 1e12] {
@@ -129,14 +129,14 @@ fn edge_classify_quadrant_zero_effect_axis() {
     }
 }
 
-/// Locks down: ΔC = 0 boundary — free-and-better is Dominant, free-and-worse is SavingsForLoss.
+/// Locks down: ΔC = 0 boundary — free-and-better is Dominant, free-and-worse is `SavingsForLoss`.
 #[test]
 fn edge_classify_quadrant_zero_cost_boundary() {
     assert_eq!(icer_mod::classify_quadrant(0.0, 1.0), CostEffectivenessQuadrant::Dominant);
     assert_eq!(icer_mod::classify_quadrant(0.0, -1.0), CostEffectivenessQuadrant::SavingsForLoss);
 }
 
-/// Locks down: net_incremental_cost goes negative when offsets exceed gross (dominance candidate).
+/// Locks down: `net_incremental_cost` goes negative when offsets exceed gross (dominance candidate).
 #[test]
 fn edge_net_incremental_cost_offsets_exceed_gross() {
     let dc = icer_mod::net_incremental_cost(500_000.0, 900_000.0);
@@ -156,7 +156,7 @@ fn edge_inference_zero_and_extreme_tokens() {
     assert!((c - 18e6).abs() < 1e-3); // 1e12 × (3+15)/1e6 = 18,000,000
 }
 
-/// Locks down: cost_share_of_value is None exactly at zero value; annual_cost at zero volume is 0.
+/// Locks down: `cost_share_of_value` is None exactly at zero value; `annual_cost` at zero volume is 0.
 #[test]
 fn edge_inference_zero_value_and_zero_volume() {
     assert!(infer::cost_share_of_value(0.0765, 0.0).is_none());
@@ -165,7 +165,7 @@ fn edge_inference_zero_value_and_zero_volume() {
     assert!((infer::annual_cost(0.0, 1e12) - 0.0).abs() < TOL);
 }
 
-/// Locks down: projected_cost at t = 0 is the base cost, and d = 1 holds prices flat forever.
+/// Locks down: `projected_cost` at t = 0 is the base cost, and d = 1 holds prices flat forever.
 #[test]
 fn edge_projected_cost_zero_years_and_flat_ratio() {
     assert!((infer::projected_cost(1_000.0, 0.3, 0.0) - 1_000.0).abs() < TOL);
@@ -173,7 +173,7 @@ fn edge_projected_cost_zero_years_and_flat_ratio() {
     assert!(infer::projected_cost(1e12, 0.5, 30.0).is_finite());
 }
 
-/// Locks down: average_length_of_stay is None exactly at zero discharges.
+/// Locks down: `average_length_of_stay` is None exactly at zero discharges.
 #[test]
 fn edge_average_los_none_at_zero_discharges() {
     assert!(los::average_length_of_stay(240.0, 0.0).is_none());
@@ -199,7 +199,7 @@ fn edge_length_of_stay_zero_and_negative() {
     assert!((los::length_of_stay_days(16.0, 10.0) - -6.0).abs() < TOL);
 }
 
-/// Locks down: beds_occupied at zero rate or zero LOS is 0; beds_freed is negative when LOS rises.
+/// Locks down: `beds_occupied` at zero rate or zero LOS is 0; `beds_freed` is negative when LOS rises.
 #[test]
 fn edge_beds_occupied_zero_and_beds_freed_negative() {
     assert!((los::beds_occupied(0.0, 6.0) - 0.0).abs() < TOL);
@@ -208,7 +208,7 @@ fn edge_beds_occupied_zero_and_beds_freed_negative() {
     assert!((los::annual_bed_days_freed(0.0) - 0.0).abs() < TOL);
 }
 
-/// Locks down: area_between_survival_curves rejects mismatched lengths, empty, and single points.
+/// Locks down: `area_between_survival_curves` rejects mismatched lengths, empty, and single points.
 #[test]
 fn edge_area_between_curves_malformed_inputs() {
     assert!(lyg::area_between_survival_curves(&[], &[], &[]).is_none());
@@ -235,7 +235,7 @@ fn edge_area_between_curves_crossing_regions_subtract() {
     assert!((area2 - -0.05).abs() < TOL);
 }
 
-/// Locks down: utility 0 zeroes the QALY view; monetary_value at zero threshold is 0 (not None).
+/// Locks down: utility 0 zeroes the QALY view; `monetary_value` at zero threshold is 0 (not None).
 #[test]
 fn edge_lyg_zero_utility_and_zero_threshold() {
     assert!((lyg::qalys_from_life_extension(96.0, 0.0) - 0.0).abs() < TOL);
@@ -246,7 +246,7 @@ fn edge_lyg_zero_utility_and_zero_threshold() {
     assert!((lyg::life_years_gained_from_deaths_prevented(0.0, 8.0) - 0.0).abs() < TOL);
 }
 
-/// Locks down: average_cost is None exactly at zero quantity; huge quantities stay finite.
+/// Locks down: `average_cost` is None exactly at zero quantity; huge quantities stay finite.
 #[test]
 fn edge_average_cost_zero_quantity_and_extremes() {
     assert!(mva::average_cost(400_000.0, 0.0).is_none());
@@ -257,7 +257,7 @@ fn edge_average_cost_zero_quantity_and_extremes() {
     assert!((mva::marginal_saving(0.0, 120.0) - 0.0).abs() < TOL);
 }
 
-/// Locks down: crosses_capacity_step is inclusive (>=) at the exact step boundary.
+/// Locks down: `crosses_capacity_step` is inclusive (>=) at the exact step boundary.
 #[test]
 fn edge_crosses_capacity_step_boundary_inclusive() {
     let step = mva::ward_bed_days_per_year(20.0);
@@ -266,14 +266,14 @@ fn edge_crosses_capacity_step_boundary_inclusive() {
     assert!((mva::ward_bed_days_per_year(0.0) - 0.0).abs() < TOL);
 }
 
-/// Locks down: step_change_saving is negative when total cost rises (no clamping).
+/// Locks down: `step_change_saving` is negative when total cost rises (no clamping).
 #[test]
 fn edge_step_change_saving_negative_when_cost_rises() {
     assert!((mva::step_change_saving(8_500_000.0, 10_000_000.0) - -1_500_000.0).abs() < TOL);
     assert!((mva::step_change_saving(1e12, 0.0) - 1e12).abs() < 1e-3);
 }
 
-/// Locks down: ncc_unit_cost and valuation_ratio are None exactly at zero denominators.
+/// Locks down: `ncc_unit_cost` and `valuation_ratio` are None exactly at zero denominators.
 #[test]
 fn edge_tariff_zero_denominators() {
     assert!(tariff::ncc_unit_cost(16_000_000.0, 0.0).is_none());
@@ -282,7 +282,7 @@ fn edge_tariff_zero_denominators() {
     assert!(tariff::valuation_ratio(0.0, 7_750.0).is_some());
 }
 
-/// Locks down: blended_payment at zero activity is the fixed element alone; MFF 1.0 is identity.
+/// Locks down: `blended_payment` at zero activity is the fixed element alone; MFF 1.0 is identity.
 #[test]
 fn edge_tariff_degenerate_blend_and_identity_mff() {
     assert!((tariff::blended_payment(1_000_000.0, 160.0, 0.0) - 1_000_000.0).abs() < TOL);
@@ -292,7 +292,7 @@ fn edge_tariff_degenerate_blend_and_identity_mff() {
     assert!((tariff::redeployed_activity_value(0.0, 250.0, 160.0) - 0.0).abs() < TOL);
 }
 
-/// Locks down: net_health_benefit is None exactly at λ = 0; NMB itself is total at any λ.
+/// Locks down: `net_health_benefit` is None exactly at λ = 0; NMB itself is total at any λ.
 #[test]
 fn edge_nhb_none_at_zero_lambda() {
     assert!(nmb_mod::net_health_benefit(30.0, 400_000.0, 0.0).is_none());
@@ -309,7 +309,7 @@ fn edge_adopt_zero_nmb_is_not_adoption() {
     assert!(!nmb_mod::adopt(-1e-300));
 }
 
-/// Locks down: best_option_index is None for empty input, Some(0) for a single option.
+/// Locks down: `best_option_index` is None for empty input, Some(0) for a single option.
 #[test]
 fn edge_best_option_index_empty_and_singleton() {
     assert!(nmb_mod::best_option_index(&[], 20_000.0).is_none());
@@ -317,7 +317,7 @@ fn edge_best_option_index_empty_and_singleton() {
     assert_eq!(nmb_mod::best_option_index(&one, 20_000.0), Some(0)); // even a value-destroying option is argmax of itself
 }
 
-/// Locks down: years_to_recoup_evidence_cost is None exactly at zero incremental revenue.
+/// Locks down: `years_to_recoup_evidence_cost` is None exactly at zero incremental revenue.
 #[test]
 fn edge_years_to_recoup_none_at_zero_revenue() {
     assert!(esf::years_to_recoup_evidence_cost(600_000.0, 0.0).is_none());
@@ -326,7 +326,7 @@ fn edge_years_to_recoup_none_at_zero_revenue() {
     assert!(esf::years_to_recoup_evidence_cost(1e12, 1.0).unwrap().is_finite());
 }
 
-/// Locks down: evidence_investment_range endpoints for every tier as coded.
+/// Locks down: `evidence_investment_range` endpoints for every tier as coded.
 #[test]
 fn edge_evidence_ranges_exact_endpoints() {
     assert_eq!(esf::evidence_investment_range(EsfTier::A), (10_000.0, 50_000.0));
@@ -356,7 +356,7 @@ fn edge_rrr_and_nnh_none_conditions() {
     assert!((nnh - -50.0).abs() < 1e-6);
 }
 
-/// Locks down: prevention_payoff_ratio None at zero prevention cost; extreme NNT stays finite.
+/// Locks down: `prevention_payoff_ratio` None at zero prevention cost; extreme NNT stays finite.
 #[test]
 fn edge_prevention_payoff_and_extreme_nnt() {
     assert!(nnt_mod::prevention_payoff_ratio(12_000.0, 0.0).is_none());
@@ -372,7 +372,7 @@ fn edge_prevention_payoff_and_extreme_nnt() {
 // 2. PROPERTIES / INVARIANTS
 // =========================================================================
 
-/// Locks down: ICER/NMB duality — adopt_at_threshold(ICER, λ) ⇔ NMB > 0 for all ΔC, ΔE > 0, λ on a grid.
+/// Locks down: ICER/NMB duality — `adopt_at_threshold(ICER, λ)` ⇔ NMB > 0 for all ΔC, ΔE > 0, λ on a grid.
 #[test]
 fn prop_icer_nmb_duality_on_grid() {
     let dcs = [100.0, 450.0, 10_000.0, 300_000.0];
@@ -405,7 +405,7 @@ fn prop_icer_nmb_agree_at_exact_equality() {
     assert!(!nmb_mod::adopt(nmb));
 }
 
-/// Locks down: classify_quadrant maps all four strict sign combinations to the right variant.
+/// Locks down: `classify_quadrant` maps all four strict sign combinations to the right variant.
 #[test]
 fn prop_classify_quadrant_four_sign_combinations() {
     for &(dc, de, want) in &[
@@ -436,7 +436,7 @@ fn prop_nmb_linearity_in_lambda() {
     }
 }
 
-/// Locks down: best_option_index picks the argmax NMB and keeps the earliest option on ties.
+/// Locks down: `best_option_index` picks the argmax NMB and keeps the earliest option on ties.
 #[test]
 fn prop_best_option_index_is_argmax_and_tie_stable() {
     let options = [
@@ -461,7 +461,7 @@ fn prop_best_option_index_is_argmax_and_tie_stable() {
     assert_eq!(nmb_mod::best_option_index(&tied, 20_000.0), Some(0));
 }
 
-/// Locks down: probability_cost_effective stays in [0,1] and equals the hand-counted fraction.
+/// Locks down: `probability_cost_effective` stays in [0,1] and equals the hand-counted fraction.
 #[test]
 fn prop_probability_cost_effective_matches_hand_count() {
     // Hand count at λ = 20,000 (NMB = ΔE×λ − ΔC, strict > 0):
@@ -479,7 +479,7 @@ fn prop_probability_cost_effective_matches_hand_count() {
     }
 }
 
-/// Locks down: Little's Law — beds_occupied is linear in both rate and LOS on a grid.
+/// Locks down: Little's Law — `beds_occupied` is linear in both rate and LOS on a grid.
 #[test]
 fn prop_beds_occupied_bilinear() {
     for rate in [1.0, 7.0, 40.0] {
@@ -491,7 +491,7 @@ fn prop_beds_occupied_bilinear() {
     }
 }
 
-/// Locks down: beds_freed equals the difference of the two Little's-Law occupancies; annual = beds × 365.
+/// Locks down: `beds_freed` equals the difference of the two Little's-Law occupancies; annual = beds × 365.
 #[test]
 fn prop_beds_freed_is_occupancy_difference_and_annualizes_at_365() {
     for rate in [10.0, 40.0] {
@@ -571,7 +571,7 @@ fn prop_nnt_inverse_and_halving_doubles() {
     }
 }
 
-/// Locks down: cost_per_event_prevented is exactly NNT × course cost on a grid.
+/// Locks down: `cost_per_event_prevented` is exactly NNT × course cost on a grid.
 #[test]
 fn prop_cost_per_event_prevented_is_product() {
     for nnt in [10.0, 125.0, 400.0] {
@@ -609,7 +609,7 @@ fn prop_naive_saving_dominates_marginal_when_fixed_costs_exist() {
     }
 }
 
-/// Locks down: average_cost × quantity round-trips to total cost; step saving equals removed spend.
+/// Locks down: `average_cost` × quantity round-trips to total cost; step saving equals removed spend.
 #[test]
 fn prop_average_cost_roundtrip_and_step_change() {
     for &(tc, q) in &[(400_000.0, 1_000.0), (16_000_000.0, 100_000.0), (7.0, 3.0)] {
@@ -626,7 +626,7 @@ fn prop_average_cost_roundtrip_and_step_change() {
     assert!(!mva::crosses_capacity_step(5_840.0, step));
 }
 
-/// Locks down: EsfTier Ord is A < B < C, and classify_tier covers every ClinicalFunction variant.
+/// Locks down: `EsfTier` Ord is A < B < C, and `classify_tier` covers every `ClinicalFunction` variant.
 #[test]
 fn prop_esf_tier_ordering_and_total_classification() {
     assert!(EsfTier::A < EsfTier::B);
@@ -649,7 +649,7 @@ fn prop_esf_evidence_ranges_escalate_and_touch() {
     assert!(c_lo / b_lo >= 5.0); // "moving a tier can 10× the bill" — at least 5× at the low end
 }
 
-/// Locks down: cost_per_unit is exactly the sum of the constituent cost_per_call values.
+/// Locks down: `cost_per_unit` is exactly the sum of the constituent `cost_per_call` values.
 #[test]
 fn prop_cost_per_unit_is_sum_of_calls() {
     let calls = [
@@ -663,7 +663,7 @@ fn prop_cost_per_unit_is_sum_of_calls() {
     }
 }
 
-/// Locks down: projected_cost is identity at d = 1, strictly decreasing in t for d < 1, and compounds.
+/// Locks down: `projected_cost` is identity at d = 1, strictly decreasing in t for d < 1, and compounds.
 #[test]
 fn prop_projected_cost_identity_monotone_and_compounding() {
     for t in [0.0, 1.0, 2.5, 10.0] {
@@ -687,7 +687,7 @@ fn prop_projected_cost_identity_monotone_and_compounding() {
 // 3. CROSS-MODULE CONSISTENCY
 // =========================================================================
 
-/// Locks down: hta::icer and incremental_cost_effectiveness_ratio::icer agree on values and None conditions.
+/// Locks down: `hta::icer` and `incremental_cost_effectiveness_ratio::icer` agree on values and None conditions.
 #[test]
 fn cross_icer_implementations_agree() {
     let cases = [(450.0, 0.03), (300_000.0, 25.0), (-56.0, 8e-5), (900_000.0, 25.0), (0.0, 1.0), (5.0, -2.0)];
@@ -699,10 +699,10 @@ fn cross_icer_implementations_agree() {
     assert_eq!(hta::icer(450.0, 0.0).is_none(), icer_mod::icer(450.0, 0.0).is_none());
 }
 
-/// Locks down: hta::meets_threshold and icer_mod::adopt_at_threshold implement the same strict rule.
+/// Locks down: `hta::meets_threshold` and `icer_mod::adopt_at_threshold` implement the same strict rule.
 #[test]
 fn cross_threshold_rules_agree_including_equality() {
-    for icer_value in [11_999.9, 12_000.0, 20_000.0, 20_000.000001, 36_000.0, -700_000.0] {
+    for icer_value in [11_999.9, 12_000.0, 20_000.0, 20_000.000_001, 36_000.0, -700_000.0] {
         for threshold in [12_000.0, 20_000.0, 30_000.0] {
             assert_eq!(
                 hta::meets_threshold(icer_value, threshold),
@@ -729,7 +729,7 @@ fn cross_single_draw_probability_matches_nmb_adopt() {
     }
 }
 
-/// Locks down: in the TradeOff quadrant, NMB adoption, ICER threshold, and HTA recommendation align.
+/// Locks down: in the `TradeOff` quadrant, NMB adoption, ICER threshold, and HTA recommendation align.
 #[test]
 fn cross_quadrant_icer_nmb_and_recommendation_align() {
     let checklist = hta::ReferenceCaseChecklist {
@@ -871,7 +871,7 @@ fn scenario_llm_feature_unit_economics_and_esf() {
     let annual = infer::annual_cost(per_unit, 100_000.0);
     assert!((annual - 7_650.0).abs() < TOL);
     let share = infer::cost_share_of_value(per_unit, 31.25).unwrap();
-    assert!((share - 0.002448).abs() < 1e-6);
+    assert!((share - 0.002_448).abs() < 1e-6);
 
     // Price-decline scenario d = 0.5: year-2 annual cost is a quarter — $1,912.50.
     let annual_y2 = infer::projected_cost(annual, 0.5, 2.0);

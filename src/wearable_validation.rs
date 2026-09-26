@@ -145,6 +145,7 @@
 /// // A zero reference value makes the percentage undefined.
 /// assert!(mape_percent(&[1.0], &[0.0]).is_none());
 /// ```
+#[must_use]
 pub fn mape_percent(measured: &[f64], reference: &[f64]) -> Option<f64> {
     if measured.is_empty() || measured.len() != reference.len() {
         return None;
@@ -157,7 +158,9 @@ pub fn mape_percent(measured: &[f64], reference: &[f64]) -> Option<f64> {
         // Absolute percentage error term: |measured − reference| / reference.
         sum += (m - r).abs() / r;
     }
-    // Mean of the per-pair terms, scaled to percent.
+    // Mean of the per-pair terms, scaled to percent. Sample sizes fit
+    // comfortably in f64's 52-bit mantissa for any realistic validation set.
+    #[allow(clippy::cast_precision_loss)]
     Some(sum / measured.len() as f64 * 100.0)
 }
 
@@ -199,11 +202,15 @@ pub fn mape_percent(measured: &[f64], reference: &[f64]) -> Option<f64> {
 /// let ccc = concordance_correlation(&biased, &reference).unwrap();
 /// assert!((ccc - 0.8).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn concordance_correlation(measured: &[f64], reference: &[f64]) -> Option<f64> {
     let n = measured.len();
     if n == 0 || n != reference.len() {
         return None;
     }
+    // Sample sizes fit comfortably in f64's 52-bit mantissa for any
+    // realistic validation set.
+    #[allow(clippy::cast_precision_loss)]
     let nf = n as f64;
     let mean_x = measured.iter().sum::<f64>() / nf;
     let mean_y = reference.iter().sum::<f64>() / nf;
@@ -282,11 +289,15 @@ pub struct BlandAltman {
 /// // A single pair cannot yield a sample SD.
 /// assert!(bland_altman(&[1.0], &[1.0]).is_none());
 /// ```
+#[must_use]
 pub fn bland_altman(measured: &[f64], reference: &[f64]) -> Option<BlandAltman> {
     let n = measured.len();
     if n < 2 || n != reference.len() {
         return None;
     }
+    // Sample sizes fit comfortably in f64's 52-bit mantissa for any
+    // realistic validation set.
+    #[allow(clippy::cast_precision_loss)]
     let nf = n as f64;
     // Paired differences d_i = measured_i − reference_i.
     let diffs: Vec<f64> = measured
@@ -334,6 +345,7 @@ pub fn bland_altman(measured: &[f64], reference: &[f64]) -> Option<BlandAltman> 
 /// let compliance = wear_time_compliance_percent(16.0, 30.0).unwrap();
 /// assert!((compliance - 53.33).abs() < 0.01);
 /// ```
+#[must_use]
 pub fn wear_time_compliance_percent(time_worn: f64, protocol_time: f64) -> Option<f64> {
     if protocol_time == 0.0 {
         None
@@ -366,6 +378,7 @@ pub fn wear_time_compliance_percent(time_worn: f64, protocol_time: f64) -> Optio
 /// let completeness = data_completeness_percent(900.0, 1_000.0).unwrap();
 /// assert!((completeness - 90.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn data_completeness_percent(observed_points: f64, expected_points: f64) -> Option<f64> {
     if expected_points == 0.0 {
         None
@@ -418,6 +431,7 @@ pub enum HeartRateMapeGrade {
 /// assert_eq!(classify_heart_rate_mape(6.9), HeartRateMapeGrade::Lenient);
 /// assert_eq!(classify_heart_rate_mape(11.4), HeartRateMapeGrade::Fail);
 /// ```
+#[must_use]
 pub fn classify_heart_rate_mape(mape_percent: f64) -> HeartRateMapeGrade {
     if mape_percent <= 5.0 {
         HeartRateMapeGrade::Strict
@@ -453,6 +467,7 @@ pub fn classify_heart_rate_mape(mape_percent: f64) -> HeartRateMapeGrade {
 /// let err = absolute_error_at(11.4, 100.0);
 /// assert!((err - 11.4).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn absolute_error_at(mape_percent: f64, true_value: f64) -> f64 {
     mape_percent / 100.0 * true_value
 }
@@ -485,6 +500,7 @@ pub fn absolute_error_at(mape_percent: f64, true_value: f64) -> f64 {
 /// let cost = annual_false_alert_cost(500.0, 2.0, 40.0);
 /// assert_eq!(cost, 2_080_000.0);
 /// ```
+#[must_use]
 pub fn annual_false_alert_cost(
     patient_count: f64,
     extra_false_alerts_per_patient_per_week: f64,

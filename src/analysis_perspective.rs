@@ -180,6 +180,7 @@ impl ImpactItem {
     /// assert!(!patient_time.included_in(Perspective::Payer));
     /// assert!(patient_time.included_in(Perspective::Societal));
     /// ```
+    #[must_use]
     pub fn included_in(&self, perspective: Perspective) -> bool {
         match perspective {
             Perspective::Payer => self.counts_for_payer,
@@ -222,6 +223,7 @@ impl ImpactItem {
 /// assert!((net_value_from_perspective(&items, Perspective::Payer) - 420_000.0).abs() < 1e-9);
 /// assert!((net_value_from_perspective(&items, Perspective::Societal) - 120_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn net_value_from_perspective(items: &[ImpactItem], perspective: Perspective) -> f64 {
     items
         .iter()
@@ -251,6 +253,7 @@ pub fn net_value_from_perspective(items: &[ImpactItem], perspective: Perspective
 /// let savings = payer_savings(10_000.0, 42.0);
 /// assert!((savings - 420_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn payer_savings(visits_diverted: f64, cost_per_visit: f64) -> f64 {
     visits_diverted * cost_per_visit
 }
@@ -280,6 +283,7 @@ pub fn payer_savings(visits_diverted: f64, cost_per_visit: f64) -> f64 {
 /// let value = patient_time_value(10_000.0, 2.0, 15.0);
 /// assert!((value - 300_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn patient_time_value(visits: f64, hours_per_visit: f64, value_per_hour: f64) -> f64 {
     visits * hours_per_visit * value_per_hour
 }
@@ -312,6 +316,7 @@ pub fn patient_time_value(visits: f64, hours_per_visit: f64, value_per_hour: f64
 /// let harm = false_reassurance_harm(10_000.0, 0.02, 3_000.0);
 /// assert!((harm - 600_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn false_reassurance_harm(
     visits: f64,
     false_reassurance_rate: f64,
@@ -404,6 +409,11 @@ mod tests {
         let payer = net_value_from_perspective(&items, Perspective::Payer);
         let provider = net_value_from_perspective(&items, Perspective::Provider);
         let societal = net_value_from_perspective(&items, Perspective::Societal);
-        assert!(payer != provider && provider != societal && payer != societal);
+        let tol = 1e-9;
+        assert!(
+            (payer - provider).abs() > tol
+                && (provider - societal).abs() > tol
+                && (payer - societal).abs() > tol
+        );
     }
 }

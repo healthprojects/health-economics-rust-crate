@@ -133,6 +133,7 @@
 /// // Ambient scribing saves 2 minutes × 30 consultations = 60 minutes/day.
 /// assert_eq!(daily_minutes_saved(2.0, 30.0), 60.0);
 /// ```
+#[must_use]
 pub fn daily_minutes_saved(
     minutes_saved_per_consultation: f64,
     consultations_per_day: f64,
@@ -163,6 +164,7 @@ pub fn daily_minutes_saved(
 /// // 60 minutes/day over 220 working days = 220 hours/year per GP.
 /// assert_eq!(annual_hours_saved(60.0, 220.0), 220.0);
 /// ```
+#[must_use]
 pub fn annual_hours_saved(daily_minutes_saved: f64, working_days_per_year: f64) -> f64 {
     daily_minutes_saved * working_days_per_year / 60.0
 }
@@ -191,6 +193,7 @@ pub fn annual_hours_saved(daily_minutes_saved: f64, working_days_per_year: f64) 
 /// // 220 hours × £80 loaded GP hour ≈ £17,600/GP/year.
 /// assert_eq!(wage_basis_value(220.0, 80.0), 17_600.0);
 /// ```
+#[must_use]
 pub fn wage_basis_value(hours_saved: f64, loaded_hourly_rate: f64) -> f64 {
     hours_saved * loaded_hourly_rate
 }
@@ -223,6 +226,7 @@ pub fn wage_basis_value(hours_saved: f64, loaded_hourly_rate: f64) -> f64 {
 /// // A zero-length appointment is undefined.
 /// assert_eq!(extra_appointments_per_day(60.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn extra_appointments_per_day(
     daily_minutes_saved: f64,
     minutes_per_appointment: f64,
@@ -256,6 +260,7 @@ pub fn extra_appointments_per_day(
 /// // 5/day × 220 days = 1,100 extra appointments/GP/year.
 /// assert_eq!(annual_extra_appointments(5.0, 220.0), 1_100.0);
 /// ```
+#[must_use]
 pub fn annual_extra_appointments(
     extra_appointments_per_day: f64,
     working_days_per_year: f64,
@@ -288,6 +293,7 @@ pub fn annual_extra_appointments(
 /// // 1,100 appointments × £42 ≈ £46,200/GP/year.
 /// assert_eq!(output_basis_value(1_100.0, 42.0), 46_200.0);
 /// ```
+#[must_use]
 pub fn output_basis_value(annual_extra_appointments: f64, value_per_appointment: f64) -> f64 {
     annual_extra_appointments * value_per_appointment
 }
@@ -317,6 +323,7 @@ pub fn output_basis_value(annual_extra_appointments: f64, value_per_appointment:
 /// // 220 released hours are worth £110,000/year.
 /// assert_eq!(bottleneck_basis_value(220.0, 500.0), 110_000.0);
 /// ```
+#[must_use]
 pub fn bottleneck_basis_value(hours_saved: f64, pathway_value_per_hour: f64) -> f64 {
     hours_saved * pathway_value_per_hour
 }
@@ -346,6 +353,7 @@ pub fn bottleneck_basis_value(hours_saved: f64, pathway_value_per_hour: f64) -> 
 /// // the £46,200 output-basis value falls to £23,100.
 /// assert_eq!(fragmentation_adjusted_value(46_200.0, 0.5), 23_100.0);
 /// ```
+#[must_use]
 pub fn fragmentation_adjusted_value(raw_value: f64, utilization_factor: f64) -> f64 {
     raw_value * utilization_factor
 }

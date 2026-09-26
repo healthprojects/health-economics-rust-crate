@@ -115,7 +115,7 @@ pub struct HealthState {
 
 /// Total QALYs accrued over a sequence of health states.
 ///
-/// Computes Σ duration_i × utility_i across the given states.
+/// Computes Σ `duration_i` × `utility_i` across the given states.
 ///
 /// # Arguments
 ///
@@ -135,6 +135,7 @@ pub struct HealthState {
 /// let states = [HealthState { duration_years: 0.5, utility: 0.76 }];
 /// assert!((total_qalys(&states) - 0.38).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn total_qalys(states: &[HealthState]) -> f64 {
     states.iter().map(|s| s.duration_years * s.utility).sum()
 }
@@ -163,6 +164,7 @@ pub fn total_qalys(states: &[HealthState]) -> f64 {
 /// let old = [HealthState { duration_years: 0.5, utility: 0.68 }];
 /// assert!((delta_qalys(&new, &old) - 0.04).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn delta_qalys(new_states: &[HealthState], old_states: &[HealthState]) -> f64 {
     total_qalys(new_states) - total_qalys(old_states)
 }
@@ -190,11 +192,12 @@ pub fn delta_qalys(new_states: &[HealthState], old_states: &[HealthState]) -> f6
 /// // 40% of app users no longer need £1,700 face-to-face therapy: £680 saved.
 /// assert_eq!(displaced_care_saving(0.40, 1_700.0), 680.0);
 /// ```
+#[must_use]
 pub fn displaced_care_saving(displacement_fraction: f64, comparator_cost: f64) -> f64 {
     displacement_fraction * comparator_cost
 }
 
-/// Incremental cost-utility ratio: ΔCost / ΔQALYs (£/QALY).
+/// Incremental cost-utility ratio: `ΔCost` / ΔQALYs (£/QALY).
 ///
 /// The ICER with QALYs as the effect unit; judged against the
 /// willingness-to-pay threshold (£20,000–30,000/QALY at NICE). Note that a
@@ -221,6 +224,7 @@ pub fn displaced_care_saving(displacement_fraction: f64, comparator_cost: f64) -
 /// // No QALY difference: no ratio.
 /// assert_eq!(icur(100.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn icur(delta_cost: f64, delta_qalys: f64) -> Option<f64> {
     if delta_qalys == 0.0 {
         None
@@ -252,6 +256,7 @@ pub fn icur(delta_cost: f64, delta_qalys: f64) -> Option<f64> {
 /// assert!(is_dominant(-430.0, 0.04));
 /// assert!(!is_dominant(80.0, 0.04)); // costs money — not dominant
 /// ```
+#[must_use]
 pub fn is_dominant(delta_cost: f64, delta_qalys: f64) -> bool {
     delta_cost < 0.0 && delta_qalys > 0.0
 }

@@ -1,16 +1,16 @@
 //! Comprehensive integration tests, group 1.
 //!
 //! Covers:
-//! - activation_and_uptake
-//! - adherence_and_persistence
-//! - ai_developer_productivity
-//! - ai_quality_metrics
-//! - ai_regulatory_evaluation
-//! - ai_return_on_investment
-//! - analysis_perspective
-//! - avoidable_outsourcing_costs
-//! - avoided_downstream_costs
-//! - bed_days_saved
+//! - `activation_and_uptake`
+//! - `adherence_and_persistence`
+//! - `ai_developer_productivity`
+//! - `ai_quality_metrics`
+//! - `ai_regulatory_evaluation`
+//! - `ai_return_on_investment`
+//! - `analysis_perspective`
+//! - `avoidable_outsourcing_costs`
+//! - `avoided_downstream_costs`
+//! - `bed_days_saved`
 //!
 //! Sections: 1. EDGE CASES, 2. PROPERTIES / INVARIANTS,
 //! 3. CROSS-MODULE CONSISTENCY, 4. DOMAIN SCENARIOS.
@@ -156,8 +156,8 @@ fn edge_pdc_caps_at_100_but_mpr_does_not_on_oversupply() {
 fn edge_is_adherent_boundary_is_inclusive_at_80() {
     // Locks down: the ≥80% bar is inclusive (>=), so exactly 80.0 is adherent.
     assert!(is_adherent(80.0));
-    assert!(!is_adherent(79.999999));
-    assert!(is_adherent(80.000001));
+    assert!(!is_adherent(79.999_999));
+    assert!(is_adherent(80.000_001));
     assert!(is_adherent(100.0));
     assert!(!is_adherent(0.0));
 }

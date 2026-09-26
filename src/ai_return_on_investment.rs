@@ -1,8 +1,8 @@
 //! # AI Return on Investment
 //!
 //! AI ROI is the measurable P&L return attributable to AI initiatives. The
-//! sobering benchmark: MIT's 2025 "GenAI Divide" research found that despite
-//! $30–40B of enterprise GenAI investment, ~95% of pilots showed no
+//! sobering benchmark: MIT's 2025 "`GenAI` Divide" research found that despite
+//! $30–40B of enterprise `GenAI` investment, ~95% of pilots showed no
 //! measurable P&L return — and the successful 5% shared identifiable habits:
 //! a baseline, an owner, and a budget line.
 //!
@@ -73,7 +73,7 @@
 //!
 //! - **Stage the evidence like NICE ESF tiers**: demo-grade evidence for
 //!   low-stakes tools, controlled pilots before org-wide spend, rollout gates
-//!   pre-registered (DiGA's provisional-listing-with-deadline pattern).
+//!   pre-registered (`DiGA`'s provisional-listing-with-deadline pattern).
 //! - **Count cost avoidance the way health economics counts demand
 //!   avoidance** — real only when a specific budget line moves.
 //! - **Price the pilot itself with EVPI** — a pilot that can't change the
@@ -95,9 +95,9 @@
 //!
 //! ## Sources
 //!
-//! - MIT Project NANDA "GenAI Divide" coverage.
+//! - MIT Project NANDA "`GenAI` Divide" coverage.
 //!   <https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/>
-//! - MIT GenAI ROI findings summary.
+//! - MIT `GenAI` ROI findings summary.
 //!   <https://blueflame.ai/blog/achieving-ai-roi-key-findings-from-mits-genai-report>
 //! - MIT Technology Review, finding ROI on AI.
 //!   <https://www.technologyreview.com/2025/10/28/1126693/finding-return-on-ai-investments-across-industries/>
@@ -151,6 +151,7 @@ impl AiCostStack {
     /// assert!((stack.total() - 120_000.0).abs() < 1e-9);
     /// assert!(stack.licences_and_inference < stack.total() / 2.0);
     /// ```
+    #[must_use]
     pub fn total(&self) -> f64 {
         self.licences_and_inference
             + self.integration
@@ -193,6 +194,7 @@ impl AiCostStack {
 ///
 /// assert!(ai_roi(320_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn ai_roi(attributable_benefit: f64, total_ai_cost: f64) -> Option<f64> {
     if total_ai_cost == 0.0 {
         None
@@ -229,6 +231,7 @@ pub fn ai_roi(attributable_benefit: f64, total_ai_cost: f64) -> Option<f64> {
 /// let benefit = attributable_benefit(380_000.0, 60_000.0);
 /// assert!((benefit - 320_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn attributable_benefit(baseline_spend_stopped: f64, new_costs_introduced: f64) -> f64 {
     baseline_spend_stopped - new_costs_introduced
 }

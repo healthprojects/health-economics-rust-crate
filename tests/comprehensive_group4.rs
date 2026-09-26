@@ -1,10 +1,10 @@
 //! Comprehensive integration tests, group 4.
 //!
-//! Covers: earlier_intervention, emergency_attendance_avoidance,
-//! engagement_metrics, eq_5d, expected_value_of_perfect_information,
-//! flow_metrics, gds_service_metrics,
-//! hard_cash_releasing_savings_deficit_defense,
-//! health_adjusted_life_expectancy, health_app_unit_economics.
+//! Covers: `earlier_intervention`, `emergency_attendance_avoidance`,
+//! `engagement_metrics`, `eq_5d`, `expected_value_of_perfect_information`,
+//! `flow_metrics`, `gds_service_metrics`,
+//! `hard_cash_releasing_savings_deficit_defense`,
+//! `health_adjusted_life_expectancy`, `health_app_unit_economics`.
 //!
 //! Sections:
 //!   1. EDGE CASES
@@ -34,10 +34,13 @@ const TOL: f64 = 1e-9;
 /// Deterministic pseudo-random f64 in [0, 1): a plain LCG, no external crates.
 fn lcg(state: &mut u64) -> f64 {
     *state = state
-        .wrapping_mul(6364136223846793005)
-        .wrapping_add(1442695040888963407);
-    // Top 53 bits as a fraction.
-    ((*state >> 11) as f64) / ((1u64 << 53) as f64)
+        .wrapping_mul(6_364_136_223_846_793_005)
+        .wrapping_add(1_442_695_040_888_963_407);
+    // Top 53 bits of a u64 LCG state fit exactly in f64's 52-bit mantissa
+    // once shifted down by 11, so there is no precision loss here.
+    #[allow(clippy::cast_precision_loss)]
+    let result = ((*state >> 11) as f64) / ((1u64 << 53) as f64);
+    result
 }
 
 // =========================================================================
@@ -377,7 +380,11 @@ fn edge_extreme_magnitudes_stay_finite() {
 fn prop_evpi_nonnegative_and_identity_over_random_scenarios() {
     let mut seed = 42u64;
     for _ in 0..200 {
+        // lcg() is in [0, 1), so these casts always land in 2..=5 / 2..=4:
+        // no truncation or sign loss is reachable here.
+        #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         let n_worlds = 2 + (lcg(&mut seed) * 4.0) as usize; // 2–5 worlds
+        #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         let n_options = 2 + (lcg(&mut seed) * 3.0) as usize; // 2–4 options
         // Raw weights normalized so probabilities sum to 1.
         let raw: Vec<f64> = (0..n_worlds).map(|_| 0.1 + lcg(&mut seed)).collect();
@@ -404,6 +411,9 @@ fn prop_evpi_nonnegative_and_identity_over_random_scenarios() {
 fn prop_evpi_zero_under_dominance() {
     let mut seed = 7u64;
     for _ in 0..50 {
+        // lcg() is in [0, 1), so this cast always lands in 2..=5: no
+        // truncation or sign loss is reachable here.
+        #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         let n_worlds = 2 + (lcg(&mut seed) * 4.0) as usize;
         let raw: Vec<f64> = (0..n_worlds).map(|_| 0.1 + lcg(&mut seed)).collect();
         let total: f64 = raw.iter().sum();
@@ -426,12 +436,18 @@ fn prop_evpi_zero_under_dominance() {
 fn prop_evpi_psa_draws_match_equal_probability_scenarios() {
     let mut seed = 99u64;
     for _ in 0..30 {
+        // lcg() is in [0, 1), so these casts always land in 3..=10 / 2..=3:
+        // no truncation or sign loss is reachable here.
+        #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         let n_draws = 3 + (lcg(&mut seed) * 8.0) as usize; // 3–10 draws
+        #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         let n_options = 2 + (lcg(&mut seed) * 2.0) as usize; // 2–3 options
         let draws: Vec<Vec<f64>> = (0..n_draws)
             .map(|_| (0..n_options).map(|_| lcg(&mut seed) * 12.0 - 6.0).collect())
             .collect();
         let from_draws = evpi_mod::evpi_from_psa_draws(&draws).unwrap();
+        // n_draws is a small loop-bounded count (3..=10): no precision loss.
+        #[allow(clippy::cast_precision_loss)]
         let p = 1.0 / n_draws as f64;
         let scenarios: Vec<Scenario> = draws
             .iter()
@@ -447,8 +463,8 @@ fn prop_evpi_psa_draws_match_equal_probability_scenarios() {
 #[test]
 fn prop_population_evpi_linear() {
     for i in 1..=10 {
-        let v = 0.3 * i as f64;
-        let a = 4.0 * i as f64;
+        let v = 0.3 * f64::from(i);
+        let a = 4.0 * f64::from(i);
         let b = 7.0;
         let sum = evpi_mod::population_evpi(v, a) + evpi_mod::population_evpi(v, b);
         assert!((evpi_mod::population_evpi(v, a + b) - sum).abs() < 1e-9);
@@ -463,8 +479,8 @@ fn prop_population_evpi_linear() {
 fn prop_littles_law_round_trips() {
     for wip_i in 1..=8 {
         for tp_i in 1..=8 {
-            let wip = 3.5 * wip_i as f64;
-            let tp = 1.25 * tp_i as f64;
+            let wip = 3.5 * f64::from(wip_i);
+            let tp = 1.25 * f64::from(tp_i);
             let ct = fm::littles_law_cycle_time(wip, tp).unwrap();
             assert!((fm::littles_law_wip(tp, ct) - wip).abs() < 1e-9);
             let wip2 = fm::littles_law_wip(tp, ct);
@@ -480,8 +496,8 @@ fn prop_littles_law_round_trips() {
 fn prop_flow_efficiency_range() {
     for a_i in 1..=10 {
         for w_i in 0..=10 {
-            let active = 0.5 * a_i as f64;
-            let wait = 2.0 * w_i as f64;
+            let active = 0.5 * f64::from(a_i);
+            let wait = 2.0 * f64::from(w_i);
             let fe = fm::flow_efficiency_percent(active, wait).unwrap();
             assert!(fe > 0.0 && fe <= 100.0, "fe {fe} out of (0,100]");
         }
@@ -495,9 +511,9 @@ fn prop_cycle_time_bounded_by_lead_time() {
     for req_i in 0..5 {
         for queue_i in 0..5 {
             for work_i in 1..5 {
-                let requested = req_i as f64;
-                let started = requested + queue_i as f64; // start ≥ request
-                let finished = started + work_i as f64;
+                let requested = f64::from(req_i);
+                let started = requested + f64::from(queue_i); // start ≥ request
+                let finished = started + f64::from(work_i);
                 let delivered = finished + 0.5; // delivery lag after finish
                 let ct = fm::cycle_time(finished, started);
                 let lt = fm::lead_time(delivered, requested);
@@ -517,7 +533,7 @@ fn prop_stickiness_monotone_in_dau() {
     assert!((em::stickiness_percent(mau, mau).unwrap() - 100.0).abs() < TOL);
     let mut prev = -1.0;
     for dau_i in 0..=20 {
-        let dau = 500.0 * dau_i as f64;
+        let dau = 500.0 * f64::from(dau_i);
         let s = em::stickiness_percent(dau, mau).unwrap();
         assert!(s > prev, "stickiness not increasing at DAU {dau}");
         prev = s;
@@ -530,8 +546,8 @@ fn prop_stickiness_monotone_in_dau() {
 fn prop_funnel_share_and_overstatement_are_reciprocals() {
     for e_i in 1..=10 {
         for r_i in 1..=10 {
-            let effective = 700.0 * e_i as f64;
-            let registered = 5_000.0 * r_i as f64;
+            let effective = 700.0 * f64::from(e_i);
+            let registered = 5_000.0 * f64::from(r_i);
             let share = em::effective_dose_share(effective, registered).unwrap();
             let factor = em::overstatement_factor(registered, effective).unwrap();
             assert!((share * factor - 1.0).abs() < 1e-9);
@@ -578,8 +594,11 @@ fn prop_sullivan_hale_reduces_to_life_expectancy_and_gap_identity() {
     // With real burdens, HALE < LE and the gap identity holds.
     let burdened: Vec<f64> = (0..person_years.len())
         .map(|i| {
+            // i indexes a small fixed-size test fixture: no precision loss.
+            #[allow(clippy::cast_precision_loss)]
+            let prevalence = 0.05 * (i + 1) as f64;
             hale_mod::proportion_in_full_health(&[ConditionBurden {
-                prevalence: 0.05 * (i + 1) as f64,
+                prevalence,
                 disability_weight: 0.32,
             }])
         })
@@ -597,14 +616,14 @@ fn prop_sullivan_hale_reduces_to_life_expectancy_and_gap_identity() {
 fn prop_ltv_is_arpu_over_churn() {
     for a_i in 1..=6 {
         for c_i in 1..=10 {
-            let arpu = 2.5 * a_i as f64;
-            let churn = 0.1 * c_i as f64; // 0.1 … 1.0 inclusive
+            let arpu = 2.5 * f64::from(a_i);
+            let churn = 0.1 * f64::from(c_i); // 0.1 … 1.0 inclusive
             let v = ue::ltv(arpu, churn).unwrap();
             assert!((v - arpu / churn).abs() < 1e-9);
         }
     }
     for cac_i in 1..=5 {
-        let cac = 10.0 * cac_i as f64;
+        let cac = 10.0 * f64::from(cac_i);
         assert!((ue::effective_cac_per_retained_user(cac, 1.0).unwrap() - cac).abs() < TOL);
     }
 }
@@ -622,7 +641,7 @@ fn prop_ltv_cac_viability_boundary_at_exactly_3() {
     assert!(ue::is_viable_ltv_cac(301.0, cac));
     // Equivalence over a grid: viable ⟺ ratio ≥ 3.
     for ltv_i in 1..=12 {
-        let ltv = 50.0 * ltv_i as f64;
+        let ltv = 50.0 * f64::from(ltv_i);
         let ratio = ue::ltv_cac_ratio(ltv, cac).unwrap();
         assert_eq!(ue::is_viable_ltv_cac(ltv, cac), ratio >= 3.0);
     }
@@ -634,8 +653,8 @@ fn prop_ltv_cac_viability_boundary_at_exactly_3() {
 fn prop_channel_shift_saving_formula() {
     for v_i in 1..=5 {
         for s_i in 0..=4 {
-            let volume = 100_000.0 * v_i as f64;
-            let shift = 0.25 * s_i as f64; // 0 … 1
+            let volume = 100_000.0 * f64::from(v_i);
+            let shift = 0.25 * f64::from(s_i); // 0 … 1
             let s = gds::channel_shift_saving(volume, shift, 3.20, 0.25);
             assert!((s - volume * shift * (3.20 - 0.25)).abs() < 1e-6);
         }
@@ -650,7 +669,7 @@ fn prop_channel_shift_saving_formula() {
 fn prop_failure_demand_falls_with_completion_rate() {
     let mut prev = f64::INFINITY;
     for c_i in 0..=10 {
-        let completion = 0.1 * c_i as f64;
+        let completion = 0.1 * f64::from(c_i);
         let cost = gds::failure_demand_cost(2_000_000.0, 0.40, completion, 3.20);
         assert!(cost < prev, "failure demand did not fall at completion {completion}");
         prev = cost;
@@ -665,9 +684,9 @@ fn prop_failure_demand_falls_with_completion_rate() {
 fn prop_hard_saving_is_sum_of_three_mechanisms() {
     for i in 0..=5 {
         for j in 0..=3 {
-            let shifts = 100.0 * i as f64;
-            let hours = 5_000.0 * j as f64;
-            let contracts = j as f64;
+            let shifts = 100.0 * f64::from(i);
+            let hours = 5_000.0 * f64::from(j);
+            let contracts = f64::from(j);
             let sum = hc::premium_shift_saving(shifts, 180.0, 30.0)
                 + hc::overtime_saving(hours, 8.0)
                 + hc::cancelled_contract_saving(contracts, 50_000.0);
@@ -687,7 +706,7 @@ fn prop_hard_saving_is_sum_of_three_mechanisms() {
 #[test]
 fn prop_earlier_intervention_per_patient_matches_backlog_total() {
     for p_i in 1..=4 {
-        let patients = 1_000.0 * p_i as f64;
+        let patients = 1_000.0 * f64::from(p_i);
         let rate = 0.02;
         let years = 0.25;
         let events = ei::progression_events_avoided(patients, rate, years);
@@ -703,8 +722,8 @@ fn prop_earlier_intervention_per_patient_matches_backlog_total() {
 #[test]
 fn prop_gross_saving_combined_equals_sum_of_lines() {
     for i in 1..=5 {
-        let attendances = ea::avoided_events(1_000.0 * i as f64, 0.9, 0.7);
-        let admissions = ea::avoided_events(1_000.0 * i as f64, 0.5, 0.42);
+        let attendances = ea::avoided_events(1_000.0 * f64::from(i), 0.9, 0.7);
+        let admissions = ea::avoided_events(1_000.0 * f64::from(i), 0.5, 0.42);
         let combined =
             ea::gross_saving_attendances_and_admissions(attendances, 300.0, admissions, 3_800.0);
         let split = ea::gross_saving(attendances, 300.0) + ea::gross_saving(admissions, 3_800.0);
@@ -733,8 +752,8 @@ fn prop_hale_contribution_and_day_conversion_scale() {
 fn cross_eq5d_qalys_match_qaly_module_single_state() {
     for d_i in 0..=8 {
         for u_i in -2..=10 {
-            let duration = 0.5 * d_i as f64;
-            let utility = 0.1 * u_i as f64; // −0.2 … 1.0
+            let duration = 0.5 * f64::from(d_i);
+            let utility = 0.1 * f64::from(u_i); // −0.2 … 1.0
             let via_eq5d = eq_5d::qalys(duration, utility);
             let via_qaly = qaly_mod::qalys(&[HealthState { duration_years: duration, utility }]);
             assert!((via_eq5d - via_qaly).abs() < 1e-12);
@@ -770,7 +789,7 @@ fn cross_eq5d_stream_sum_and_monetization_agree() {
 #[test]
 fn cross_eq5d_gain_equals_stream_difference() {
     for d_i in 1..=6 {
-        let duration = 0.25 * d_i as f64;
+        let duration = 0.25 * f64::from(d_i);
         let before = qaly_mod::qalys(&[HealthState { duration_years: duration, utility: 0.62 }]);
         let after = qaly_mod::qalys(&[HealthState { duration_years: duration, utility: 0.71 }]);
         let gain = eq_5d::qaly_gain(0.62, 0.71, duration);
@@ -788,7 +807,7 @@ fn cross_eq5d_gain_equals_stream_difference() {
 #[test]
 fn cross_health_value_per_user_matches_retention_composition() {
     for c_i in 1..=4 {
-        let cohort = 50_000.0 * c_i as f64;
+        let cohort = 50_000.0 * f64::from(c_i);
         let completion_fraction = 0.04;
         let qalys_per_completer = 0.02;
         let threshold = 20_000.0;
@@ -809,7 +828,7 @@ fn cross_health_value_per_user_matches_retention_composition() {
 #[test]
 fn cross_effective_cac_matches_cost_per_retained_user() {
     for r_i in 1..=10 {
-        let retention = 0.02 * r_i as f64;
+        let retention = 0.02 * f64::from(r_i);
         let a = ue::effective_cac_per_retained_user(5.0, retention).unwrap();
         let b = rc::cost_per_retained_user(5.0, retention).unwrap();
         assert!((a - b).abs() < 1e-12);
@@ -821,7 +840,7 @@ fn cross_effective_cac_matches_cost_per_retained_user() {
 #[test]
 fn cross_monetization_conventions_agree() {
     for q_i in 0..=6 {
-        let qalys = 0.05 * q_i as f64;
+        let qalys = 0.05 * f64::from(q_i);
         let a = eq_5d::monetized_value(qalys, 30_000.0);
         let b = rc::monetized_health_value(qalys, 30_000.0);
         let c = ue::health_value_per_acquired_user(qalys, 30_000.0);

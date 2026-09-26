@@ -6,7 +6,7 @@
 //! Under a shared, fixed capacity, highest-CD3-first is the mathematically
 //! optimal sequence for minimizing total delay cost.
 //!
-//! CD3 uses real currency (Black Swan Farming); WSJF is SAFe's
+//! CD3 uses real currency (Black Swan Farming); WSJF is `SAFe`'s
 //! relative-scale proxy with modified-Fibonacci scores. CD3 with genuine
 //! currency is strictly stronger than WSJF's unitless points — WSJF is to
 //! CD3 what multi-criteria scoring is to full cost-utility analysis: usable
@@ -43,7 +43,7 @@
 //!
 //! ## Example
 //!
-//! Three features, one team: A (CoD £30,000/wk, 10 wks), B (£12,000/wk,
+//! Three features, one team: A (`CoD` £30,000/wk, 10 wks), B (£12,000/wk,
 //! 2 wks), C (£5,000/wk, 1 wk).
 //!
 //! ```rust
@@ -75,7 +75,7 @@
 //!
 //! ## Software engineering connection
 //!
-//! - For healthcare software portfolios, denominate CoD in QALYs/week ×
+//! - For healthcare software portfolios, denominate `CoD` in QALYs/week ×
 //!   threshold + operational £/week, and the backlog becomes directly
 //!   commensurable with how the health system ranks everything else it buys.
 //! - Duration means *calendar time occupying the constraint*, not effort —
@@ -88,10 +88,10 @@
 //! ## Pitfalls
 //!
 //! - **WSJF score theater**: unitless Fibonacci debates converge on whoever
-//!   argues loudest; anchor at least the top-of-backlog items in real CoD.
+//!   argues loudest; anchor at least the top-of-backlog items in real `CoD`.
 //! - **Duration gaming**: splitting items to inflate CD3 rank — fine when
 //!   splits deliver value independently, fraud when they don't.
-//! - **Ignoring urgency profiles**: deadline-shaped CoD (regulatory dates)
+//! - **Ignoring urgency profiles**: deadline-shaped `CoD` (regulatory dates)
 //!   breaks the steady-rate assumption; schedule those by date feasibility,
 //!   then CD3 the rest.
 //! - **Re-ranking churn**: CD3 is for sequencing decisions at commitment
@@ -101,7 +101,7 @@
 //!
 //! - Black Swan Farming, CD3 and WSJF.
 //!   <https://blackswanfarming.com/wsjf-weighted-shortest-job-first/>
-//! - SAFe, WSJF. <https://framework.scaledagile.com/wsjf>
+//! - `SAFe`, WSJF. <https://framework.scaledagile.com/wsjf>
 //! - Reinertsen DG, *The Principles of Product Development Flow*.
 //!
 //! Topic doc: health-economics-metrics/topics/wsjf-and-cd3.md
@@ -137,6 +137,7 @@ impl Feature {
     /// let b = Feature { cost_of_delay_per_week: 12_000.0, duration_weeks: 2.0 };
     /// assert_eq!(b.cd3(), Some(6_000.0));
     /// ```
+    #[must_use]
     pub fn cd3(&self) -> Option<f64> {
         cd3(self.cost_of_delay_per_week, self.duration_weeks)
     }
@@ -169,6 +170,7 @@ impl Feature {
 /// // Zero duration: undefined.
 /// assert_eq!(cd3(10_000.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn cd3(cost_of_delay_per_week: f64, duration_weeks: f64) -> Option<f64> {
     if duration_weeks == 0.0 {
         None
@@ -177,7 +179,7 @@ pub fn cd3(cost_of_delay_per_week: f64, duration_weeks: f64) -> Option<f64> {
     }
 }
 
-/// SAFe's WSJF proxy: relative-scale value density.
+/// `SAFe`'s WSJF proxy: relative-scale value density.
 ///
 /// (user-business value + time criticality + risk reduction/opportunity
 /// enablement) / job size, all on relative modified-Fibonacci scales
@@ -211,6 +213,7 @@ pub fn cd3(cost_of_delay_per_week: f64, duration_weeks: f64) -> Option<f64> {
 /// // Zero job size: undefined.
 /// assert_eq!(wsjf(8.0, 5.0, 3.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn wsjf(
     user_business_value: f64,
     time_criticality: f64,
@@ -231,8 +234,8 @@ pub fn wsjf(
 /// shared pipeline.
 ///
 /// Each item accrues its cost of delay for the weeks it waits before
-/// starting: Σ CoD_i × start_time_i. (Charging the wait-to-start rather than
-/// wait-to-finish shifts every schedule by the same constant Σ CoD_i × d_i,
+/// starting: Σ `CoD_i` × `start_time_i`. (Charging the wait-to-start rather than
+/// wait-to-finish shifts every schedule by the same constant Σ `CoD_i` × `d_i`,
 /// so rankings and savings are unaffected.)
 ///
 /// # Arguments
@@ -257,6 +260,7 @@ pub fn wsjf(
 /// // CoD order (A,B,C): B waits 10, C waits 12 → 12k×10 + 5k×12 = £180k.
 /// assert_eq!(total_delay_cost(&[a, b, c]), 180_000.0);
 /// ```
+#[must_use]
 pub fn total_delay_cost(features: &[Feature]) -> f64 {
     let mut elapsed_weeks = 0.0;
     let mut cost = 0.0;
@@ -295,6 +299,7 @@ pub fn total_delay_cost(features: &[Feature]) -> f64 {
 /// // CD3 scores 3,000 / 6,000 / 5,000 → order is B, C, A.
 /// assert_eq!(sequence_by_cd3(&[a, b, c]), vec![b, c, a]);
 /// ```
+#[must_use]
 pub fn sequence_by_cd3(features: &[Feature]) -> Vec<Feature> {
     let mut ordered: Vec<Feature> = features.to_vec();
     ordered.sort_by(|a, b| {
@@ -311,7 +316,7 @@ pub fn sequence_by_cd3(features: &[Feature]) -> Vec<Feature> {
 /// Delay cost saved by CD3 sequencing relative to executing the features in
 /// the order given.
 ///
-/// Computes total_delay_cost(as given) − total_delay_cost(CD3 order).
+/// Computes `total_delay_cost` (as given) − `total_delay_cost` (`CD3` order).
 /// Getting sequencing right is free money — same work, same capacity, less
 /// total delay cost.
 ///
@@ -336,6 +341,7 @@ pub fn sequence_by_cd3(features: &[Feature]) -> Vec<Feature> {
 /// // £180k (biggest-CoD-first) − £100k (CD3 order) = £80,000 saved.
 /// assert_eq!(sequencing_savings(&[a, b, c]), 80_000.0);
 /// ```
+#[must_use]
 pub fn sequencing_savings(features: &[Feature]) -> f64 {
     total_delay_cost(features) - total_delay_cost(&sequence_by_cd3(features))
 }
@@ -386,7 +392,7 @@ mod tests {
 
     // Worked example: "CoD order (A,B,C): B waits 10, C waits 12 →
     // 12k×10 + 5k×12 = £180k".
-    /// CoD order (A,B,C): B waits 10, C waits 12 → 12k×10 + 5k×12 = £180k.
+    /// `CoD` order (A,B,C): B waits 10, C waits 12 → 12k×10 + 5k×12 = £180k.
     #[test]
     fn biggest_cod_first_delay_cost_is_180k() {
         let cost = total_delay_cost(&[A, B, C]);

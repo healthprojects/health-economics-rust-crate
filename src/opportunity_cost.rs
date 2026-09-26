@@ -134,6 +134,7 @@ pub const NHS_MARGINAL_COST_PER_QALY_GBP: f64 = 13_000.0;
 /// // No alternatives supplied: undefined.
 /// assert_eq!(opportunity_cost(&[]), None);
 /// ```
+#[must_use]
 pub fn opportunity_cost(forgone_alternative_values: &[f64]) -> Option<f64> {
     forgone_alternative_values
         .iter()
@@ -169,6 +170,7 @@ pub fn opportunity_cost(forgone_alternative_values: &[f64]) -> Option<f64> {
 /// // the net case for A is only the £100,000 difference.
 /// assert_eq!(net_gain(400_000.0, 300_000.0), 100_000.0);
 /// ```
+#[must_use]
 pub fn net_gain(value_chosen: f64, value_best_alternative: f64) -> f64 {
     value_chosen - value_best_alternative
 }
@@ -197,6 +199,7 @@ pub fn net_gain(value_chosen: f64, value_best_alternative: f64) -> f64 {
 /// // 2,000 bed days/year at ~£150 per bed day freed = £300,000/year.
 /// assert_eq!(bed_day_savings_value(2_000.0, 150.0), 300_000.0);
 /// ```
+#[must_use]
 pub fn bed_day_savings_value(bed_days_freed: f64, marginal_cost_per_bed_day: f64) -> f64 {
     bed_days_freed * marginal_cost_per_bed_day
 }
@@ -232,6 +235,7 @@ pub fn bed_day_savings_value(bed_days_freed: f64, marginal_cost_per_bed_day: f64
 /// // A zero marginal cost per QALY is undefined.
 /// assert_eq!(qalys_displaced(1_000.0, 0.0), None);
 /// ```
+#[must_use]
 pub fn qalys_displaced(spend: f64, marginal_cost_per_qaly: f64) -> Option<f64> {
     if marginal_cost_per_qaly == 0.0 {
         None

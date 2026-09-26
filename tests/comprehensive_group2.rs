@@ -1,11 +1,11 @@
 //! Comprehensive integration tests, group 2.
 //!
-//! Covers: benefits_realization, budget_impact_analysis, build_vs_buy,
-//! cash_releasing_vs_non_cash_releasing, clinical_ai_evaluation,
-//! cloud_unit_economics, cost_benefit_analysis, cost_consequence_analysis,
-//! cost_effectiveness_analysis, cost_minimization_analysis — plus
-//! cross-module consistency with incremental_cost_effectiveness_ratio and
-//! discounting_and_time_preference.
+//! Covers: `benefits_realization`, `budget_impact_analysis`, `build_vs_buy`,
+//! `cash_releasing_vs_non_cash_releasing`, `clinical_ai_evaluation`,
+//! `cloud_unit_economics`, `cost_benefit_analysis`, `cost_consequence_analysis`,
+//! `cost_effectiveness_analysis`, `cost_minimization_analysis` — plus
+//! cross-module consistency with `incremental_cost_effectiveness_ratio` and
+//! `discounting_and_time_preference`.
 //!
 //! Sections:
 //!   1. EDGE CASES
@@ -437,7 +437,10 @@ fn prop_ppv_increases_with_prevalence() {
 fn prop_auroc_separation_identity_and_ties() {
     // Perfect separation across grid sizes.
     for k in 1..=4usize {
+        // k is at most 4, so i is a tiny loop index: no precision loss.
+        #[allow(clippy::cast_precision_loss)]
         let pos: Vec<f64> = (0..k).map(|i| 0.6 + 0.1 * i as f64).collect();
+        #[allow(clippy::cast_precision_loss)]
         let neg: Vec<f64> = (0..k).map(|i| 0.1 + 0.1 * i as f64).collect();
         assert!(close(auroc(&pos, &neg).unwrap(), 1.0, 1e-12));
         // Identical distributions are chance.
@@ -490,7 +493,7 @@ fn prop_annuity_factor_is_sum_of_discount_factors() {
     for &rate in &[0.0, 0.01, GREEN_BOOK_DISCOUNT_RATE, 0.10, 0.25] {
         assert!(close(discount_factor(rate, 0.0), 1.0, 1e-12));
         for &years in &[0u32, 1, 3, 5, 10, 30] {
-            let summed: f64 = (1..=years).map(|t| discount_factor(rate, t as f64)).sum();
+            let summed: f64 = (1..=years).map(|t| discount_factor(rate, f64::from(t))).sum();
             assert!(
                 close(annuity_factor(rate, years), summed, 1e-9),
                 "annuity mismatch at r={rate}, n={years}"
@@ -852,7 +855,7 @@ fn cross_annuity_representations_agree() {
     for &rate in &[0.0, GREEN_BOOK_DISCOUNT_RATE, 0.07] {
         for &years in &[1u32, 5, 12] {
             let af = annuity_factor(rate, years);
-            let apv = dtp::annuity_present_value(1.0, rate, years as f64);
+            let apv = dtp::annuity_present_value(1.0, rate, f64::from(years));
             assert!(close(af, apv, 1e-9), "annuity mismatch at r={rate}, n={years}");
             // Level £300k stream, year 0 empty, years 1..=n.
             let mut flows = vec![0.0];

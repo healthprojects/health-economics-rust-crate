@@ -127,6 +127,7 @@
 /// let hours = hours_released(20.0, 0.75, 250.0);
 /// assert_eq!(hours, 3_750.0);
 /// ```
+#[must_use]
 pub fn hours_released(
     staff_count: f64,
     hours_saved_per_day: f64,
@@ -165,6 +166,7 @@ pub fn hours_released(
 /// // Zero slot duration has no defined slot count.
 /// assert!(extra_slots(3_750.0, 0.0, 0.85).is_none());
 /// ```
+#[must_use]
 pub fn extra_slots(
     hours_released: f64,
     slot_duration_hours: f64,
@@ -200,6 +202,7 @@ pub fn extra_slots(
 /// let seen = patients_seen(6_375.0, 0.07);
 /// assert!((seen - 5_929.0).abs() < 0.5);
 /// ```
+#[must_use]
 pub fn patients_seen(extra_slots: f64, dna_rate: f64) -> f64 {
     extra_slots * (1.0 - dna_rate)
 }
@@ -230,6 +233,7 @@ pub fn patients_seen(extra_slots: f64, dna_rate: f64) -> f64 {
 /// let net = list_reduction(5_929.0, 1_000.0);
 /// assert_eq!(net, 4_929.0);
 /// ```
+#[must_use]
 pub fn list_reduction(patients_seen: f64, induced_new_demand: f64) -> f64 {
     patients_seen - induced_new_demand
 }
@@ -264,6 +268,7 @@ pub fn list_reduction(patients_seen: f64, induced_new_demand: f64) -> f64 {
 /// // A zero service rate has no defined gain.
 /// assert!(waiting_time_gain(100.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn waiting_time_gain(backlog_reduction: f64, service_rate: f64) -> Option<f64> {
     if service_rate == 0.0 {
         None
@@ -298,6 +303,7 @@ pub fn waiting_time_gain(backlog_reduction: f64, service_rate: f64) -> Option<f6
 /// let fraction = wait_reduction_fraction(5_928.75, 24_000.0).unwrap();
 /// assert!((fraction - 0.25).abs() < 0.005);
 /// ```
+#[must_use]
 pub fn wait_reduction_fraction(
     extra_appointments: f64,
     annual_appointment_capacity: f64,
@@ -334,6 +340,7 @@ pub fn wait_reduction_fraction(
 /// let value = activity_value(5_928.75, 160.0);
 /// assert!((value - 949_000.0).abs() < 500.0);
 /// ```
+#[must_use]
 pub fn activity_value(patients_seen: f64, scheme_value_per_attendance: f64) -> f64 {
     patients_seen * scheme_value_per_attendance
 }

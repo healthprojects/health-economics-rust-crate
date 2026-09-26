@@ -140,6 +140,7 @@ pub struct ConditionBurden {
 /// let p = proportion_in_full_health(&conditions);
 /// assert!((p - 0.948).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn proportion_in_full_health(conditions: &[ConditionBurden]) -> f64 {
     // 1 − Σ (prevalence × disability weight): each condition removes its
     // prevalence-weighted severity from the full-health share.
@@ -161,10 +162,10 @@ pub fn proportion_in_full_health(conditions: &[ConditionBurden]) -> f64 {
 /// # Arguments
 ///
 /// * `person_years` — life-table person-years lived in each remaining age
-///   interval (L_a).
+///   interval (`L_a`).
 /// * `full_health_proportion` — proportion in full health per interval
 ///   (0–1), same length as `person_years`.
-/// * `survivors_at_x` — life-table survivors at the starting age (l_x).
+/// * `survivors_at_x` — life-table survivors at the starting age (`l_x`).
 ///
 /// # Returns
 ///
@@ -185,6 +186,7 @@ pub fn proportion_in_full_health(conditions: &[ConditionBurden]) -> f64 {
 /// let le = sullivan_hale(&[950.0, 800.0], &[1.0, 1.0], 100.0).unwrap();
 /// assert!((le - 17.5).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn sullivan_hale(
     person_years: &[f64],
     full_health_proportion: &[f64],
@@ -228,6 +230,7 @@ pub fn sullivan_hale(
 /// // WHO 2019 global figures: 73.3 − 61.9 = 11.4 years.
 /// assert!((hale_gap(73.3, 61.9) - 11.4).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn hale_gap(life_expectancy: f64, hale: f64) -> f64 {
     life_expectancy - hale
 }
@@ -257,6 +260,7 @@ pub fn hale_gap(life_expectancy: f64, hale: f64) -> f64 {
 /// let c = hale_contribution_per_person(15_000.0, 500_000.0).unwrap();
 /// assert!((c - 0.03).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn hale_contribution_per_person(healthy_years_saved: f64, cohort_size: f64) -> Option<f64> {
     if cohort_size == 0.0 {
         None
@@ -283,6 +287,7 @@ pub fn hale_contribution_per_person(healthy_years_saved: f64, cohort_size: f64) 
 /// // Worked example: 0.03 years ≈ 11 days of HALE per enrolled person.
 /// assert!((years_to_days(0.03) - 11.0).abs() < 0.5);
 /// ```
+#[must_use]
 pub fn years_to_days(years: f64) -> f64 {
     years * 365.25
 }

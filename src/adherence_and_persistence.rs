@@ -37,8 +37,8 @@
 //! Payers already run on these numbers: PDC ≥80% feeds US Medicare Star
 //! Ratings, which move real payer revenue — adherence is financially
 //! load-bearing infrastructure, not a soft metric. For digital therapeutics
-//! the pattern repeats: DiGA data shows strong prescription volumes with weak
-//! sustained adherence, and outcomes-based DTx pricing (arriving in Germany
+//! the pattern repeats: `DiGA` data shows strong prescription volumes with weak
+//! sustained adherence, and outcomes-based `DTx` pricing (arriving in Germany
 //! from 2026) will pay on adherence-gated results. The conceptual upgrade
 //! from digital health research: **effective engagement** — *sufficient*
 //! engagement to achieve the intended outcome — and its corollary, the
@@ -110,7 +110,7 @@
 //! - MPR vs PDC. <https://phslrx.com/medication-adherence-metrics/>
 //! - Yardley L, et al., effective engagement.
 //!   <https://pmc.ncbi.nlm.nih.gov/articles/PMC8726056/>
-//! - DiGA adherence findings, npj Digital Medicine 2024.
+//! - `DiGA` adherence findings, npj Digital Medicine 2024.
 //!   <https://www.nature.com/articles/s41746-024-01137-1>
 //!
 //! Topic doc: health-economics-metrics/topics/adherence-and-persistence.md
@@ -143,6 +143,7 @@
 ///
 /// assert!(mpr_percent(400.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn mpr_percent(total_days_supply_dispensed: f64, days_in_period: f64) -> Option<f64> {
     if days_in_period == 0.0 {
         None
@@ -180,6 +181,7 @@ pub fn mpr_percent(total_days_supply_dispensed: f64, days_in_period: f64) -> Opt
 /// let pdc = pdc_percent(292.0, 365.0).unwrap();
 /// assert!((pdc - 80.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn pdc_percent(days_covered: f64, days_in_period: f64) -> Option<f64> {
     if days_in_period == 0.0 {
         None
@@ -216,6 +218,7 @@ pub fn pdc_percent(days_covered: f64, days_in_period: f64) -> Option<f64> {
 ///
 /// assert!(digital_adherence_percent(4.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn digital_adherence_percent(
     actual_usage_events: f64,
     prescribed_usage_events: f64,
@@ -251,6 +254,7 @@ pub fn digital_adherence_percent(
 /// // A 6-week (42-day) programme used from day 0 to day 42.
 /// assert!((persistence_days(0.0, 42.0) - 42.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn persistence_days(initiation_day: f64, discontinuation_day: f64) -> f64 {
     discontinuation_day - initiation_day
 }
@@ -280,6 +284,7 @@ pub fn persistence_days(initiation_day: f64, discontinuation_day: f64) -> f64 {
 ///
 /// assert!(percent_persistent(380.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn percent_persistent(still_persistent: f64, cohort_size: f64) -> Option<f64> {
     if cohort_size == 0.0 {
         None
@@ -310,6 +315,7 @@ pub fn percent_persistent(still_persistent: f64, cohort_size: f64) -> Option<f64
 /// assert!(is_adherent(80.0));
 /// assert!(!is_adherent(79.9));
 /// ```
+#[must_use]
 pub fn is_adherent(adherence_percent: f64) -> bool {
     adherence_percent >= 80.0
 }
@@ -334,6 +340,7 @@ pub fn is_adherent(adherence_percent: f64) -> bool {
 /// let spend = payer_spend(1_000.0, 250.0);
 /// assert!((spend - 250_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn payer_spend(prescriptions: f64, price_per_prescription: f64) -> f64 {
     prescriptions * price_per_prescription
 }
@@ -366,6 +373,7 @@ pub fn payer_spend(prescriptions: f64, price_per_prescription: f64) -> f64 {
 /// let qalys = qalys_realized(1_000.0, 0.38, 0.025);
 /// assert!((qalys - 9.5).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn qalys_realized(
     prescriptions: f64,
     fraction_reaching_minimum_effective_dose: f64,
@@ -401,6 +409,7 @@ pub fn qalys_realized(
 ///
 /// assert!(cost_per_qaly(250_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn cost_per_qaly(total_spend: f64, qalys: f64) -> Option<f64> {
     if qalys == 0.0 {
         None

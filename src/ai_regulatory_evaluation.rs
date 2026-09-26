@@ -1,7 +1,7 @@
 //! # AI Regulatory Evaluation
 //!
 //! The regulatory frameworks that govern AI in health care — FDA's Software
-//! as a Medical Device (SaMD) regime with Predetermined Change Control Plans
+//! as a Medical Device (`SaMD`) regime with Predetermined Change Control Plans
 //! (PCCPs), and real-world evaluation programs like the NHS AI in Health and
 //! Care Award — and what they cost and enable economically.
 //!
@@ -101,7 +101,7 @@
 //!
 //! ## Sources
 //!
-//! - FDA, AI-enabled device software / SaMD.
+//! - FDA, AI-enabled device software / `SaMD`.
 //!   <https://www.fda.gov/medical-devices/software-medical-device-samd/artificial-intelligence-software-medical-device>
 //! - PCCP implementation guidance analysis.
 //!   <https://intuitionlabs.ai/articles/fda-pccp-implementation-guide-ai-ml-samd>
@@ -138,6 +138,7 @@
 /// let cost = traditional_update_cost(80_000.0, 4.0, 50_000.0);
 /// assert!((cost - 280_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn traditional_update_cost(
     submission_cost: f64,
     review_months: f64,
@@ -172,6 +173,7 @@ pub fn traditional_update_cost(
 /// let cost = traditional_lifetime_cost(12.0, 80_000.0, 4.0, 50_000.0);
 /// assert!((cost - 3_360_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn traditional_lifetime_cost(
     n_updates: f64,
     submission_cost: f64,
@@ -208,6 +210,7 @@ pub fn traditional_lifetime_cost(
 /// let cost = pccp_lifetime_cost(250_000.0, 12.0, 30_000.0);
 /// assert!((cost - 610_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn pccp_lifetime_cost(
     pccp_authoring_cost: f64,
     n_updates: f64,
@@ -242,6 +245,7 @@ pub fn pccp_lifetime_cost(
 /// let saving = pccp_saving(3_360_000.0, 610_000.0);
 /// assert!((saving - 2_750_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn pccp_saving(traditional_lifetime_cost: f64, pccp_lifetime_cost: f64) -> f64 {
     traditional_lifetime_cost - pccp_lifetime_cost
 }
@@ -271,6 +275,7 @@ pub fn pccp_saving(traditional_lifetime_cost: f64, pccp_lifetime_cost: f64) -> f
 /// let months = benefit_months_gained(12.0, 4.0);
 /// assert!((months - 48.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn benefit_months_gained(n_updates: f64, review_months_avoided_per_update: f64) -> f64 {
     n_updates * review_months_avoided_per_update
 }

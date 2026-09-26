@@ -121,6 +121,7 @@
 /// let saving = avoidable_outsourcing_saving(500.0, 900.0, 350.0);
 /// assert!((saving - 275_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn avoidable_outsourcing_saving(
     cases_moved_in_house: f64,
     outsourced_unit_price: f64,
@@ -157,6 +158,7 @@ pub fn avoidable_outsourcing_saving(
 /// let remaining = outsourcing_spend(300.0, 900.0);
 /// assert!((remaining - 270_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn outsourcing_spend(cases_outsourced: f64, outsourced_unit_price: f64) -> f64 {
     cases_outsourced * outsourced_unit_price
 }
@@ -188,6 +190,7 @@ pub fn outsourcing_spend(cases_outsourced: f64, outsourced_unit_price: f64) -> f
 ///
 /// assert!(outsourcing_premium_ratio(900.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn outsourcing_premium_ratio(
     outsourced_unit_price: f64,
     internal_scheme_price: f64,
@@ -224,6 +227,7 @@ pub fn outsourcing_premium_ratio(
 /// let net = net_benefit(275_000.0, 90_000.0);
 /// assert!((net - 185_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn net_benefit(avoidable_outsourcing_saving: f64, software_annual_cost: f64) -> f64 {
     avoidable_outsourcing_saving - software_annual_cost
 }

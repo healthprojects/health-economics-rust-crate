@@ -9,6 +9,25 @@ repository = "https://github.com/healthprojects/health-economics-rust-crate/"
 license = "MIT OR Apache-2.0 OR BSD-3-Clause OR GPL-2.0-only OR GPL-3.0-only"
 keywords = ["health", "economics", "statistics", "analytics", "medical"]
 categories = ["science", "data-structures", "finance"]
-include = ["src/**/*", "docs/tutorials/**/*", "LICENSE.md", "README.md", "llms.txt", "llms.json"]
+include = [
+    "src/**/*",
+    "spec/**/*",
+    "docs/tutorials/**/*",
+    "health-economics-skill/**/*",
+    "LICENSE.md",
+    "README.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "llms.txt",
+    "llms.json",
+]
 
 [dependencies]
+rust_decimal = { version = "1.43.0", default-features = false, features = ["std"] }
+rusty-money = "0.5.1"
+
+[lints.rust]
+missing_docs = "deny"
+
+[lints.clippy]
+pedantic = { level = "deny", priority = -1 }

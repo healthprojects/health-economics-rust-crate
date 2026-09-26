@@ -125,6 +125,7 @@
 /// assert!((sensitivity(90.0, 10.0).unwrap() - 0.90).abs() < 1e-9);
 /// assert!(sensitivity(0.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn sensitivity(true_positives: f64, false_negatives: f64) -> Option<f64> {
     let denom = true_positives + false_negatives;
     if denom == 0.0 { None } else { Some(true_positives / denom) }
@@ -153,6 +154,7 @@ pub fn sensitivity(true_positives: f64, false_negatives: f64) -> Option<f64> {
 /// assert!((specificity(93.0, 7.0).unwrap() - 0.93).abs() < 1e-9);
 /// assert!(specificity(0.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn specificity(true_negatives: f64, false_positives: f64) -> Option<f64> {
     let denom = true_negatives + false_positives;
     if denom == 0.0 { None } else { Some(true_negatives / denom) }
@@ -183,6 +185,7 @@ pub fn specificity(true_negatives: f64, false_positives: f64) -> Option<f64> {
 /// assert!((ppv - 90.0 / 783.0).abs() < 1e-9); // ≈ 11.5%
 /// assert!(ppv_from_counts(0.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn ppv_from_counts(true_positives: f64, false_positives: f64) -> Option<f64> {
     let denom = true_positives + false_positives;
     if denom == 0.0 { None } else { Some(true_positives / denom) }
@@ -210,6 +213,7 @@ pub fn ppv_from_counts(true_positives: f64, false_positives: f64) -> Option<f64>
 /// assert!(npv > 0.998);
 /// assert!(npv_from_counts(0.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn npv_from_counts(true_negatives: f64, false_negatives: f64) -> Option<f64> {
     let denom = true_negatives + false_negatives;
     if denom == 0.0 { None } else { Some(true_negatives / denom) }
@@ -239,6 +243,7 @@ pub fn npv_from_counts(true_negatives: f64, false_negatives: f64) -> Option<f64>
 /// // Primary care: 0.9×0.01 + 0.07×0.99 = 0.0783 of screens flag positive.
 /// assert!((positive_rate(0.90, 0.93, 0.01) - 0.0783).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn positive_rate(sensitivity: f64, specificity: f64, prevalence: f64) -> f64 {
     // TP rate in population + FP rate in population.
     sensitivity * prevalence + (1.0 - specificity) * (1.0 - prevalence)
@@ -275,6 +280,7 @@ pub fn positive_rate(sensitivity: f64, specificity: f64, prevalence: f64) -> f64
 /// let primary = ppv_from_rates(0.90, 0.93, 0.01).unwrap();
 /// assert!((primary - 0.115).abs() < 0.001);
 /// ```
+#[must_use]
 pub fn ppv_from_rates(sensitivity: f64, specificity: f64, prevalence: f64) -> Option<f64> {
     // Bayes: P(disease | positive) = TP rate / (TP rate + FP rate).
     let denom = positive_rate(sensitivity, specificity, prevalence);
@@ -308,6 +314,7 @@ pub fn ppv_from_rates(sensitivity: f64, specificity: f64, prevalence: f64) -> Op
 /// let npv = npv_from_rates(0.90, 0.93, 0.01).unwrap();
 /// assert!(npv > 0.998);
 /// ```
+#[must_use]
 pub fn npv_from_rates(sensitivity: f64, specificity: f64, prevalence: f64) -> Option<f64> {
     // Bayes: P(healthy | negative) = TN rate / (TN rate + FN rate).
     let denom = specificity * (1.0 - prevalence) + (1.0 - sensitivity) * prevalence;
@@ -341,6 +348,7 @@ pub fn npv_from_rates(sensitivity: f64, specificity: f64, prevalence: f64) -> Op
 /// assert!((nns - 1.0 / 0.009).abs() < 1e-9);
 /// assert!(number_needed_to_screen(0.0, 0.9).is_none());
 /// ```
+#[must_use]
 pub fn number_needed_to_screen(prevalence: f64, sensitivity: f64) -> Option<f64> {
     let denom = prevalence * sensitivity;
     if denom == 0.0 { None } else { Some(1.0 / denom) }
@@ -371,6 +379,7 @@ pub fn number_needed_to_screen(prevalence: f64, sensitivity: f64) -> Option<f64>
 /// assert!((cost - 3_045.0).abs() < 0.5);
 /// assert!(cost_per_true_case_from_counts(1000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn cost_per_true_case_from_counts(program_cost: f64, true_positives: f64) -> Option<f64> {
     if true_positives == 0.0 { None } else { Some(program_cost / true_positives) }
 }
@@ -404,6 +413,7 @@ pub fn cost_per_true_case_from_counts(program_cost: f64, true_positives: f64) ->
 /// let cost = cost_per_true_case(0.90, 0.93, 0.01, 350.0).unwrap();
 /// assert!((cost - 3_045.0).abs() < 0.5);
 /// ```
+#[must_use]
 pub fn cost_per_true_case(
     sensitivity: f64,
     specificity: f64,
@@ -453,7 +463,12 @@ pub fn cost_per_true_case(
 /// assert!((auroc(&[0.5, 0.5], &[0.5, 0.5]).unwrap() - 0.5).abs() < 1e-9);
 /// assert!(auroc(&[], &[0.1]).is_none());
 /// ```
+#[must_use]
 pub fn auroc(positive_scores: &[f64], negative_scores: &[f64]) -> Option<f64> {
+    // Scores are compared within a small tolerance rather than exactly,
+    // since callers may derive them from independent floating-point
+    // computations that are conceptually but not bit-for-bit equal.
+    const TIE_TOLERANCE: f64 = 1e-9;
     if positive_scores.is_empty() || negative_scores.is_empty() {
         return None;
     }
@@ -461,14 +476,17 @@ pub fn auroc(positive_scores: &[f64], negative_scores: &[f64]) -> Option<f64> {
     let mut favorable = 0.0;
     for &p in positive_scores {
         for &n in negative_scores {
-            if p > n {
-                favorable += 1.0;
-            } else if p == n {
+            let diff = p - n;
+            if diff.abs() < TIE_TOLERANCE {
                 favorable += 0.5;
+            } else if diff > 0.0 {
+                favorable += 1.0;
             }
         }
     }
-    // Normalize by the number of (positive, negative) pairs.
+    // Normalize by the number of (positive, negative) pairs. Sample sizes
+    // fit comfortably in f64's 52-bit mantissa for any realistic cohort.
+    #[allow(clippy::cast_precision_loss)]
     Some(favorable / (positive_scores.len() as f64 * negative_scores.len() as f64))
 }
 

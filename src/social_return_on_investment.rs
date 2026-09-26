@@ -163,6 +163,7 @@ impl SocialOutcome {
     /// };
     /// assert!((loneliness.value() - 1_620_000.0).abs() < 1e-9);
     /// ```
+    #[must_use]
     pub fn value(&self) -> f64 {
         // Gross claim (quantity × proxy), then the discount chain:
         //   × attribution        — keep only the share this intervention caused
@@ -235,6 +236,7 @@ pub fn total_outcome_value(outcomes: &[SocialOutcome]) -> f64 {
 /// assert!((ratio - 8.5).abs() < 0.05);
 /// assert!(sroi_ratio(1_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn sroi_ratio(pv_outcomes: f64, pv_investment: f64) -> Option<f64> {
     if pv_investment == 0.0 {
         None
@@ -243,7 +245,7 @@ pub fn sroi_ratio(pv_outcomes: f64, pv_investment: f64) -> Option<f64> {
     }
 }
 
-/// Outcome value after `years` of drop-off: value × (1 − drop_off_rate)^years.
+/// Outcome value after `years` of drop-off: value × (1 − `drop_off_rate)^years`.
 ///
 /// Models the decay of an outcome over the years it is claimed to persist —
 /// the fourth SROI adjustment factor, applied per year rather than once.
@@ -267,9 +269,10 @@ pub fn sroi_ratio(pv_outcomes: f64, pv_investment: f64) -> Option<f64> {
 /// let v = value_after_drop_off(1_000.0, 0.10, 2);
 /// assert!((v - 810.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn value_after_drop_off(initial_value: f64, drop_off_rate: f64, years: u32) -> f64 {
     // Geometric decay: each year retains (1 − drop-off) of the prior year.
-    initial_value * (1.0 - drop_off_rate).powi(years as i32)
+    initial_value * (1.0 - drop_off_rate).powi(years.cast_signed())
 }
 
 /// Share of total claimed value that is proxy-valued (soft) rather than
@@ -300,6 +303,7 @@ pub fn value_after_drop_off(initial_value: f64, drop_off_rate: f64, years: u32) 
 /// let share = proxy_valued_share(1_620_000.0, 75_600.0).unwrap();
 /// assert!((share - 0.96).abs() < 0.005);
 /// ```
+#[must_use]
 pub fn proxy_valued_share(proxy_valued: f64, payer_real: f64) -> Option<f64> {
     let total = proxy_valued + payer_real;
     if total == 0.0 {

@@ -123,6 +123,7 @@
 /// // 780 shifts/year (15/week × 52) at a £180/shift premium over substantive.
 /// assert_eq!(premium_shift_saving(780.0, 180.0, 0.0), 140_400.0);
 /// ```
+#[must_use]
 pub fn premium_shift_saving(
     premium_shifts_avoided: f64,
     premium_rate_per_shift: f64,
@@ -152,6 +153,7 @@ pub fn premium_shift_saving(
 /// // 34,500 overtime hours (300 nurses × 2.5 hrs/week × 46 wks) at £8 premium.
 /// assert_eq!(overtime_saving(34_500.0, 8.0), 276_000.0);
 /// ```
+#[must_use]
 pub fn overtime_saving(overtime_hours_avoided: f64, overtime_premium_per_hour: f64) -> f64 {
     overtime_hours_avoided * overtime_premium_per_hour
 }
@@ -179,6 +181,7 @@ pub fn overtime_saving(overtime_hours_avoided: f64, overtime_premium_per_hour: f
 /// // One £50,000/year external contract cancelled.
 /// assert_eq!(cancelled_contract_saving(1.0, 50_000.0), 50_000.0);
 /// ```
+#[must_use]
 pub fn cancelled_contract_saving(contracts_cancelled: f64, contract_value: f64) -> f64 {
     contracts_cancelled * contract_value
 }
@@ -213,6 +216,7 @@ pub fn cancelled_contract_saving(contracts_cancelled: f64, contract_value: f64) 
 /// let total = hard_saving(780.0, 180.0, 0.0, 34_500.0, 8.0, 0.0, 0.0);
 /// assert_eq!(total, 416_400.0);
 /// ```
+#[must_use]
 pub fn hard_saving(
     premium_shifts_avoided: f64,
     premium_rate_per_shift: f64,
@@ -254,6 +258,7 @@ pub fn hard_saving(
 /// let s = annual_workforce_overtime_saving(300.0, 2.5, 8.0, 46.0);
 /// assert_eq!(s, 276_000.0);
 /// ```
+#[must_use]
 pub fn annual_workforce_overtime_saving(
     staff: f64,
     overtime_hours_avoided_per_week: f64,
@@ -289,6 +294,7 @@ pub fn annual_workforce_overtime_saving(
 /// let s = annual_bank_agency_saving(15.0, 180.0, 52.0);
 /// assert_eq!(s, 140_400.0);
 /// ```
+#[must_use]
 pub fn annual_bank_agency_saving(
     shifts_avoided_per_week: f64,
     premium_per_shift: f64,
@@ -320,6 +326,7 @@ pub fn annual_bank_agency_saving(
 /// // Worked example: £416,400 saving against a ~£150,000 licence.
 /// assert_eq!(net_of_licence(416_400.0, 150_000.0), 266_400.0);
 /// ```
+#[must_use]
 pub fn net_of_licence(hard_saving_total: f64, licence_cost: f64) -> f64 {
     hard_saving_total - licence_cost
 }

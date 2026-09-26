@@ -78,7 +78,7 @@
 //! ## Software engineering connection
 //!
 //! - CCA is the formal version of the balanced scorecard a good platform
-//!   proposal already uses: cost next to DORA metrics, DevEx scores,
+//!   proposal already uses: cost next to DORA metrics, `DevEx` scores,
 //!   incident counts — unaggregated.
 //! - **Pre-specify the rows**: decide what counts before the pilot, so you
 //!   can't quietly drop the metric that got worse.
@@ -139,6 +139,7 @@ impl ConsequenceRow {
     /// };
     /// assert!((row.difference() - (-5_600.0)).abs() < 1e-9);
     /// ```
+    #[must_use]
     pub fn difference(&self) -> f64 {
         self.intervention - self.comparator
     }
@@ -181,6 +182,7 @@ impl CostConsequenceTable {
     /// };
     /// assert!((table.incremental_cost() - 85_000.0).abs() < 1e-6);
     /// ```
+    #[must_use]
     pub fn incremental_cost(&self) -> f64 {
         self.cost.difference()
     }
@@ -214,6 +216,7 @@ impl CostConsequenceTable {
 /// assert!((per_hour - 15.0).abs() < 0.2);
 /// assert!(cost_per_unit_gained(85_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn cost_per_unit_gained(incremental_cost: f64, units_gained: f64) -> Option<f64> {
     if units_gained == 0.0 { None } else { Some(incremental_cost / units_gained) }
 }
@@ -242,6 +245,7 @@ pub fn cost_per_unit_gained(incremental_cost: f64, units_gained: f64) -> Option<
 /// // 82 avoided cancellations × £1,200 = £98,400.
 /// assert!((value_of_avoided_events(82.0, 1_200.0) - 98_400.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn value_of_avoided_events(events_avoided: f64, value_per_event: f64) -> f64 {
     events_avoided * value_per_event
 }

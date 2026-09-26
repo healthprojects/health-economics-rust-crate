@@ -130,6 +130,7 @@ pub const EVLYG_FIXED_UTILITY: f64 = 0.851;
 /// let lyg = life_years_gained_from_deaths_prevented(12.0, 8.0);
 /// assert!((lyg - 96.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn life_years_gained_from_deaths_prevented(
     deaths_prevented: f64,
     remaining_life_years_each: f64,
@@ -161,6 +162,7 @@ pub fn life_years_gained_from_deaths_prevented(
 /// let lyg = life_years_gained_from_mean_survival(5.0, 3.0);
 /// assert!((lyg - 2.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn life_years_gained_from_mean_survival(
     mean_survival_new: f64,
     mean_survival_comparator: f64,
@@ -202,6 +204,7 @@ pub fn life_years_gained_from_mean_survival(
 /// // Mismatched or too-short samples are rejected.
 /// assert!(area_between_survival_curves(&[0.0], &[1.0], &[1.0]).is_none());
 /// ```
+#[must_use]
 pub fn area_between_survival_curves(
     times: &[f64],
     survival_new: &[f64],
@@ -249,6 +252,7 @@ pub fn area_between_survival_curves(
 /// let qalys = qalys_from_life_extension(96.0, 0.7);
 /// assert!((qalys - 67.2).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn qalys_from_life_extension(life_years: f64, patient_utility: f64) -> f64 {
     life_years * patient_utility
 }
@@ -279,6 +283,7 @@ pub fn qalys_from_life_extension(life_years: f64, patient_utility: f64) -> f64 {
 /// let evlyg = evlyg_from_life_extension(96.0, EVLYG_FIXED_UTILITY);
 /// assert!((evlyg - 81.696).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn evlyg_from_life_extension(life_years: f64, fixed_utility: f64) -> f64 {
     life_years * fixed_utility
 }
@@ -307,6 +312,7 @@ pub fn evlyg_from_life_extension(life_years: f64, fixed_utility: f64) -> f64 {
 /// let value = monetary_value(67.2, 20_000.0);
 /// assert!((value - 1_344_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn monetary_value(health_units: f64, threshold_per_unit: f64) -> f64 {
     health_units * threshold_per_unit
 }

@@ -150,6 +150,7 @@ pub struct DownstreamRelease {
 /// // An hour saved at a non-gating role releases nothing downstream.
 /// assert_eq!(value_of_unblocking(&[], 0.0, 300.0), 0.0);
 /// ```
+#[must_use]
 pub fn value_of_unblocking(
     downstream_releases: &[DownstreamRelease],
     pathway_throughput_gain: f64,
@@ -187,6 +188,7 @@ pub fn value_of_unblocking(
 /// // 90 min of information assembly cut to 20 min: 70 minutes/day saved.
 /// assert_eq!(gating_task_minutes_saved(90.0, 20.0), 70.0);
 /// ```
+#[must_use]
 pub fn gating_task_minutes_saved(minutes_before: f64, minutes_after: f64) -> f64 {
     minutes_before - minutes_after
 }
@@ -214,6 +216,7 @@ pub fn gating_task_minutes_saved(minutes_before: f64, minutes_after: f64) -> f64
 /// // ~3 staff-hours/day of blocked time released ≈ 1,095 hrs/yr.
 /// assert_eq!(annualize(3.0, 365.0), 1_095.0);
 /// ```
+#[must_use]
 pub fn annualize(per_day: f64, days_per_year: f64) -> f64 {
     per_day * days_per_year
 }
@@ -241,6 +244,7 @@ pub fn annualize(per_day: f64, days_per_year: f64) -> f64 {
 /// // 4 of the 6 late discharges recovered × 365 = 1,460 bed days/year.
 /// assert_eq!(bed_days_avoided_per_year(4.0, 365.0), 1_460.0);
 /// ```
+#[must_use]
 pub fn bed_days_avoided_per_year(
     late_discharges_recovered_per_day: f64,
     days_per_year: f64,

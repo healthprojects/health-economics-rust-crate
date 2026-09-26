@@ -152,6 +152,7 @@ pub enum CostEffectivenessQuadrant {
 /// // Zero effect puts the pair on the axis: no meaningful ratio.
 /// assert_eq!(classify_quadrant(300_000.0, 0.0), CostEffectivenessQuadrant::OnAxis);
 /// ```
+#[must_use]
 pub fn classify_quadrant(delta_cost: f64, delta_effect: f64) -> CostEffectivenessQuadrant {
     // Order matters: the ΔE = 0 axis is carved out first because the ratio
     // is undefined there regardless of ΔC's sign.
@@ -200,6 +201,7 @@ pub fn classify_quadrant(delta_cost: f64, delta_effect: f64) -> CostEffectivenes
 /// // Undefined at ΔE = 0.
 /// assert!(icer(300_000.0, 0.0).is_none());
 /// ```
+#[must_use]
 pub fn icer(delta_cost: f64, delta_effect: f64) -> Option<f64> {
     if delta_effect == 0.0 {
         None
@@ -235,6 +237,7 @@ pub fn icer(delta_cost: f64, delta_effect: f64) -> Option<f64> {
 /// let dc = net_incremental_cost(900_000.0, 600_000.0);
 /// assert!((dc - 300_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn net_incremental_cost(gross_cost: f64, cost_offsets: f64) -> f64 {
     gross_cost - cost_offsets
 }
@@ -265,6 +268,7 @@ pub fn net_incremental_cost(gross_cost: f64, cost_offsets: f64) -> f64 {
 /// // £36,000/QALY (the un-netted version of the same case) fails.
 /// assert!(!adopt_at_threshold(36_000.0, 20_000.0));
 /// ```
+#[must_use]
 pub fn adopt_at_threshold(icer_value: f64, lambda: f64) -> bool {
     icer_value < lambda
 }

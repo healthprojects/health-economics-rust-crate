@@ -142,6 +142,7 @@ pub enum SavingCategory {
 /// // An agency-spend line falling from £500,000 to £419,500 releases £80,500.
 /// assert!((cash_releasing_saving(500_000.0, 419_500.0) - 80_500.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn cash_releasing_saving(budget_line_before: f64, budget_line_after: f64) -> f64 {
     budget_line_before - budget_line_after
 }
@@ -172,6 +173,7 @@ pub fn cash_releasing_saving(budget_line_before: f64, budget_line_after: f64) ->
 /// // then be split honestly.
 /// assert!((non_cash_releasing_value(11_500.0, 25.0) - 287_500.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn non_cash_releasing_value(hours_released: f64, unit_cost_per_hour: f64) -> f64 {
     hours_released * unit_cost_per_hour
 }
@@ -199,6 +201,7 @@ pub fn non_cash_releasing_value(hours_released: f64, unit_cost_per_hour: f64) ->
 /// // 100 nurses × 30 min/shift × 5 shifts/week × 46 weeks ≈ 11,500 h/year.
 /// assert!((annual_hours_saved(100.0, 0.5, 5.0, 46.0) - 11_500.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn annual_hours_saved(
     staff_count: f64,
     hours_saved_per_shift: f64,
@@ -220,7 +223,7 @@ pub struct TimeAllocation {
     /// Fraction of total saved hours in this slice (0–1).
     pub fraction: f64,
     /// £ per hour used to value this slice (e.g. agency rate for cancelled
-    /// shifts, employer cost for redeployed capacity). Ignored for NoBenefit.
+    /// shifts, employer cost for redeployed capacity). Ignored for `NoBenefit`.
     pub hourly_rate: f64,
 }
 
@@ -242,6 +245,7 @@ impl TimeAllocation {
     /// };
     /// assert!((slice.hours(11_500.0) - 2_300.0).abs() < 1e-9);
     /// ```
+    #[must_use]
     pub fn hours(&self, total_hours: f64) -> f64 {
         total_hours * self.fraction
     }
@@ -272,6 +276,7 @@ impl TimeAllocation {
     /// };
     /// assert!(slack.value(11_500.0).abs() < 1e-9);
     /// ```
+    #[must_use]
     pub fn value(&self, total_hours: f64) -> f64 {
         match self.category {
             // Dissipated time carries no value: claiming it would be fiction.
@@ -316,6 +321,7 @@ impl TimeAllocation {
 /// assert!((cash - 80_500.0).abs() < 1e-6);
 /// assert!((capacity - 172_500.0).abs() < 1e-6);
 /// ```
+#[must_use]
 pub fn category_value(
     total_hours: f64,
     allocations: &[TimeAllocation],

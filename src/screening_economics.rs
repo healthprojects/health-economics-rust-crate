@@ -130,6 +130,7 @@
 /// let ppv = positive_predictive_value(0.90, 0.95, 0.005).unwrap();
 /// assert!((ppv - 0.083).abs() < 0.001);
 /// ```
+#[must_use]
 pub fn positive_predictive_value(
     sensitivity: f64,
     specificity: f64,
@@ -168,6 +169,7 @@ pub fn positive_predictive_value(
 /// let tp = true_positives(100_000.0, 0.005, 0.90);
 /// assert!((tp - 450.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn true_positives(population: f64, prevalence: f64, sensitivity: f64) -> f64 {
     population * prevalence * sensitivity
 }
@@ -193,6 +195,7 @@ pub fn true_positives(population: f64, prevalence: f64, sensitivity: f64) -> f64
 /// let fp = false_positives(100_000.0, 0.005, 0.95);
 /// assert!((fp - 4_975.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn false_positives(population: f64, prevalence: f64, specificity: f64) -> f64 {
     population * (1.0 - prevalence) * (1.0 - specificity)
 }
@@ -225,6 +228,7 @@ pub fn false_positives(population: f64, prevalence: f64, specificity: f64) -> f6
 /// let cost = total_programme_cost(100_000.0, 15.0, 400.0, 450.0, 4_975.0);
 /// assert!((cost - 3_670_000.0).abs() < 1e-9);
 /// ```
+#[must_use]
 pub fn total_programme_cost(
     population: f64,
     screening_cost_per_person: f64,
@@ -261,6 +265,7 @@ pub fn total_programme_cost(
 /// let per_case = cost_per_true_case(3_670_000.0, 450.0).unwrap();
 /// assert!((per_case - 8_156.0).abs() < 1.0);
 /// ```
+#[must_use]
 pub fn cost_per_true_case(total_programme_cost: f64, true_positives: f64) -> Option<f64> {
     if true_positives == 0.0 {
         None
@@ -298,6 +303,7 @@ pub fn cost_per_true_case(total_programme_cost: f64, true_positives: f64) -> Opt
 /// let value = net_value_per_case_found(20_000.0, 0.0);
 /// assert!(value > 8_156.0);
 /// ```
+#[must_use]
 pub fn net_value_per_case_found(
     earlier_intervention_value_per_case: f64,
     overdiagnosis_harm_per_case: f64,
