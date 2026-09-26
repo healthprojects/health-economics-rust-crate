@@ -104,6 +104,13 @@
 //! [`total_cost_of_ownership`], [`build_vs_buy`], [`cloud_unit_economics`],
 //! [`exact_cents_cost_allocation`], [`currency_safe_cost_rollup`]
 
+// Re-exported so callers can construct `Money` values for the three
+// `Money`-based modules without adding `rusty-money` as their own direct
+// dependency (which would otherwise risk a version mismatch: a `Money`
+// from a different `rusty-money` version is a different, incompatible
+// type).
+pub use rusty_money::{iso, Money};
+
 /// Long-form tutorials rendered into rustdoc. Each walks a complete
 /// analysis with runnable, doctested code.
 pub mod tutorials {
