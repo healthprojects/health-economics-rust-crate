@@ -38,6 +38,7 @@ common pitfalls, and further reading.
 - [Patient-Reported Outcomes (PROMs, PREMs, MCID)](src/patient_reported_outcomes.rs): `instrument_sum_score`, `distribution_based_mcid`, `adjusted_difference`, `clears_mcid`, `absolute_risk_reduction`, `number_needed_to_treat`, +4 more
 - [Number Needed to Treat (NNT)](src/number_needed_to_treat.rs): `absolute_risk_reduction`, `relative_risk_reduction`, `number_needed_to_treat`, `number_needed_to_harm`, `cost_per_event_prevented`, `prevention_payoff_ratio`
 - [Work Productivity and Activity Impairment (WPAI)](src/work_productivity_and_activity_impairment.rs): `absenteeism_percent`, `overall_work_impairment_percent`, `productivity_cost`
+- [Time Trade-Off (TTO) Utility Elicitation](src/time_trade_off_utility.rs): `time_trade_off_utility`, `worse_than_death_utility`
 
 ### Economic evaluation frameworks
 

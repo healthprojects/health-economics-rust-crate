@@ -1,6 +1,6 @@
 //! # Health Economics
 //!
-//! Rust implementations of 85 health-economics metrics and their software
+//! Rust implementations of 86 health-economics metrics and their software
 //! engineering analogues — one module per topic. Each module implements the
 //! formulas from its source topic document (`health-economics-metrics/topics/*.md`),
 //! documents them with runnable examples, and reproduces the document's
@@ -51,7 +51,7 @@
 //! [`quality_adjusted_life_year`], [`eq_5d`], [`disability_adjusted_life_year`],
 //! [`life_years_gained`], [`health_adjusted_life_expectancy`],
 //! [`patient_reported_outcomes`], [`number_needed_to_treat`],
-//! [`work_productivity_and_activity_impairment`]
+//! [`work_productivity_and_activity_impairment`], [`time_trade_off_utility`]
 //!
 //! **Economic evaluation frameworks** —
 //! [`cost_effectiveness_analysis`], [`cost_utility_analysis`],
@@ -205,6 +205,7 @@ pub mod social_return_on_investment;
 pub mod space_and_devex;
 pub mod technical_debt;
 pub mod time_horizon;
+pub mod time_trade_off_utility;
 pub mod total_cost_of_ownership;
 pub mod value_generating_capacity_operational_turnaround;
 pub mod value_of_a_statistical_life;

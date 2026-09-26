@@ -1,7 +1,7 @@
 {
   "name": "health-economics",
   "version": "0.2.0",
-  "description": "Rust implementations of 85 health-economics metrics and their software engineering analogues.",
+  "description": "Rust implementations of 86 health-economics metrics and their software engineering analogues.",
   "language": "rust",
   "edition": "2024",
   "dependencies": [
@@ -432,6 +432,31 @@
           "formula": "`overall_work_impairment_percent / 100 * period_earnings`",
           "returns_none_when": null,
           "example": "`productivity_cost(37.0, 800.0) == 296.0`"
+        }
+      ]
+    },
+    {
+      "name": "time_trade_off_utility",
+      "theme": "Health outcome measures",
+      "path": "src/time_trade_off_utility.rs",
+      "spec": "spec/time-trade-off-utility.md",
+      "title": "Time Trade-Off (TTO) Utility Elicitation",
+      "summary": "TTO (Torrance, 1976) is a standard method for eliciting a health-state utility value directly from a respondent, rather than inventing one. For a state considered *better than death*, the respondent is asked how many years `X` in full health they would consider equivalent to `T` years in the impaired state (`X < T`); utility is `X / T`.",
+      "upstream_topic": "health-economics-metrics/topics/time-trade-off-utility.md",
+      "functions": [
+        {
+          "name": "time_trade_off_utility",
+          "signature": "time_trade_off_utility(time_in_full_health: f64, time_in_impaired_state: f64) -> Option<f64>",
+          "formula": "`time_in_full_health / time_in_impaired_state`",
+          "returns_none_when": "`time_in_impaired_state == 0.0`.",
+          "example": "`time_trade_off_utility(7.0, 10.0) == Some(0.7)`"
+        },
+        {
+          "name": "worse_than_death_utility",
+          "signature": "worse_than_death_utility(time_traded_for_death: f64, total_duration: f64) -> Option<f64>",
+          "formula": "`-time_traded_for_death / (total_duration - time_traded_for_death)`",
+          "returns_none_when": "`total_duration - time_traded_for_death == 0.0`.",
+          "example": "`worse_than_death_utility(2.0, 10.0) == Some(-0.25)`"
         }
       ]
     },
