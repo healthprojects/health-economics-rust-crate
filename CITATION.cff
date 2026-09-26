@@ -12,9 +12,9 @@ authors:
     orcid: 'https://orcid.org/0009-0000-4681-282X'
 identifiers:
   - type: url
-    value: 'https://github.com/joelparkerhenderson/health-economics-rust-crate/'
+    value: 'https://github.com/healthprojects/health-economics-rust-crate/'
     description: Health Economics: Rust crate of health economics models, structs, functions, calculations, and more
-repository-code: 'https://github.com/joelparkerhenderson/health-economics-rust-crate/'
+repository-code: 'https://github.com/healthprojects/health-economics-rust-crate/'
 abstract: >-
   Health Economics: Rust crate of health economics models, structs, functions, calculations, and more
 license: See license file

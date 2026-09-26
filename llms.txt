@@ -1,0 +1,146 @@
+# Health Economics
+
+> Rust crate of pure calculation functions for health-economics metrics —
+> health outcome measures, economic evaluation frameworks, decision rules,
+> uncertainty analysis, healthcare operations, digital health products, AI
+> evaluation, and their software-engineering analogues. Almost entirely
+> `f64` in, `f64`/`Option<f64>` out; three modules use the `rusty_money`
+> crate for exact-decimal currency arithmetic (this crate's only
+> dependency).
+
+One module per metric topic, each mirroring a topic in the upstream
+[Health Economics Metrics](https://github.com/healthprojects/health-economics-metrics)
+project: what the metric is, how it's calculated, why it matters, a worked
+example that runs as a doctest, the software engineering connection,
+common pitfalls, and further reading.
+
+## Docs
+
+- [Crate root](src/lib.rs): module index and a quickstart doctest
+- [Specification contracts](spec/README.md): formula, signature, and
+  `None`/`Err` condition for every function — the single source of truth
+  for "what it computes"
+- [README](README.md): install, quickstart, module index, testing
+- [Skill](health-economics-skill/SKILL.md): how an AI agent should pick a
+  function and read `Option<f64>` results in this crate
+- [Tutorials](docs/tutorials/): four long-form guides from a waiting-list
+  business case through to the software-engineering mirror
+
+## Modules
+
+### Health outcome measures
+
+- [Quality-Adjusted Life Year (QALY)](src/quality_adjusted_life_year.rs): `qalys`, `qaly_loss_from_delay`, `qaly_gain`, `population_qalys`, `monetized_value`, `discount_factor`
+- [EQ-5D](src/eq_5d.rs): `qalys`, `qaly_gain`, `attributable_qaly_gain`, `monetized_value`
+- [Disability-Adjusted Life Year (DALY)](src/disability_adjusted_life_year.rs): `years_of_life_lost`, `years_lived_with_disability`, `dalys`, `cost_per_daly_averted`, `who_choice_band`
+- [Life-Years Gained (LYG)](src/life_years_gained.rs): `life_years_gained_from_deaths_prevented`, `life_years_gained_from_mean_survival`, `area_between_survival_curves`, `qalys_from_life_extension`, `evlyg_from_life_extension`, `monetary_value`
+- [Health-Adjusted Life Expectancy (HALE)](src/health_adjusted_life_expectancy.rs): `proportion_in_full_health`, `sullivan_hale`, `hale_gap`, `hale_contribution_per_person`, `years_to_days`
+- [Patient-Reported Outcomes (PROMs, PREMs, MCID)](src/patient_reported_outcomes.rs): `instrument_sum_score`, `distribution_based_mcid`, `adjusted_difference`, `clears_mcid`, `absolute_risk_reduction`, `number_needed_to_treat`, +4 more
+- [Number Needed to Treat (NNT)](src/number_needed_to_treat.rs): `absolute_risk_reduction`, `relative_risk_reduction`, `number_needed_to_treat`, `number_needed_to_harm`, `cost_per_event_prevented`, `prevention_payoff_ratio`
+- [Work Productivity and Activity Impairment (WPAI)](src/work_productivity_and_activity_impairment.rs): `absenteeism_percent`, `overall_work_impairment_percent`, `productivity_cost`
+
+### Economic evaluation frameworks
+
+- [Cost-Effectiveness Analysis (CEA)](src/cost_effectiveness_analysis.rs): `icer`, `average_cost_effectiveness_ratio`, `incremental_icers`
+- [Cost-Utility Analysis (CUA)](src/cost_utility_analysis.rs): `total_qalys`, `delta_qalys`, `displaced_care_saving`, `icur`, `is_dominant`
+- [Cost-Benefit Analysis (CBA)](src/cost_benefit_analysis.rs): `discount_factor`, `annuity_factor`, `present_value`, `net_present_value`, `benefit_cost_ratio`, `optimism_bias_cost_uplift`, +1 more
+- [Cost-Minimization Analysis (CMA)](src/cost_minimization_analysis.rs): `outcomes_equivalent`, `cost_minimization`, `cost_saving`
+- [Cost-Consequence Analysis (CCA)](src/cost_consequence_analysis.rs): `cost_per_unit_gained`, `value_of_avoided_events`
+- [Budget Impact Analysis (BIA)](src/budget_impact_analysis.rs): `net_cost_per_patient`, `scenario_cost`, `budget_impact`
+- [Social Return on Investment (SROI)](src/social_return_on_investment.rs): `total_outcome_value`, `sroi_ratio`, `value_after_drop_off`, `proxy_valued_share`
+- [Health Technology Assessment (HTA)](src/health_technology_assessment.rs): `icer`, `meets_threshold`, `probability_cost_effective`, `recommend_routine_commissioning`
+- [Human Capital Approach vs Friction Cost Method](src/human_capital_and_friction_cost.rs): `human_capital_cost`, `friction_cost`
+
+### Decision rules and thresholds
+
+- [Incremental Cost-Effectiveness Ratio (ICER)](src/incremental_cost_effectiveness_ratio.rs): `classify_quadrant`, `icer`, `net_incremental_cost`, `adopt_at_threshold`
+- [Net Monetary Benefit (NMB)](src/net_monetary_benefit.rs): `net_monetary_benefit`, `net_health_benefit`, `adopt`, `best_option_index`
+- [Willingness-to-Pay Thresholds](src/willingness_to_pay_thresholds.rs): `icer`, `net_monetary_benefit`, `adopt_by_icer`, `adopt_by_nmb`, `max_defensible_price`
+- [Dominance and the Efficiency Frontier](src/dominance_and_efficiency_frontier.rs): `strictly_dominates`, `icer`, `efficiency_frontier`, `frontier_icers`
+- [QALY Shortfall and Severity Modifiers](src/qaly_shortfall_and_severity_modifiers.rs): `absolute_shortfall`, `proportional_shortfall`, `severity_weight`, `effective_icer`, `effective_threshold`
+- [Opportunity Cost](src/opportunity_cost.rs): `opportunity_cost`, `net_gain`, `bed_day_savings_value`, `qalys_displaced`
+- [Analysis Perspective](src/analysis_perspective.rs): `net_value_from_perspective`, `payer_savings`, `patient_time_value`, `false_reassurance_harm`
+- [Time Horizon](src/time_horizon.rs): `net_present_value`, `net_benefit_at_horizon`, `break_even_horizon_years`, `net_benefit_by_horizons`
+- [Discounting and Time Preference](src/discounting_and_time_preference.rs): `present_value`, `annuity_present_value`, `delayed_present_value`
+- [Marginal vs Average Cost](src/marginal_vs_average_cost.rs): `average_cost`, `naive_average_cost_saving`, `marginal_saving`, `step_change_saving`, `ward_bed_days_per_year`, `crosses_capacity_step`
+- [Value of a Statistical Life (VSL)](src/value_of_a_statistical_life.rs): `deaths_averted_from_risk_reduction`, `monetized_mortality_benefit`
+- [Cross-Currency ICER Comparison](src/cross_currency_icer_comparison.rs): `convert`, `adopt_at_threshold`
+- [Multi-Criteria Decision Analysis (MCDA)](src/multi_criteria_decision_analysis.rs): `mcda_score`, `weights_sum_to_one`
+- [Carbon Footprint per QALY](src/carbon_footprint_per_qaly.rs): `carbon_per_qaly`, `monetized_carbon_impact`, `carbon_adjusted_net_monetary_benefit`
+
+### Uncertainty and evidence
+
+- [Sensitivity Analysis](src/sensitivity_analysis.rs): `rank_by_swing`
+- [Probabilistic Sensitivity Analysis (PSA)](src/probabilistic_sensitivity_analysis.rs): `net_monetary_benefit`, `ceac`, `mean`, `probability_positive`, `percentile`, `simulate_migration_net_benefits`
+- [Expected Value of Perfect Information (EVPI)](src/expected_value_of_perfect_information.rs): `expected_nmb_of_best_option`, `expected_nmb_with_perfect_information`, `evpi`, `evpi_from_psa_draws`, `population_evpi`
+- [Expected Value of Sample Information (EVSI)](src/expected_value_of_sample_information.rs): `evsi_normal_approximation`, `expected_net_benefit_of_sampling`, `population_evsi`
+- [Benefits Realization](src/benefits_realization.rs): `realization_rate`, `optimism_error`, `optimism_adjusted_forecast`
+
+### Healthcare operations
+
+- [Bed Days Saved](src/bed_days_saved.rs): `bed_days_saved_from_earlier_discharge`, `bed_days_saved_from_avoided_admissions`, `freed_capacity_value`, `additional_elective_spells`, `naive_bed_day_value`
+- [Length of Stay (LOS)](src/length_of_stay.rs): `length_of_stay_days`, `average_length_of_stay`, `mean_length_of_stay`, `median_length_of_stay`, `beds_occupied`, `beds_freed`, +1 more
+- [Readmission Rate](src/readmission_rate.rs): `readmission_rate_percent`, `observed_vs_expected`, `avoided_readmissions`, `value_of_avoidance`, `program_cost`, `net_benefit`
+- [Referral to Treatment (RTT)](src/referral_to_treatment.rs): `rtt_performance_percent`, `meets_rtt_standard`, `waiting_health_cost_qalys`, `qaly_gain_from_wait_reduction`, `monetized_value`, `total_pathway_duration`, +1 more
+- [Waiting List Impact](src/waiting_list_impact.rs): `hours_released`, `extra_slots`, `patients_seen`, `list_reduction`, `waiting_time_gain`, `wait_reduction_fraction`, +1 more
+- [Did-Not-Attend (DNA) Rate](src/did_not_attend_rate.rs): `dna_rate_percent`, `recovered_slots`, `value_of_reduction`, `service_cost`, `return_ratio`, `relative_reduction`
+- [Emergency Attendance Avoidance](src/emergency_attendance_avoidance.rs): `avoided_events`, `gross_saving`, `gross_saving_attendances_and_admissions`, `net_saving`
+- [Practitioner Time](src/practitioner_time.rs): `daily_minutes_saved`, `annual_hours_saved`, `wage_basis_value`, `extra_appointments_per_day`, `annual_extra_appointments`, `output_basis_value`, +2 more
+- [National Tariff and Unit Costs](src/national_tariff_and_unit_costs.rs): `ncc_unit_cost`, `tariff_price`, `blended_payment`, `staff_capacity_value`, `redeployed_activity_value`, `valuation_ratio`
+- [Avoidable Outsourcing Costs](src/avoidable_outsourcing_costs.rs): `avoidable_outsourcing_saving`, `outsourcing_spend`, `outsourcing_premium_ratio`, `net_benefit`
+- [Avoided Downstream Costs](src/avoided_downstream_costs.rs): `attributable_events_avoided`, `offset_value`, `intervention_cost`, `net_cost`, `discount_factor`, `probability_weighted_offset`
+- [Downstream Resource Optimization](src/downstream_resource_optimization.rs): `value_of_unblocking`, `gating_task_minutes_saved`, `annualize`, `bed_days_avoided_per_year`
+- [Earlier Intervention](src/earlier_intervention.rs): `progression_events_avoided`, `value_per_avoided_progression`, `value_per_patient`, `total_backlog_value`
+- [Prevention Economics](src/prevention_economics.rs): `program_cost`, `downstream_offsets`, `net_cost`, `is_cost_saving`, `per_person_cost_saving_condition`, `qalys_gained`, +2 more
+- [Screening Economics](src/screening_economics.rs): `positive_predictive_value`, `true_positives`, `false_positives`, `total_programme_cost`, `cost_per_true_case`, `net_value_per_case_found`
+- [Workforce Retention](src/workforce_retention.rs): `vacancy_cover_cost`, `annual_turnover_cost`, `retention_value`, `software_value`
+- [Cash-Releasing vs Non-Cash-Releasing Savings](src/cash_releasing_vs_non_cash_releasing.rs): `cash_releasing_saving`, `non_cash_releasing_value`, `annual_hours_saved`, `category_value`
+- [Hard Cash-Releasing Savings (Deficit Defense)](src/hard_cash_releasing_savings_deficit_defense.rs): `premium_shift_saving`, `overtime_saving`, `cancelled_contract_saving`, `hard_saving`, `annual_workforce_overtime_saving`, `annual_bank_agency_saving`, +1 more
+- [Value-Generating Capacity (Operational Turnaround)](src/value_generating_capacity_operational_turnaround.rs): `extra_activity_units`, `capacity_value`, `annual_capacity_value`
+
+### Digital health products
+
+- [Activation and Uptake](src/activation_and_uptake.rs): `activation_rate_percent`, `uptake_rate_percent`, `dtx_fill_rate_percent`, `value_per_completer`, `funnel_population_value`, `population_value`, +1 more
+- [Adherence and Persistence](src/adherence_and_persistence.rs): `mpr_percent`, `pdc_percent`, `digital_adherence_percent`, `persistence_days`, `percent_persistent`, `is_adherent`, +3 more
+- [Engagement Metrics](src/engagement_metrics.rs): `stickiness_percent`, `sessions_per_user`, `average_session_duration`, `feature_engagement`, `effective_dose_share`, `population_effect`, +1 more
+- [Retention and Churn](src/retention_and_churn.rs): `retention_percent`, `churn_rate_percent`, `expected_benefit_per_acquired_user`, `cost_per_retained_user`, `completers`, `qalys_delivered`, +3 more
+- [Reach and Equity (RE-AIM)](src/reach_and_equity.rs): `reach`, `population_impact`, `equity_gap`, `impact_ratio`, `equity_weighted_qalys`
+- [Health App Unit Economics](src/health_app_unit_economics.rs): `cac`, `arpu`, `ltv`, `ltv_cac_ratio`, `is_viable_ltv_cac`, `effective_cac_per_retained_user`, +4 more
+- [Remote Patient Monitoring Economics](src/remote_patient_monitoring_economics.rs): `revenue_per_member_per_month`, `monthly_revenue`, `annual_revenue`, `annual_margin`, `compliance_lever_annual_gain`, `virtual_ward_gross_annual_value`, +1 more
+- [Digital Endpoints and Biomarkers](src/digital_endpoints_and_biomarkers.rs): `required_sample_size`, `sampling_density_ratio`, `detectable_effect_improvement`, `sample_size_ratio`, `trial_cost_saving`
+- [Wearable Validation](src/wearable_validation.rs): `mape_percent`, `concordance_correlation`, `bland_altman`, `wear_time_compliance_percent`, `data_completeness_percent`, `classify_heart_rate_mape`, +2 more
+- [Germany's DiGA Fast-Track](src/diga_fast_track.rs): `revenue`, `activated_prescriptions`, `expected_value`, `provisional_year_finances_evidence`
+- [NICE Evidence Standards Framework (ESF)](src/nice_evidence_standards_framework.rs): `classify_tier`, `evidence_investment_range`, `years_to_recoup_evidence_cost`
+- [GDS Service Metrics](src/gds_service_metrics.rs): `cost_per_transaction`, `completion_rate_percent`, `digital_take_up_percent`, `user_satisfaction_percent`, `channel_shift_saving`, `failure_demand_cost`
+
+### AI evaluation and economics
+
+- [Clinical AI Evaluation](src/clinical_ai_evaluation.rs): `sensitivity`, `specificity`, `ppv_from_counts`, `npv_from_counts`, `positive_rate`, `ppv_from_rates`, +5 more
+- [AI Quality Metrics](src/ai_quality_metrics.rs): `hallucination_rate`, `faithfulness`, `expected_harm_cost_per_output`, `errors_reaching_submission`, `expected_error_cost`, `review_cost`
+- [AI Regulatory Evaluation](src/ai_regulatory_evaluation.rs): `traditional_update_cost`, `traditional_lifetime_cost`, `pccp_lifetime_cost`, `pccp_saving`, `benefit_months_gained`
+- [AI Return on Investment](src/ai_return_on_investment.rs): `ai_roi`, `attributable_benefit`
+- [AI Developer Productivity](src/ai_developer_productivity.rs): `acceptance_rate`, `retention_rate`, `speedup`, `throughput_delta`, `annual_capacity_value`, `annual_tool_cost`, +2 more
+- [Inference Unit Economics](src/inference_unit_economics.rs): `cost_per_call`, `cost_per_unit`, `annual_cost`, `cost_share_of_value`, `projected_cost`
+
+### Software engineering economics
+
+- [DORA Metrics](src/dora_metrics.rs): `deployment_frequency`, `change_failure_rate_percent`, `days_to_weeks`, `lead_time_reduction_weeks`, `value_pulled_forward`, `failed_changes_avoided`, +3 more
+- [Flow Metrics](src/flow_metrics.rs): `cycle_time`, `lead_time`, `throughput`, `flow_efficiency_percent`, `littles_law_cycle_time`, `littles_law_wip`, +1 more
+- [SPACE and DevEx](src/space_and_devex.rs): `space_rule_satisfied`, `time_reclaimed_minutes_per_day`, `capacity_value_per_year`, `vendor_index_minutes_per_week`
+- [Technical Debt](src/technical_debt.rs): `sqale_principal`, `technical_debt_ratio_percent`, `sqale_grade`, `annual_interest`, `interest_avoided_per_year`, `payback_period_years`, +2 more
+- [Cost of Delay (CoD)](src/cost_of_delay.rs): `operational_cost_of_delay`, `total_delay_loss`, `qaly_gain_per_patient`, `cost_of_delay_health`, `cost_of_delay_money`
+- [WSJF and CD3](src/wsjf_and_cd3.rs): `cd3`, `wsjf`, `total_delay_cost`, `sequence_by_cd3`, `sequencing_savings`
+- [Return on Investment (ROI)](src/return_on_investment.rs): `roi`, `payback_period_years`, `total_benefits`, `strict_financial_roi`, `economic_roi`
+- [Total Cost of Ownership (TCO)](src/total_cost_of_ownership.rs): `tco_advantage`, `annual_maintenance_benchmark`
+- [Build vs Buy](src/build_vs_buy.rs): `risk_adjusted_build_cost`, `risk_adjusted_time_to_value`, `total_cost_of_ownership`, `cost_of_delay`, `effective_cost`
+- [Cloud Unit Economics (FinOps)](src/cloud_unit_economics.rs): `unit_cost`, `unit_cost_ratio`, `unit_cost_change`
+- [Exact-Cents Cost Allocation](src/exact_cents_cost_allocation.rs): `allocate_by_shares`
+- [Currency-Safe Cost Rollup](src/currency_safe_cost_rollup.rs): `sum_line_items`, `apply_multiplier`
+
+## Optional
+
+- [llms.json](llms.json): the same module/function list as structured
+  JSON, with formulas and worked-example input/output pairs
+- [AGENTS.md](AGENTS.md): build/test/lint commands and conventions for an
+  agent modifying this crate
+- [CLAUDE.md](CLAUDE.md): Claude Code-specific supplement to AGENTS.md

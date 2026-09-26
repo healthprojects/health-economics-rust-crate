@@ -1,14 +1,21 @@
 # Health Economics Rust crate
 
-Health economics models, structs, calculations, and examples — 76 modules
+Health economics models, structs, calculations, and examples — 85 modules
 covering the metrics of health technology assessment, healthcare operations,
 digital health products, clinical AI evaluation, and their software
 engineering analogues. One module per topic.
 
-The crate is `std`-only with **zero external dependencies**. All quantities
-are `f64`, and functions return `Option<f64>` wherever a denominator can be
-zero. Randomness (for probabilistic sensitivity analysis) uses a seeded,
-deterministic generator so results are reproducible.
+Almost every function is `f64` in, `f64`/`Option<f64>` out (`None` wherever
+a denominator can be zero). Three modules —
+[`exact_cents_cost_allocation`](src/exact_cents_cost_allocation.rs),
+[`currency_safe_cost_rollup`](src/currency_safe_cost_rollup.rs), and
+[`cross_currency_icer_comparison`](src/cross_currency_icer_comparison.rs) —
+instead use the [`rusty-money`](https://docs.rs/rusty-money) crate's `Money`
+type for exact-decimal currency arithmetic, because summing or allocating
+money in binary floating point is a real correctness bug class. That's this
+crate's only reason to depend on anything outside `std`. Randomness (for
+probabilistic sensitivity analysis) uses a seeded, deterministic generator
+so results are reproducible.
 
 ## Install
 
@@ -48,6 +55,14 @@ Each module's rustdoc explains its topic — what the metric is, its formula
 with a legend, why it matters, and a worked example that runs as a doctest.
 Start with `cargo doc --open`.
 
+For the calculation contract independent of the narrative — exact function
+signatures, formulas, and `None`/`Err` conditions — see
+[`spec/`](spec/README.md). For a machine-readable index of every module and
+function, see [`llms.txt`](llms.txt) and [`llms.json`](llms.json). An AI
+agent modifying this crate should start with [`AGENTS.md`](AGENTS.md); one
+answering a metrics question should start with
+[`health-economics-skill/SKILL.md`](health-economics-skill/SKILL.md).
+
 Long-form tutorials live in the `tutorials` module
 ([`docs/tutorials/`](docs/tutorials/)), in reading order:
 
@@ -84,6 +99,7 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `health_adjusted_life_expectancy` — HALE
 - `patient_reported_outcomes` — PROMs and PREMs
 - `number_needed_to_treat` — NNT and NNH from absolute risk differences
+- `work_productivity_and_activity_impairment` — WPAI: absenteeism and presenteeism
 
 ### Economic evaluation frameworks
 
@@ -95,6 +111,7 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `budget_impact_analysis` — affordability for the payer
 - `social_return_on_investment` — SROI
 - `health_technology_assessment` — the HTA process end-to-end
+- `human_capital_and_friction_cost` — indirect/productivity cost valuation methods
 
 ### Decision rules and thresholds
 
@@ -108,12 +125,17 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `time_horizon` — how far consequences are counted
 - `discounting_and_time_preference` — present values at reference-case rates
 - `marginal_vs_average_cost` — which cost belongs in which decision
+- `value_of_a_statistical_life` — VSL/VPF: the population revealed-preference alternative to QALYs
+- `multi_criteria_decision_analysis` — MCDA weighted scoring beyond a single threshold
+- `carbon_footprint_per_qaly` — carbon efficiency alongside cost efficiency
+- `cross_currency_icer_comparison` — PPP vs market-FX conversion for international comparisons
 
 ### Uncertainty and evidence
 
 - `sensitivity_analysis` — one-way analysis and tornado diagrams
 - `probabilistic_sensitivity_analysis` — Monte Carlo over parameter distributions
 - `expected_value_of_perfect_information` — EVPI: what resolving uncertainty is worth
+- `expected_value_of_sample_information` — EVSI: pricing a specific proposed study
 - `benefits_realization` — tracking promised benefits after go-live
 
 ### Healthcare operations
@@ -151,6 +173,8 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `cost_of_delay`, `wsjf_and_cd3` — sequencing by cost of delay
 - `return_on_investment`, `total_cost_of_ownership`, `build_vs_buy`
 - `cloud_unit_economics`
+- `exact_cents_cost_allocation` — proportional splits that always sum exactly
+- `currency_safe_cost_rollup` — exact-decimal summation instead of drifting `f64`
 
 ## Testing
 
@@ -175,5 +199,5 @@ your option — or contact us for custom license options. See
 ## Tracking
 
 - Package: [health-economics](https://crates.io/crates/health-economics)
-- Repository: [github.com/joelparkerhenderson/health-economics-rust-crate](https://github.com/joelparkerhenderson/health-economics-rust-crate)
+- Repository: [github.com/healthprojects/health-economics-rust-crate](https://github.com/healthprojects/health-economics-rust-crate)
 - Author: [Joel Parker Henderson](https://joelparkerhenderson.com) — joel@joelparkerhenderson.com
