@@ -102,7 +102,7 @@ assert!((cap - 1_000_000.0).abs() < 1e-6);
 
 ## Where to go next
 
-- Discount multi-year QALY and cost streams first: [`discounting_and_time_preference`](../../discounting_and_time_preference/index.html).
-- Comparing more than two options? Build the frontier: [`dominance_and_efficiency_frontier`](../../dominance_and_efficiency_frontier/index.html).
-- Utilities come from validated instruments, not intuition: [`eq_5d`](../../eq_5d/index.html).
-- Severity can shift the effective threshold: [`qaly_shortfall_and_severity_modifiers`](../../qaly_shortfall_and_severity_modifiers/index.html).
+- Discount multi-year QALY and cost streams first: [`discounting_and_time_preference`](../../spec/discounting-and-time-preference.md).
+- Comparing more than two options? Build the frontier: [`dominance_and_efficiency_frontier`](../../spec/dominance-and-efficiency-frontier.md).
+- Utilities come from validated instruments, not intuition: [`eq_5d`](../../spec/eq-5d.md).
+- Severity can shift the effective threshold: [`qaly_shortfall_and_severity_modifiers`](../../spec/qaly-shortfall-and-severity-modifiers.md).

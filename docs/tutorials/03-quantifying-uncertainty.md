@@ -121,6 +121,6 @@ and now you can prove it.
 
 ## Where to go next
 
-- The full PSA-to-decision pipeline: [`probabilistic_sensitivity_analysis`](../../probabilistic_sensitivity_analysis/index.html).
-- Deterministic sensitivity patterns: [`sensitivity_analysis`](../../sensitivity_analysis/index.html).
-- Time horizons interact with all of this: [`time_horizon`](../../time_horizon/index.html).
+- The full PSA-to-decision pipeline: [`probabilistic_sensitivity_analysis`](../../spec/probabilistic-sensitivity-analysis.md).
+- Deterministic sensitivity patterns: [`sensitivity_analysis`](../../spec/sensitivity-analysis.md).
+- Time horizons interact with all of this: [`time_horizon`](../../spec/time-horizon.md).

@@ -133,6 +133,6 @@ assert!(payback < 0.5); // pays back in under six months
 
 ## Where to go next
 
-- Developer time has three valuation levels, like clinician time: [`practitioner_time`](../../practitioner_time/index.html).
-- Composite wellbeing metrics done properly: [`space_and_devex`](../../space_and_devex/index.html).
-- Retaining engineers is workforce economics: [`workforce_retention`](../../workforce_retention/index.html).
+- Developer time has three valuation levels, like clinician time: [`practitioner_time`](../../spec/practitioner-time.md).
+- Composite wellbeing metrics done properly: [`space_and_devex`](../../spec/space-and-devex.md).
+- Retaining engineers is workforce economics: [`workforce_retention`](../../spec/workforce-retention.md).

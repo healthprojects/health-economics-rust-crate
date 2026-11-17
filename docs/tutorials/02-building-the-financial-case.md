@@ -120,7 +120,7 @@ assert!((impact - 1_080_000.0).abs() < 1e-6); // £1.08M in year one
 
 ## Where to go next
 
-- Whose costs count? Declare it first: [`analysis_perspective`](../../analysis_perspective/index.html).
-- Full lifetime costs, not sticker price: [`total_cost_of_ownership`](../../total_cost_of_ownership/index.html).
-- Which "savings" are real cash: [`cash_releasing_vs_non_cash_releasing`](../../cash_releasing_vs_non_cash_releasing/index.html).
-- Did the benefits actually arrive? [`benefits_realization`](../../benefits_realization/index.html).
+- Whose costs count? Declare it first: [`analysis_perspective`](../../spec/analysis-perspective.md).
+- Full lifetime costs, not sticker price: [`total_cost_of_ownership`](../../spec/total-cost-of-ownership.md).
+- Which "savings" are real cash: [`cash_releasing_vs_non_cash_releasing`](../../spec/cash-releasing-vs-non-cash-releasing.md).
+- Did the benefits actually arrive? [`benefits_realization`](../../spec/benefits-realization.md).
