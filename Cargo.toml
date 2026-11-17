@@ -2,6 +2,7 @@
 name = "health-economics"
 version = "1.0.0"
 edition = "2024"
+rust-version = "1.98"
 authors = ["Joel Parker Henderson <joel@joelparkerhenderson.com>"]
 description = "Health economics models, structs, calculations, and examples."
 readme = "README.md"
@@ -31,3 +32,4 @@ missing_docs = "deny"
 
 [lints.clippy]
 pedantic = { level = "deny", priority = -1 }
+assert_is_empty = "allow"
