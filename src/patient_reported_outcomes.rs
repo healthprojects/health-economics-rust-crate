@@ -285,10 +285,7 @@ pub fn clears_mcid(mean_difference: f64, mcid: f64) -> bool {
 /// assert!((arr - 0.26).abs() < 1e-9);
 /// ```
 #[must_use]
-pub fn absolute_risk_reduction(
-    responder_rate_treatment: f64,
-    responder_rate_control: f64,
-) -> f64 {
+pub fn absolute_risk_reduction(responder_rate_treatment: f64, responder_rate_control: f64) -> f64 {
     responder_rate_treatment - responder_rate_control
 }
 

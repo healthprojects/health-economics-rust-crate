@@ -241,7 +241,10 @@ pub enum FreedCapacityUse {
 /// assert!((freed_capacity_value(1_200.0, &slack).unwrap() - 120_000.0).abs() < 1e-9);
 /// ```
 #[must_use]
-pub fn freed_capacity_value(bed_days_saved: f64, use_of_capacity: &FreedCapacityUse) -> Option<f64> {
+pub fn freed_capacity_value(
+    bed_days_saved: f64,
+    use_of_capacity: &FreedCapacityUse,
+) -> Option<f64> {
     match use_of_capacity {
         FreedCapacityUse::RefilledWithElective {
             average_elective_stay_days,

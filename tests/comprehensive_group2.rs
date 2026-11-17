@@ -102,8 +102,16 @@ fn edge_budget_impact_empty_and_zero() {
     assert!(close(scenario_cost(&[]), 0.0, 1e-12));
     assert!(close(budget_impact(0.0, 0.0), 0.0, 1e-12));
     // Zero-uptake and zero-population groups contribute nothing.
-    let dead = PatientGroup { eligible_population: 0.0, uptake: 0.5, net_cost_per_patient: 99.0 };
-    let idle = PatientGroup { eligible_population: 500.0, uptake: 0.0, net_cost_per_patient: 99.0 };
+    let dead = PatientGroup {
+        eligible_population: 0.0,
+        uptake: 0.5,
+        net_cost_per_patient: 99.0,
+    };
+    let idle = PatientGroup {
+        eligible_population: 500.0,
+        uptake: 0.0,
+        net_cost_per_patient: 99.0,
+    };
     assert!(close(dead.cost(), 0.0, 1e-12));
     assert!(close(scenario_cost(&[dead, idle]), 0.0, 1e-12));
 }
@@ -112,15 +120,27 @@ fn edge_budget_impact_empty_and_zero() {
 // extreme magnitudes without NaN/inf.
 #[test]
 fn edge_budget_impact_boundaries_and_extremes() {
-    let full = PatientGroup { eligible_population: 1_000.0, uptake: 1.0, net_cost_per_patient: 180.0 };
+    let full = PatientGroup {
+        eligible_population: 1_000.0,
+        uptake: 1.0,
+        net_cost_per_patient: 180.0,
+    };
     assert!(close(full.cost(), 180_000.0, 1e-9));
     // Displacement exceeding price makes the net cost negative (a saving).
     let net = net_cost_per_patient(100.0, 250.0, 0.0);
     assert!(close(net, -150.0, 1e-12));
-    let saver = PatientGroup { eligible_population: 1_000.0, uptake: 1.0, net_cost_per_patient: net };
+    let saver = PatientGroup {
+        eligible_population: 1_000.0,
+        uptake: 1.0,
+        net_cost_per_patient: net,
+    };
     assert!(budget_impact(scenario_cost(&[saver]), 0.0) < 0.0);
     // Extremes stay finite.
-    let big = PatientGroup { eligible_population: 1e12, uptake: 1.0, net_cost_per_patient: 1e12 };
+    let big = PatientGroup {
+        eligible_population: 1e12,
+        uptake: 1.0,
+        net_cost_per_patient: 1e12,
+    };
     assert!(big.cost().is_finite());
     assert!(net_cost_per_patient(1e12, 1e12, 1e12).is_finite());
 }
@@ -130,9 +150,17 @@ fn edge_budget_impact_boundaries_and_extremes() {
 #[test]
 fn edge_build_vs_buy_zeros_and_identities() {
     assert!(close(total_cost_of_ownership(0.0, 0.0, 0.0), 0.0, 1e-12));
-    assert!(close(total_cost_of_ownership(500.0, 100.0, 0.0), 500.0, 1e-12));
+    assert!(close(
+        total_cost_of_ownership(500.0, 100.0, 0.0),
+        500.0,
+        1e-12
+    ));
     assert!(close(cost_of_delay(25_000.0, 0.0), 0.0, 1e-12));
-    assert!(close(risk_adjusted_build_cost(600_000.0, 1.0), 600_000.0, 1e-9));
+    assert!(close(
+        risk_adjusted_build_cost(600_000.0, 1.0),
+        600_000.0,
+        1e-9
+    ));
     assert!(close(risk_adjusted_time_to_value(12.0, 0.0), 12.0, 1e-12));
     assert!(close(effective_cost(0.0, 0.0), 0.0, 1e-12));
 }
@@ -153,12 +181,24 @@ fn edge_build_vs_buy_negative_delay_and_extremes() {
 // negative "saving".
 #[test]
 fn edge_cash_releasing_zero_empty_and_negative() {
-    assert!(close(category_value(11_500.0, &[], SavingCategory::CashReleasing), 0.0, 1e-12));
-    let slack = TimeAllocation { category: SavingCategory::NoBenefit, fraction: 1.0, hourly_rate: 1e6 };
+    assert!(close(
+        category_value(11_500.0, &[], SavingCategory::CashReleasing),
+        0.0,
+        1e-12
+    ));
+    let slack = TimeAllocation {
+        category: SavingCategory::NoBenefit,
+        fraction: 1.0,
+        hourly_rate: 1e6,
+    };
     assert!(close(slack.value(10_000.0), 0.0, 1e-12));
     assert!(close(slack.hours(10_000.0), 10_000.0, 1e-9)); // hours still counted
     // A budget line that grew is a negative saving, not clamped to zero.
-    assert!(close(cash_releasing_saving(100_000.0, 130_000.0), -30_000.0, 1e-9));
+    assert!(close(
+        cash_releasing_saving(100_000.0, 130_000.0),
+        -30_000.0,
+        1e-9
+    ));
     // Zero staff or zero weeks saves zero hours.
     assert!(close(annual_hours_saved(0.0, 0.5, 5.0, 46.0), 0.0, 1e-12));
     assert!(close(annual_hours_saved(100.0, 0.5, 5.0, 0.0), 0.0, 1e-12));
@@ -169,8 +209,16 @@ fn edge_cash_releasing_zero_empty_and_negative() {
 // magnitudes staying finite.
 #[test]
 fn edge_cash_releasing_fraction_boundaries_and_extremes() {
-    let none = TimeAllocation { category: SavingCategory::CashReleasing, fraction: 0.0, hourly_rate: 35.0 };
-    let all = TimeAllocation { category: SavingCategory::CashReleasing, fraction: 1.0, hourly_rate: 35.0 };
+    let none = TimeAllocation {
+        category: SavingCategory::CashReleasing,
+        fraction: 0.0,
+        hourly_rate: 35.0,
+    };
+    let all = TimeAllocation {
+        category: SavingCategory::CashReleasing,
+        fraction: 1.0,
+        hourly_rate: 35.0,
+    };
     assert!(close(none.value(11_500.0), 0.0, 1e-12));
     assert!(close(all.value(11_500.0), 11_500.0 * 35.0, 1e-6));
     assert!(non_cash_releasing_value(1e12, 1e6).is_finite());
@@ -245,7 +293,11 @@ fn edge_cloud_zero_denominators() {
     assert!(unit_cost(62_000.0, 0.0).is_none());
     assert!(unit_cost_ratio(1.0, 0.0).is_none());
     assert!(unit_cost_change(0.0, 1.0).is_none());
-    let nil = CloudSpend { compute: 0.0, data: 0.0, shared_platform: 0.0 };
+    let nil = CloudSpend {
+        compute: 0.0,
+        data: 0.0,
+        shared_platform: 0.0,
+    };
     assert!(close(nil.total(), 0.0, 1e-12));
     // Zero cost over positive units is a defined £0 unit cost.
     assert!(close(unit_cost(0.0, 1_000.0).unwrap(), 0.0, 1e-12));
@@ -254,7 +306,11 @@ fn edge_cloud_zero_denominators() {
 // Locks down: cloud extreme magnitudes stay finite and sane.
 #[test]
 fn edge_cloud_extremes() {
-    let big = CloudSpend { compute: 1e12, data: 1e12, shared_platform: 1e12 };
+    let big = CloudSpend {
+        compute: 1e12,
+        data: 1e12,
+        shared_platform: 1e12,
+    };
     assert!(close(big.total(), 3e12, 1e-3));
     let uc = unit_cost(big.total(), 1e12).unwrap();
     assert!(uc.is_finite() && close(uc, 3.0, 1e-12));
@@ -267,16 +323,36 @@ fn edge_cloud_extremes() {
 // BCR undefined at zero PV costs.
 #[test]
 fn edge_cba_zero_identities() {
-    assert!(close(discount_factor(GREEN_BOOK_DISCOUNT_RATE, 0.0), 1.0, 1e-12));
+    assert!(close(
+        discount_factor(GREEN_BOOK_DISCOUNT_RATE, 0.0),
+        1.0,
+        1e-12
+    ));
     assert!(close(discount_factor(0.0, 50.0), 1.0, 1e-12));
-    assert!(close(annuity_factor(GREEN_BOOK_DISCOUNT_RATE, 0), 0.0, 1e-12));
+    assert!(close(
+        annuity_factor(GREEN_BOOK_DISCOUNT_RATE, 0),
+        0.0,
+        1e-12
+    ));
     assert!(close(present_value(&[], 0.035), 0.0, 1e-12));
     assert!(benefit_cost_ratio(1.0, 0.0).is_none());
     assert!(close(net_present_value(0.0, 0.0), 0.0, 1e-12));
     // Zero-percent bias adjustments are identities; a 100% haircut zeroes.
-    assert!(close(optimism_bias_cost_uplift(1_200_000.0, 0.0), 1_200_000.0, 1e-9));
-    assert!(close(optimism_bias_benefit_haircut(5_102_000.0, 0.0), 5_102_000.0, 1e-9));
-    assert!(close(optimism_bias_benefit_haircut(5_102_000.0, 1.0), 0.0, 1e-9));
+    assert!(close(
+        optimism_bias_cost_uplift(1_200_000.0, 0.0),
+        1_200_000.0,
+        1e-9
+    ));
+    assert!(close(
+        optimism_bias_benefit_haircut(5_102_000.0, 0.0),
+        5_102_000.0,
+        1e-9
+    ));
+    assert!(close(
+        optimism_bias_benefit_haircut(5_102_000.0, 1.0),
+        0.0,
+        1e-9
+    ));
 }
 
 // Locks down: CBA with negative flows (costs as negative benefits) and
@@ -299,10 +375,18 @@ fn edge_cba_negatives_and_extremes() {
 #[test]
 fn edge_cca_zero_and_empty() {
     assert!(cost_per_unit_gained(85_000.0, 0.0).is_none());
-    let flat = ConsequenceRow { name: "No change".to_string(), intervention: 42.0, comparator: 42.0 };
+    let flat = ConsequenceRow {
+        name: "No change".to_string(),
+        intervention: 42.0,
+        comparator: 42.0,
+    };
     assert!(close(flat.difference(), 0.0, 1e-12));
     let table = CostConsequenceTable {
-        cost: ConsequenceRow { name: "Cost".to_string(), intervention: 0.0, comparator: 0.0 },
+        cost: ConsequenceRow {
+            name: "Cost".to_string(),
+            intervention: 0.0,
+            comparator: 0.0,
+        },
         consequences: vec![],
     };
     assert!(close(table.incremental_cost(), 0.0, 1e-12));
@@ -316,7 +400,11 @@ fn edge_cca_zero_and_empty() {
 #[test]
 fn edge_cca_negative_and_extremes() {
     let cheaper = CostConsequenceTable {
-        cost: ConsequenceRow { name: "Cost".to_string(), intervention: 50_000.0, comparator: 95_000.0 },
+        cost: ConsequenceRow {
+            name: "Cost".to_string(),
+            intervention: 50_000.0,
+            comparator: 95_000.0,
+        },
         consequences: vec![ConsequenceRow {
             name: "Hours".to_string(),
             intervention: 6_200.0,
@@ -337,12 +425,24 @@ fn edge_cea_none_conditions() {
     assert!(icer(400_000.0, 300.0, 150_000.0, 300.0).is_none());
     assert!(average_cost_effectiveness_ratio(100.0, 0.0).is_none());
     assert!(incremental_icers(&[]).is_empty());
-    let solo = vec![InterventionOption { name: "Only".into(), cost: 1.0, effect: 1.0 }];
+    let solo = vec![InterventionOption {
+        name: "Only".into(),
+        cost: 1.0,
+        effect: 1.0,
+    }];
     assert!(incremental_icers(&solo).is_empty());
     // An equal-effect adjacent pair produces a None slot, not a panic.
     let pair = vec![
-        InterventionOption { name: "A".into(), cost: 100.0, effect: 10.0 },
-        InterventionOption { name: "B".into(), cost: 200.0, effect: 10.0 },
+        InterventionOption {
+            name: "A".into(),
+            cost: 100.0,
+            effect: 10.0,
+        },
+        InterventionOption {
+            name: "B".into(),
+            cost: 200.0,
+            effect: 10.0,
+        },
     ];
     let slots = incremental_icers(&pair);
     assert_eq!(slots.len(), 1);
@@ -358,7 +458,11 @@ fn edge_cea_signs_and_extremes() {
     assert!(dominant < 0.0);
     assert!(close(dominant, -50_000.0 / 200.0, 1e-9));
     assert!(icer(1e12, 1e12, 0.0, 1.0).unwrap().is_finite());
-    assert!(average_cost_effectiveness_ratio(1e12, 1e-6).unwrap().is_finite());
+    assert!(
+        average_cost_effectiveness_ratio(1e12, 1e-6)
+            .unwrap()
+            .is_finite()
+    );
 }
 
 // Locks down: CMA gate — without evidenced equivalence the analysis returns
@@ -376,7 +480,11 @@ fn edge_cma_gate_and_boundaries() {
     // cost_saving is |a − b|, never negative.
     assert!(close(cost_saving(450_000.0, 500_000.0), 50_000.0, 1e-9));
     assert!(close(cost_saving(0.0, 0.0), 0.0, 1e-12));
-    let free = CostLines { licences: 0.0, integration: 0.0, training_support: 0.0 };
+    let free = CostLines {
+        licences: 0.0,
+        integration: 0.0,
+        training_support: 0.0,
+    };
     assert!(close(free.total(), 0.0, 1e-12));
 }
 
@@ -423,10 +531,16 @@ fn prop_ppv_increases_with_prevalence() {
     let mut last_nns = f64::INFINITY;
     for &prev in &prevs {
         let ppv = ppv_from_rates(0.90, 0.93, prev).unwrap();
-        assert!(ppv > last_ppv, "PPV must rise with prevalence: {ppv} at {prev}");
+        assert!(
+            ppv > last_ppv,
+            "PPV must rise with prevalence: {ppv} at {prev}"
+        );
         last_ppv = ppv;
         let nns = number_needed_to_screen(prev, 0.90).unwrap();
-        assert!(nns < last_nns, "NNS must fall with prevalence: {nns} at {prev}");
+        assert!(
+            nns < last_nns,
+            "NNS must fall with prevalence: {nns} at {prev}"
+        );
         last_nns = nns;
     }
 }
@@ -450,7 +564,11 @@ fn prop_auroc_separation_identity_and_ties() {
     assert!(close(auroc(&[0.5], &[0.5]).unwrap(), 0.5, 1e-12));
     // Hand-counted mixed case: pairs (1.0,0.5)>, (1.0,0.0)>, (0.5,0.5)=,
     // (0.5,0.0)> → (1 + 1 + 0.5 + 1)/4 = 0.875.
-    assert!(close(auroc(&[1.0, 0.5], &[0.5, 0.0]).unwrap(), 0.875, 1e-12));
+    assert!(close(
+        auroc(&[1.0, 0.5], &[0.5, 0.0]).unwrap(),
+        0.875,
+        1e-12
+    ));
     // Fully reversed ranking is 0.0.
     assert!(close(auroc(&[0.1, 0.2], &[0.8, 0.9]).unwrap(), 0.0, 1e-12));
 }
@@ -467,7 +585,10 @@ fn prop_auroc_complement_identity() {
     for (pos, neg) in score_sets {
         let fwd = auroc(pos, neg).unwrap();
         let rev = auroc(neg, pos).unwrap();
-        assert!(close(fwd + rev, 1.0, 1e-12), "complement failed: {fwd} + {rev}");
+        assert!(
+            close(fwd + rev, 1.0, 1e-12),
+            "complement failed: {fwd} + {rev}"
+        );
     }
 }
 
@@ -493,7 +614,9 @@ fn prop_annuity_factor_is_sum_of_discount_factors() {
     for &rate in &[0.0, 0.01, GREEN_BOOK_DISCOUNT_RATE, 0.10, 0.25] {
         assert!(close(discount_factor(rate, 0.0), 1.0, 1e-12));
         for &years in &[0u32, 1, 3, 5, 10, 30] {
-            let summed: f64 = (1..=years).map(|t| discount_factor(rate, f64::from(t))).sum();
+            let summed: f64 = (1..=years)
+                .map(|t| discount_factor(rate, f64::from(t)))
+                .sum();
             assert!(
                 close(annuity_factor(rate, years), summed, 1e-9),
                 "annuity mismatch at r={rate}, n={years}"
@@ -507,7 +630,11 @@ fn prop_annuity_factor_is_sum_of_discount_factors() {
 fn prop_npv_antisymmetric() {
     for &a in &[0.0, 100.0, 5_102_000.0, 1e12] {
         for &b in &[0.0, 2_555_000.0, 750.0] {
-            assert!(close(net_present_value(a, b), -net_present_value(b, a), 1e-3));
+            assert!(close(
+                net_present_value(a, b),
+                -net_present_value(b, a),
+                1e-3
+            ));
         }
     }
 }
@@ -535,14 +662,30 @@ fn prop_optimism_bias_never_flatters() {
 // scenario against itself is exactly zero.
 #[test]
 fn prop_budget_impact_additive_and_null() {
-    let g1 = PatientGroup { eligible_population: 30_000.0, uptake: 0.2, net_cost_per_patient: 180.0 };
-    let g2 = PatientGroup { eligible_population: 5_000.0, uptake: 0.9, net_cost_per_patient: -40.0 };
-    let g3 = PatientGroup { eligible_population: 750.0, uptake: 1.0, net_cost_per_patient: 300.0 };
+    let g1 = PatientGroup {
+        eligible_population: 30_000.0,
+        uptake: 0.2,
+        net_cost_per_patient: 180.0,
+    };
+    let g2 = PatientGroup {
+        eligible_population: 5_000.0,
+        uptake: 0.9,
+        net_cost_per_patient: -40.0,
+    };
+    let g3 = PatientGroup {
+        eligible_population: 750.0,
+        uptake: 1.0,
+        net_cost_per_patient: 300.0,
+    };
     let all = [g1, g2, g3];
     let summed = g1.cost() + g2.cost() + g3.cost();
     assert!(close(scenario_cost(&all), summed, 1e-6));
     // Splitting the slice preserves the total.
-    assert!(close(scenario_cost(&[g1]) + scenario_cost(&[g2, g3]), scenario_cost(&all), 1e-6));
+    assert!(close(
+        scenario_cost(&[g1]) + scenario_cost(&[g2, g3]),
+        scenario_cost(&all),
+        1e-6
+    ));
     for &c in &[0.0, 1_080_000.0, -55_000.0, 1e12] {
         assert!(close(budget_impact(c, c), 0.0, 1e-3));
     }
@@ -551,11 +694,24 @@ fn prop_budget_impact_additive_and_null() {
 // Locks down: PatientGroup::cost is linear in each of its three fields.
 #[test]
 fn prop_patient_group_cost_linear_in_each_field() {
-    let base = PatientGroup { eligible_population: 10_000.0, uptake: 0.35, net_cost_per_patient: 220.0 };
+    let base = PatientGroup {
+        eligible_population: 10_000.0,
+        uptake: 0.35,
+        net_cost_per_patient: 220.0,
+    };
     for &k in &[0.0, 0.5, 2.0, 10.0] {
-        let pop = PatientGroup { eligible_population: base.eligible_population * k, ..base };
-        let upt = PatientGroup { uptake: base.uptake * k, ..base };
-        let net = PatientGroup { net_cost_per_patient: base.net_cost_per_patient * k, ..base };
+        let pop = PatientGroup {
+            eligible_population: base.eligible_population * k,
+            ..base
+        };
+        let upt = PatientGroup {
+            uptake: base.uptake * k,
+            ..base
+        };
+        let net = PatientGroup {
+            net_cost_per_patient: base.net_cost_per_patient * k,
+            ..base
+        };
         assert!(close(pop.cost(), base.cost() * k, 1e-6));
         assert!(close(upt.cost(), base.cost() * k, 1e-6));
         assert!(close(net.cost(), base.cost() * k, 1e-6));
@@ -575,7 +731,11 @@ fn prop_incremental_icers_match_adjacent_pairs() {
         let options: Vec<InterventionOption> = pts
             .iter()
             .enumerate()
-            .map(|(i, &(cost, effect))| InterventionOption { name: format!("opt{i}"), cost, effect })
+            .map(|(i, &(cost, effect))| InterventionOption {
+                name: format!("opt{i}"),
+                cost,
+                effect,
+            })
             .collect();
         let got = incremental_icers(&options);
         assert_eq!(got.len(), options.len() - 1);
@@ -627,13 +787,22 @@ fn prop_cma_gate_cheaper_and_tie_behavior() {
 // optimism_error → optimism_adjusted_forecast loop round-trips exactly.
 #[test]
 fn prop_benefits_realization_roundtrip() {
-    let cases = [(450_000.0, 287_000.0), (8_000.0, 5_100.0), (10.0, 12.0), (100.0, -25.0)];
+    let cases = [
+        (450_000.0, 287_000.0),
+        (8_000.0, 5_100.0),
+        (10.0, 12.0),
+        (100.0, -25.0),
+    ];
     for &(forecast, realized) in &cases {
         let rate = realization_rate(realized, forecast).unwrap();
         assert!(close(rate * forecast, realized, 1e-6));
         // Applying the observed error to the same raw forecast recovers realized.
         let err = optimism_error(forecast, realized).unwrap();
-        assert!(close(optimism_adjusted_forecast(forecast, err), realized, 1e-6));
+        assert!(close(
+            optimism_adjusted_forecast(forecast, err),
+            realized,
+            1e-6
+        ));
         // rate + error == 1 by construction.
         assert!(close(rate + err, 1.0, 1e-12));
     }
@@ -671,7 +840,10 @@ fn prop_cloud_ratio_inverse_and_null_change() {
         for &b in &costs {
             let fwd = unit_cost_ratio(a, b).unwrap();
             let rev = unit_cost_ratio(b, a).unwrap();
-            assert!(close(fwd, 1.0 / rev, 1e-9), "ratio inverse failed at {a}/{b}");
+            assert!(
+                close(fwd, 1.0 / rev, 1e-9),
+                "ratio inverse failed at {a}/{b}"
+            );
         }
         assert!(close(unit_cost_change(a, a).unwrap(), 0.0, 1e-12));
     }
@@ -682,11 +854,23 @@ fn prop_cloud_ratio_inverse_and_null_change() {
 #[test]
 fn prop_cloud_unit_cost_recomposes_total() {
     let spends = [
-        CloudSpend { compute: 30_000.0, data: 18_000.0, shared_platform: 14_000.0 },
-        CloudSpend { compute: 1.0, data: 2.0, shared_platform: 3.0 },
+        CloudSpend {
+            compute: 30_000.0,
+            data: 18_000.0,
+            shared_platform: 14_000.0,
+        },
+        CloudSpend {
+            compute: 1.0,
+            data: 2.0,
+            shared_platform: 3.0,
+        },
     ];
     for spend in spends {
-        assert!(close(spend.total(), spend.compute + spend.data + spend.shared_platform, 1e-9));
+        assert!(close(
+            spend.total(),
+            spend.compute + spend.data + spend.shared_platform,
+            1e-9
+        ));
         for &units in &[1.0, 380_000.0, 1e9] {
             let uc = unit_cost(spend.total(), units).unwrap();
             assert!(close(uc * units, spend.total(), 1e-6));
@@ -735,7 +919,11 @@ fn prop_build_vs_buy_risk_adjustments_multiplicative() {
         // Time uplift is (1 + u) multiplicative, so u = 0 is identity and
         // doubling the estimate doubles the adjusted time.
         for &u in &[0.0, 0.4, 0.6] {
-            assert!(close(risk_adjusted_time_to_value(est, u), est * (1.0 + u), 1e-6));
+            assert!(close(
+                risk_adjusted_time_to_value(est, u),
+                est * (1.0 + u),
+                1e-6
+            ));
             assert!(close(
                 risk_adjusted_time_to_value(2.0 * est, u),
                 2.0 * risk_adjusted_time_to_value(est, u),
@@ -754,9 +942,21 @@ fn prop_cash_releasing_split_accounting() {
     for &(cash_frac, cap_frac) in &[(0.2, 0.6), (0.0, 1.0), (0.5, 0.0), (0.3, 0.3)] {
         let slack_frac = 1.0 - cash_frac - cap_frac;
         let split = [
-            TimeAllocation { category: SavingCategory::CashReleasing, fraction: cash_frac, hourly_rate: 35.0 },
-            TimeAllocation { category: SavingCategory::NonCashReleasing, fraction: cap_frac, hourly_rate: 25.0 },
-            TimeAllocation { category: SavingCategory::NoBenefit, fraction: slack_frac, hourly_rate: 999.0 },
+            TimeAllocation {
+                category: SavingCategory::CashReleasing,
+                fraction: cash_frac,
+                hourly_rate: 35.0,
+            },
+            TimeAllocation {
+                category: SavingCategory::NonCashReleasing,
+                fraction: cap_frac,
+                hourly_rate: 25.0,
+            },
+            TimeAllocation {
+                category: SavingCategory::NoBenefit,
+                fraction: slack_frac,
+                hourly_rate: 999.0,
+            },
         ];
         // Hours conserve across the split.
         let hours_sum: f64 = split.iter().map(|s| s.hours(total_hours)).sum();
@@ -825,7 +1025,10 @@ fn cross_net_incremental_cost_feeds_both_icers() {
     assert!(close(ratio, via_cea, 1e-9));
     assert!(close(ratio, 12_000.0, 1e-9));
     assert!(icer_mod::adopt_at_threshold(ratio, 20_000.0));
-    assert!(!icer_mod::adopt_at_threshold(icer(900_000.0, 25.0, 0.0, 0.0).unwrap(), 20_000.0));
+    assert!(!icer_mod::adopt_at_threshold(
+        icer(900_000.0, 25.0, 0.0, 0.0).unwrap(),
+        20_000.0
+    ));
 }
 
 // Locks down: cost_benefit_analysis::discount_factor and
@@ -833,7 +1036,13 @@ fn cross_net_incremental_cost_feeds_both_icers() {
 // fv × factor(r, t) == present_value(fv, r, t) over a grid.
 #[test]
 fn cross_discount_factor_matches_dtp_present_value() {
-    for &rate in &[0.0, 0.015, GREEN_BOOK_DISCOUNT_RATE, dtp::NICE_REFERENCE_RATE, 0.1] {
+    for &rate in &[
+        0.0,
+        0.015,
+        GREEN_BOOK_DISCOUNT_RATE,
+        dtp::NICE_REFERENCE_RATE,
+        0.1,
+    ] {
         for &year in &[0.0, 1.0, 2.5, 5.0, 30.0] {
             for &fv in &[1.0, 100_000.0] {
                 assert!(close(
@@ -845,7 +1054,11 @@ fn cross_discount_factor_matches_dtp_present_value() {
         }
     }
     // The two crates' reference rates are the same 3.5% constant.
-    assert!(close(GREEN_BOOK_DISCOUNT_RATE, dtp::NICE_REFERENCE_RATE, 1e-15));
+    assert!(close(
+        GREEN_BOOK_DISCOUNT_RATE,
+        dtp::NICE_REFERENCE_RATE,
+        1e-15
+    ));
 }
 
 // Locks down: cba::annuity_factor equals dtp::annuity_present_value of £1,
@@ -856,7 +1069,10 @@ fn cross_annuity_representations_agree() {
         for &years in &[1u32, 5, 12] {
             let af = annuity_factor(rate, years);
             let apv = dtp::annuity_present_value(1.0, rate, f64::from(years));
-            assert!(close(af, apv, 1e-9), "annuity mismatch at r={rate}, n={years}");
+            assert!(
+                close(af, apv, 1e-9),
+                "annuity mismatch at r={rate}, n={years}"
+            );
             // Level £300k stream, year 0 empty, years 1..=n.
             let mut flows = vec![0.0];
             flows.extend(std::iter::repeat_n(300_000.0, years as usize));
@@ -872,7 +1088,11 @@ fn cross_delay_is_one_more_discount_factor() {
     let pv = dtp::annuity_present_value(100_000.0, dtp::NICE_REFERENCE_RATE, 5.0);
     for &delay in &[0.0, 1.0, 2.0] {
         let slipped = dtp::delayed_present_value(pv, dtp::NICE_REFERENCE_RATE, delay);
-        assert!(close(slipped, pv * discount_factor(GREEN_BOOK_DISCOUNT_RATE, delay), 1e-6));
+        assert!(close(
+            slipped,
+            pv * discount_factor(GREEN_BOOK_DISCOUNT_RATE, delay),
+            1e-6
+        ));
     }
 }
 
@@ -889,8 +1109,22 @@ fn scenario_green_book_appraisal_with_benefits_audit() {
     let af = annuity_factor(GREEN_BOOK_DISCOUNT_RATE, 5);
     assert!(close(af, 4.515, 5e-4)); // hand anchor: 5-yr annuity at 3.5%
 
-    let cost_flows = [1_200_000.0, 300_000.0, 300_000.0, 300_000.0, 300_000.0, 300_000.0];
-    let benefit_flows = [0.0, 1_130_000.0, 1_130_000.0, 1_130_000.0, 1_130_000.0, 1_130_000.0];
+    let cost_flows = [
+        1_200_000.0,
+        300_000.0,
+        300_000.0,
+        300_000.0,
+        300_000.0,
+        300_000.0,
+    ];
+    let benefit_flows = [
+        0.0,
+        1_130_000.0,
+        1_130_000.0,
+        1_130_000.0,
+        1_130_000.0,
+        1_130_000.0,
+    ];
     let pv_costs = present_value(&cost_flows, GREEN_BOOK_DISCOUNT_RATE);
     let pv_benefits = present_value(&benefit_flows, GREEN_BOOK_DISCOUNT_RATE);
     assert!(close(pv_costs, 1_200_000.0 + 300_000.0 * af, 1e-6));
@@ -956,7 +1190,11 @@ fn scenario_clinical_ai_triage_end_to_end() {
     let per_case_counts = cost_per_true_case_from_counts((tp + fp) * 350.0, tp).unwrap();
     assert!(close(per_case_rates, per_case_counts, 1e-6));
     assert!(close(per_case_rates, 3_045.0, 0.5)); // hand anchor: 783×350/90
-    assert!(close(number_needed_to_screen(prev, sens).unwrap(), 1.0 / 0.009, 1e-9));
+    assert!(close(
+        number_needed_to_screen(prev, sens).unwrap(),
+        1.0 / 0.009,
+        1e-9
+    ));
 
     // Model quality gate: clear separation on the pilot's scored cases.
     let roc = auroc(&[0.91, 0.84, 0.77], &[0.40, 0.31, 0.12]).unwrap();
@@ -986,8 +1224,16 @@ fn scenario_clinical_ai_triage_end_to_end() {
             comparator: 200_000.0,
         },
         consequences: vec![
-            ConsequenceRow { name: "True cases found".to_string(), intervention: 90.0, comparator: 60.0 },
-            ConsequenceRow { name: "False alarms".to_string(), intervention: 693.0, comparator: 250.0 },
+            ConsequenceRow {
+                name: "True cases found".to_string(),
+                intervention: 90.0,
+                comparator: 60.0,
+            },
+            ConsequenceRow {
+                name: "False alarms".to_string(),
+                intervention: 693.0,
+                comparator: 250.0,
+            },
         ],
     };
     assert!(close(table.incremental_cost(), 74_050.0, 1e-6));
@@ -999,7 +1245,11 @@ fn scenario_clinical_ai_triage_end_to_end() {
     // The unfavorable row is shown too: +443 false alarms.
     assert!(close(table.consequences[1].difference(), 443.0, 1e-9));
     // Each true case caught early avoids a £2,800 late presentation.
-    assert!(close(value_of_avoided_events(30.0, 2_800.0), 84_000.0, 1e-6));
+    assert!(close(
+        value_of_avoided_events(30.0, 2_800.0),
+        84_000.0,
+        1e-6
+    ));
 }
 
 // Locks down: a build-vs-buy shootout — risk-adjusted TCO plus cost of
@@ -1027,8 +1277,7 @@ fn scenario_build_vs_buy_shootout_with_cma_gate() {
     assert!(close(build_eff, 1_785_000.0, 1e-6)); // hand: 1,410k + 375k
 
     // Equivalence pilot: both meet the spec inside the pre-agreed 2pp margin.
-    let equivalent =
-        outcomes_equivalent(94.1, 93.8, 2.0) && outcomes_equivalent(4.4, 4.4, 2.0);
+    let equivalent = outcomes_equivalent(94.1, 93.8, 2.0) && outcomes_equivalent(4.4, 4.4, 2.0);
     assert!(equivalent);
     // CMA over effective costs: A = build, B = buy → buy (OptionB) wins.
     let pick = cost_minimization(build_eff, buy_eff, equivalent);
@@ -1038,7 +1287,11 @@ fn scenario_build_vs_buy_shootout_with_cma_gate() {
     assert!(cost_minimization(build_eff, buy_eff, false).is_none());
 
     // CostLines view of the buy option over 5 years matches its TCO.
-    let buy_lines = CostLines { licences: 750_000.0, integration: 0.0, training_support: 0.0 };
+    let buy_lines = CostLines {
+        licences: 750_000.0,
+        integration: 0.0,
+        training_support: 0.0,
+    };
     assert!(close(buy_lines.total(), buy_tco, 1e-6));
 
     // Unit-economics evidence for the QBR: 20,000 consults/year each.

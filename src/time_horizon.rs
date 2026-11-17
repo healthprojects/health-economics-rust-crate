@@ -243,7 +243,10 @@ pub fn net_benefit_by_horizons(
     horizons_years
         .iter()
         .map(|&h| {
-            (h, net_benefit_at_horizon(implementation_cost, annual_benefit, annual_running_cost, h))
+            (
+                h,
+                net_benefit_at_horizon(implementation_cost, annual_benefit, annual_running_cost, h),
+            )
         })
         .collect()
 }

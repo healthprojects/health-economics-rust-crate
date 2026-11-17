@@ -162,7 +162,12 @@ pub fn expected_nmb_of_best_option(scenarios: &[Scenario]) -> Option<f64> {
     }
     // E-then-max: expectation per option j across worlds ...
     let expected_per_option: Vec<f64> = (0..n_options)
-        .map(|j| scenarios.iter().map(|s| s.probability * s.option_nmbs[j]).sum())
+        .map(|j| {
+            scenarios
+                .iter()
+                .map(|s| s.probability * s.option_nmbs[j])
+                .sum()
+        })
         .collect();
     // ... then max over options — the commit-now decision rule.
     max_of(&expected_per_option)
@@ -246,7 +251,9 @@ pub fn expected_nmb_with_perfect_information(scenarios: &[Scenario]) -> Option<f
 #[must_use]
 pub fn evpi(scenarios: &[Scenario]) -> Option<f64> {
     // E[max] − max E[]: the gap is the price of deciding blind.
-    Some(expected_nmb_with_perfect_information(scenarios)? - expected_nmb_of_best_option(scenarios)?)
+    Some(
+        expected_nmb_with_perfect_information(scenarios)? - expected_nmb_of_best_option(scenarios)?,
+    )
 }
 
 /// EVPI from equally weighted PSA draws.
@@ -288,7 +295,10 @@ pub fn evpi_from_psa_draws(draws: &[Vec<f64>]) -> Option<f64> {
     let p = 1.0 / draws.len() as f64;
     let scenarios: Vec<Scenario> = draws
         .iter()
-        .map(|nmbs| Scenario { probability: p, option_nmbs: nmbs.clone() })
+        .map(|nmbs| Scenario {
+            probability: p,
+            option_nmbs: nmbs.clone(),
+        })
         .collect();
     evpi(&scenarios)
 }
@@ -327,9 +337,15 @@ mod tests {
     fn worked_example_scenarios() -> Vec<Scenario> {
         vec![
             // World A (p = 0.6): rollout NMB +£8M; don't roll out £0.
-            Scenario { probability: 0.6, option_nmbs: vec![8.0, 0.0] },
+            Scenario {
+                probability: 0.6,
+                option_nmbs: vec![8.0, 0.0],
+            },
             // World B (p = 0.4): rollout NMB −£3M; don't roll out £0.
-            Scenario { probability: 0.4, option_nmbs: vec![-3.0, 0.0] },
+            Scenario {
+                probability: 0.4,
+                option_nmbs: vec![-3.0, 0.0],
+            },
         ]
     }
 
@@ -367,8 +383,14 @@ mod tests {
     #[test]
     fn evpi_is_zero_when_decision_cannot_change() {
         let scenarios = vec![
-            Scenario { probability: 0.5, option_nmbs: vec![5.0, 1.0] },
-            Scenario { probability: 0.5, option_nmbs: vec![3.0, 1.0] },
+            Scenario {
+                probability: 0.5,
+                option_nmbs: vec![5.0, 1.0],
+            },
+            Scenario {
+                probability: 0.5,
+                option_nmbs: vec![3.0, 1.0],
+            },
         ];
         let v = evpi(&scenarios).unwrap();
         assert!((v - 0.0).abs() < 1e-9, "got {v}");

@@ -17,7 +17,10 @@ fn main() {
     };
     let episodes = 450_000.0;
     let per_episode = cloud::unit_cost(spend.total(), episodes).unwrap();
-    println!("Monthly spend £{:.0} / {episodes} episodes = £{per_episode:.3}/episode", spend.total());
+    println!(
+        "Monthly spend £{:.0} / {episodes} episodes = £{per_episode:.3}/episode",
+        spend.total()
+    );
     println!(
         "vs a £42 GP consultation: {:.0}× cheaper per contact",
         cloud::unit_cost_ratio(42.0, per_episode).unwrap()
@@ -26,13 +29,22 @@ fn main() {
     println!("\n=== LLM inference cost per triage ===");
     // One triage = a short classification call plus a longer summary call.
     let calls = [
-        infer::LlmCall { input_tokens: 1_200.0, output_tokens: 150.0 },
-        infer::LlmCall { input_tokens: 3_500.0, output_tokens: 900.0 },
+        infer::LlmCall {
+            input_tokens: 1_200.0,
+            output_tokens: 150.0,
+        },
+        infer::LlmCall {
+            input_tokens: 3_500.0,
+            output_tokens: 900.0,
+        },
     ];
     let (in_rate, out_rate) = (3.0, 15.0); // $ per million tokens
     let per_triage = infer::cost_per_unit(&calls, in_rate, out_rate);
     println!("Cost per triage: ${per_triage:.4}");
-    println!("At 2M triages/year: ${:.0}", infer::annual_cost(per_triage, 2_000_000.0));
+    println!(
+        "At 2M triages/year: ${:.0}",
+        infer::annual_cost(per_triage, 2_000_000.0)
+    );
     println!(
         "Cost share of a £25 (≈$31) unit of value: {:.2}%",
         infer::cost_share_of_value(per_triage, 31.0).unwrap() * 100.0

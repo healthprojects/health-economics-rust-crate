@@ -175,7 +175,11 @@ pub fn lead_time(delivered: f64, requested: f64) -> f64 {
 /// ```
 #[must_use]
 pub fn throughput(items_completed: f64, period: f64) -> Option<f64> {
-    if period == 0.0 { None } else { Some(items_completed / period) }
+    if period == 0.0 {
+        None
+    } else {
+        Some(items_completed / period)
+    }
 }
 
 /// Flow efficiency as a percentage: active time over total elapsed time.
@@ -205,7 +209,11 @@ pub fn throughput(items_completed: f64, period: f64) -> Option<f64> {
 #[must_use]
 pub fn flow_efficiency_percent(active_time: f64, wait_time: f64) -> Option<f64> {
     let total = active_time + wait_time;
-    if total == 0.0 { None } else { Some(active_time / total * 100.0) }
+    if total == 0.0 {
+        None
+    } else {
+        Some(active_time / total * 100.0)
+    }
 }
 
 /// Little's Law solved for cycle time: `WIP / throughput`.
@@ -236,7 +244,11 @@ pub fn flow_efficiency_percent(active_time: f64, wait_time: f64) -> Option<f64> 
 /// ```
 #[must_use]
 pub fn littles_law_cycle_time(wip: f64, throughput: f64) -> Option<f64> {
-    if throughput == 0.0 { None } else { Some(wip / throughput) }
+    if throughput == 0.0 {
+        None
+    } else {
+        Some(wip / throughput)
+    }
 }
 
 /// Little's Law solved for WIP: `throughput × cycle time`.

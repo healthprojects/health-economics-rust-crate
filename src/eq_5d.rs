@@ -151,9 +151,21 @@ impl Eq5dProfile {
         pain_discomfort: u8,
         anxiety_depression: u8,
     ) -> Option<Self> {
-        let levels = [mobility, self_care, usual_activities, pain_discomfort, anxiety_depression];
+        let levels = [
+            mobility,
+            self_care,
+            usual_activities,
+            pain_discomfort,
+            anxiety_depression,
+        ];
         if levels.iter().all(|&l| (1..=5).contains(&l)) {
-            Some(Self { mobility, self_care, usual_activities, pain_discomfort, anxiety_depression })
+            Some(Self {
+                mobility,
+                self_care,
+                usual_activities,
+                pain_discomfort,
+                anxiety_depression,
+            })
         } else {
             None
         }

@@ -171,11 +171,7 @@ pub fn icer(incremental_cost: f64, incremental_effect: f64) -> Option<f64> {
 /// assert_eq!(nmb, 200.0);
 /// ```
 #[must_use]
-pub fn net_monetary_benefit(
-    threshold: f64,
-    incremental_effect: f64,
-    incremental_cost: f64,
-) -> f64 {
+pub fn net_monetary_benefit(threshold: f64, incremental_effect: f64, incremental_cost: f64) -> f64 {
     threshold * incremental_effect - incremental_cost
 }
 

@@ -380,16 +380,18 @@ mod tests {
         let transition_matrix = vec![vec![0.9, 0.1], vec![0.0, 1.0]];
         let bad_cost = vec![1_000.0]; // wrong length
         let utility = vec![0.8, 0.0];
-        assert!(simulate_cohort(
-            &initial_distribution,
-            &transition_matrix,
-            &bad_cost,
-            &utility,
-            1.0,
-            3,
-            0.035
-        )
-        .is_none());
+        assert!(
+            simulate_cohort(
+                &initial_distribution,
+                &transition_matrix,
+                &bad_cost,
+                &utility,
+                1.0,
+                3,
+                0.035
+            )
+            .is_none()
+        );
     }
 
     #[test]

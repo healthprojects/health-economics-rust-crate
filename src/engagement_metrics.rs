@@ -155,7 +155,11 @@ pub fn stickiness_percent(daily_active_users: f64, monthly_active_users: f64) ->
 /// ```
 #[must_use]
 pub fn sessions_per_user(sessions: f64, users: f64) -> Option<f64> {
-    if users == 0.0 { None } else { Some(sessions / users) }
+    if users == 0.0 {
+        None
+    } else {
+        Some(sessions / users)
+    }
 }
 
 /// Average session duration: total time divided by session count.
@@ -183,7 +187,11 @@ pub fn sessions_per_user(sessions: f64, users: f64) -> Option<f64> {
 /// ```
 #[must_use]
 pub fn average_session_duration(total_time: f64, sessions: f64) -> Option<f64> {
-    if sessions == 0.0 { None } else { Some(total_time / sessions) }
+    if sessions == 0.0 {
+        None
+    } else {
+        Some(total_time / sessions)
+    }
 }
 
 /// Feature engagement: share of active users performing the key action.

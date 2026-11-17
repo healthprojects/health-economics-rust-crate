@@ -209,11 +209,7 @@ pub fn observed_vs_expected(observed: f64, expected: f64) -> Option<f64> {
 /// assert!((avoided_readmissions(2_000.0, 0.18, 0.14) - 80.0).abs() < 1e-9);
 /// ```
 #[must_use]
-pub fn avoided_readmissions(
-    discharges: f64,
-    baseline_rate: f64,
-    new_rate: f64,
-) -> f64 {
+pub fn avoided_readmissions(discharges: f64, baseline_rate: f64, new_rate: f64) -> f64 {
     discharges * (baseline_rate - new_rate)
 }
 

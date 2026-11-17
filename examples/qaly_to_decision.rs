@@ -7,9 +7,7 @@
 //!
 //! Run with: `cargo run --example qaly_to_decision`
 
-use health_economics::incremental_cost_effectiveness_ratio::{
-    self as icer_mod, classify_quadrant,
-};
+use health_economics::incremental_cost_effectiveness_ratio::{self as icer_mod, classify_quadrant};
 use health_economics::net_monetary_benefit as nmb;
 use health_economics::quality_adjusted_life_year as qaly;
 use health_economics::willingness_to_pay_thresholds as wtp;
@@ -26,10 +24,19 @@ fn main() {
     println!("QALY gain across {patients} pts: {total_qalys:.1}");
 
     // The same gain expressed as explicit health-state streams.
-    let treated_now = qaly::qalys(&[qaly::HealthState { duration_years: 1.0, utility: 0.85 }]);
+    let treated_now = qaly::qalys(&[qaly::HealthState {
+        duration_years: 1.0,
+        utility: 0.85,
+    }]);
     let treated_late = qaly::qalys(&[
-        qaly::HealthState { duration_years: 0.5, utility: 0.6 },
-        qaly::HealthState { duration_years: 0.5, utility: 0.85 },
+        qaly::HealthState {
+            duration_years: 0.5,
+            utility: 0.6,
+        },
+        qaly::HealthState {
+            duration_years: 0.5,
+            utility: 0.85,
+        },
     ]);
     println!("Treated now vs late:        {treated_now:.3} vs {treated_late:.3} QALYs");
 
@@ -45,11 +52,17 @@ fn main() {
     let ratio = icer_mod::icer(delta_cost, total_qalys).expect("non-zero QALY gain");
     println!("Quadrant: {quadrant:?}");
     println!("ICER: £{ratio:.0} per QALY (threshold £20,000–£30,000)");
-    println!("Adopt at £20k? {}", icer_mod::adopt_at_threshold(ratio, 20_000.0));
+    println!(
+        "Adopt at £20k? {}",
+        icer_mod::adopt_at_threshold(ratio, 20_000.0)
+    );
 
     println!("\n=== Step 4: Net monetary benefit ===");
     let benefit = nmb::net_monetary_benefit(total_qalys, delta_cost, 20_000.0);
-    println!("NMB at £20k/QALY: £{benefit:.0} — adopt: {}", nmb::adopt(benefit));
+    println!(
+        "NMB at £20k/QALY: £{benefit:.0} — adopt: {}",
+        nmb::adopt(benefit)
+    );
 
     println!("\n=== Step 5: Maximum defensible price ===");
     // With no operational cost offsets, price is capped by health value alone.

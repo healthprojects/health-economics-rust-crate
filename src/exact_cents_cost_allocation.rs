@@ -106,7 +106,7 @@
 //!
 //! Topic doc: health-economics-metrics/topics/exact-cents-cost-allocation.md
 
-use rusty_money::{iso, Money, MoneyError};
+use rusty_money::{Money, MoneyError, iso};
 
 /// Splits `total` across `shares` so the parts always sum to exactly `total`.
 ///

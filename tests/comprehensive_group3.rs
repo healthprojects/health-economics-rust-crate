@@ -54,7 +54,11 @@ fn approx(a: f64, b: f64, tol: f64) -> bool {
 #[test]
 fn edge_cod_operational_zero_and_extreme() {
     assert!(approx(cod::operational_cost_of_delay(0.0, 50.0), 0.0, 1e-9));
-    assert!(approx(cod::operational_cost_of_delay(200.0, 0.0), 0.0, 1e-9));
+    assert!(approx(
+        cod::operational_cost_of_delay(200.0, 0.0),
+        0.0,
+        1e-9
+    ));
     let huge = cod::operational_cost_of_delay(1e12, 1e12);
     assert!(huge.is_finite() && huge > 0.0);
 }
@@ -63,7 +67,11 @@ fn edge_cod_operational_zero_and_extreme() {
 #[test]
 fn edge_cod_total_delay_loss_zero_and_negative_delay() {
     assert!(approx(cod::total_delay_loss(10_000.0, 0.0), 0.0, 1e-9));
-    assert!(approx(cod::total_delay_loss(10_000.0, -2.0), -20_000.0, 1e-9));
+    assert!(approx(
+        cod::total_delay_loss(10_000.0, -2.0),
+        -20_000.0,
+        1e-9
+    ));
     assert!(cod::total_delay_loss(1e12, 1e12).is_finite());
 }
 
@@ -86,8 +94,16 @@ fn edge_cod_health_zero_inputs() {
 // Edge: money CoD with all-zero terms is zero, and the operational term alone passes through.
 #[test]
 fn edge_cod_money_zero_and_operational_only() {
-    assert!(approx(cod::cost_of_delay_money(0.0, 20_000.0, 0.0), 0.0, 1e-9));
-    assert!(approx(cod::cost_of_delay_money(0.0, 20_000.0, 5_000.0), 5_000.0, 1e-9));
+    assert!(approx(
+        cod::cost_of_delay_money(0.0, 20_000.0, 0.0),
+        0.0,
+        1e-9
+    ));
+    assert!(approx(
+        cod::cost_of_delay_money(0.0, 20_000.0, 5_000.0),
+        5_000.0,
+        1e-9
+    ));
     assert!(cod::cost_of_delay_money(1e12, 1e12, 1e12).is_finite());
 }
 
@@ -97,7 +113,10 @@ fn edge_cod_money_zero_and_operational_only() {
 #[test]
 fn edge_cua_total_qalys_empty_and_single() {
     assert!(approx(cua::total_qalys(&[]), 0.0, 1e-9));
-    let one = [HealthState { duration_years: 2.0, utility: 0.5 }];
+    let one = [HealthState {
+        duration_years: 2.0,
+        utility: 0.5,
+    }];
     assert!(approx(cua::total_qalys(&one), 1.0, 1e-12));
 }
 
@@ -105,9 +124,18 @@ fn edge_cua_total_qalys_empty_and_single() {
 // accrues the full duration, and a below-zero (worse-than-dead) utility accrues negative QALYs.
 #[test]
 fn edge_cua_total_qalys_utility_boundaries_and_negative() {
-    let dead = [HealthState { duration_years: 3.0, utility: 0.0 }];
-    let full = [HealthState { duration_years: 3.0, utility: 1.0 }];
-    let worse = [HealthState { duration_years: 1.0, utility: -0.2 }];
+    let dead = [HealthState {
+        duration_years: 3.0,
+        utility: 0.0,
+    }];
+    let full = [HealthState {
+        duration_years: 3.0,
+        utility: 1.0,
+    }];
+    let worse = [HealthState {
+        duration_years: 1.0,
+        utility: -0.2,
+    }];
     assert!(approx(cua::total_qalys(&dead), 0.0, 1e-9));
     assert!(approx(cua::total_qalys(&full), 3.0, 1e-12));
     assert!(approx(cua::total_qalys(&worse), -0.2, 1e-12));
@@ -123,7 +151,11 @@ fn edge_cua_delta_qalys_empty_vs_empty() {
 #[test]
 fn edge_cua_displaced_care_saving_fraction_boundaries() {
     assert!(approx(cua::displaced_care_saving(0.0, 1_700.0), 0.0, 1e-9));
-    assert!(approx(cua::displaced_care_saving(1.0, 1_700.0), 1_700.0, 1e-9));
+    assert!(approx(
+        cua::displaced_care_saving(1.0, 1_700.0),
+        1_700.0,
+        1e-9
+    ));
 }
 
 // Edge: icur is None exactly when ΔQALYs == 0.0 (including -0.0); nonzero ΔE gives Some.
@@ -196,7 +228,11 @@ fn edge_dna_relative_reduction_none_and_negative() {
 #[test]
 fn edge_diga_revenue_activation_boundaries() {
     assert!(approx(diga::revenue(20_000.0, 0.0, 450.0), 0.0, 1e-9));
-    assert!(approx(diga::revenue(20_000.0, 1.0, 450.0), 9_000_000.0, 1e-9));
+    assert!(approx(
+        diga::revenue(20_000.0, 1.0, 450.0),
+        9_000_000.0,
+        1e-9
+    ));
     assert!(diga::revenue(1e12, 1.0, 1e12).is_finite());
 }
 
@@ -204,22 +240,44 @@ fn edge_diga_revenue_activation_boundaries() {
 #[test]
 fn edge_diga_activated_prescriptions_boundaries() {
     assert!(approx(diga::activated_prescriptions(0.0, 0.81), 0.0, 1e-9));
-    assert!(approx(diga::activated_prescriptions(20_000.0, 0.0), 0.0, 1e-9));
-    assert!(approx(diga::activated_prescriptions(20_000.0, 1.0), 20_000.0, 1e-9));
+    assert!(approx(
+        diga::activated_prescriptions(20_000.0, 0.0),
+        0.0,
+        1e-9
+    ));
+    assert!(approx(
+        diga::activated_prescriptions(20_000.0, 1.0),
+        20_000.0,
+        1e-9
+    ));
 }
 
 // Edge: probability boundaries — P = 0 loses exactly the RCT cost, P = 1 nets revenue − cost.
 #[test]
 fn edge_diga_expected_value_probability_boundaries() {
-    assert!(approx(diga::expected_value(0.0, 18_468_000.0, 2_000_000.0), -2_000_000.0, 1e-9));
-    assert!(approx(diga::expected_value(1.0, 18_468_000.0, 2_000_000.0), 16_468_000.0, 1e-9));
+    assert!(approx(
+        diga::expected_value(0.0, 18_468_000.0, 2_000_000.0),
+        -2_000_000.0,
+        1e-9
+    ));
+    assert!(approx(
+        diga::expected_value(1.0, 18_468_000.0, 2_000_000.0),
+        16_468_000.0,
+        1e-9
+    ));
 }
 
 // Edge: the financing test is inclusive — revenue exactly equal to the RCT cost counts (>=).
 #[test]
 fn edge_diga_financing_boundary_is_inclusive() {
-    assert!(diga::provisional_year_finances_evidence(2_000_000.0, 2_000_000.0));
-    assert!(!diga::provisional_year_finances_evidence(1_999_999.99, 2_000_000.0));
+    assert!(diga::provisional_year_finances_evidence(
+        2_000_000.0,
+        2_000_000.0
+    ));
+    assert!(!diga::provisional_year_finances_evidence(
+        1_999_999.99,
+        2_000_000.0
+    ));
     assert!(diga::provisional_year_finances_evidence(0.0, 0.0)); // zero-cost evidence
 }
 
@@ -230,7 +288,11 @@ fn edge_diga_financing_boundary_is_inclusive() {
 fn edge_deb_required_sample_size_none_and_zero_variance() {
     assert_eq!(deb::required_sample_size(1.0, 0.0, 16.0), None);
     assert_eq!(deb::required_sample_size(0.0, 1.0, 16.0), Some(0.0));
-    assert!(deb::required_sample_size(1e12, 1.0, 16.0).unwrap().is_finite());
+    assert!(
+        deb::required_sample_size(1e12, 1.0, 16.0)
+            .unwrap()
+            .is_finite()
+    );
 }
 
 // Edge: density ratio is None only when the clinic count is zero; zero digital sampling gives 0.
@@ -276,8 +338,16 @@ fn edge_daly_yll_zero_inputs() {
 // yields the full prevalence.
 #[test]
 fn edge_daly_yld_weight_boundaries() {
-    assert!(approx(daly::years_lived_with_disability(200.0, 0.0), 0.0, 1e-9));
-    assert!(approx(daly::years_lived_with_disability(200.0, 1.0), 200.0, 1e-9));
+    assert!(approx(
+        daly::years_lived_with_disability(200.0, 0.0),
+        0.0,
+        1e-9
+    ));
+    assert!(approx(
+        daly::years_lived_with_disability(200.0, 1.0),
+        200.0,
+        1e-9
+    ));
 }
 
 // Edge: zero burden on both components gives zero DALYs; large components stay finite.
@@ -299,9 +369,18 @@ fn edge_daly_cost_per_daly_none_and_free() {
 #[test]
 fn edge_daly_who_choice_exact_boundaries() {
     let gdp = 8_000.0;
-    assert_eq!(daly::who_choice_band(gdp, gdp), WhoChoiceBand::CostEffective);
-    assert_eq!(daly::who_choice_band(3.0 * gdp, gdp), WhoChoiceBand::CostEffective);
-    assert_eq!(daly::who_choice_band(0.0, gdp), WhoChoiceBand::HighlyCostEffective);
+    assert_eq!(
+        daly::who_choice_band(gdp, gdp),
+        WhoChoiceBand::CostEffective
+    );
+    assert_eq!(
+        daly::who_choice_band(3.0 * gdp, gdp),
+        WhoChoiceBand::CostEffective
+    );
+    assert_eq!(
+        daly::who_choice_band(0.0, gdp),
+        WhoChoiceBand::HighlyCostEffective
+    );
     assert_eq!(
         daly::who_choice_band(3.0 * gdp + 1e-6, gdp),
         WhoChoiceBand::NotCostEffective
@@ -313,7 +392,11 @@ fn edge_daly_who_choice_exact_boundaries() {
 // Edge: year 0 leaves any amount undiscounted (factor exactly 1.0).
 #[test]
 fn edge_disc_present_value_year_zero_is_identity() {
-    assert!(approx(disc::present_value(100_000.0, disc::NICE_REFERENCE_RATE, 0.0), 100_000.0, 1e-9));
+    assert!(approx(
+        disc::present_value(100_000.0, disc::NICE_REFERENCE_RATE, 0.0),
+        100_000.0,
+        1e-9
+    ));
     assert!(approx(disc::present_value(1.0, 0.5, 0.0), 1.0, 1e-9));
 }
 
@@ -328,15 +411,31 @@ fn edge_disc_present_value_zero_rate_is_identity() {
 // Edge: annuity r = 0 limit is exactly B × n, and a 0-year annuity is worth 0 at any rate.
 #[test]
 fn edge_disc_annuity_rate_zero_limit_and_zero_years() {
-    assert!(approx(disc::annuity_present_value(100_000.0, 0.0, 5.0), 500_000.0, 1e-9));
-    assert!(approx(disc::annuity_present_value(100_000.0, 0.0, 0.0), 0.0, 1e-9));
-    assert!(approx(disc::annuity_present_value(100_000.0, 0.035, 0.0), 0.0, 1e-9));
+    assert!(approx(
+        disc::annuity_present_value(100_000.0, 0.0, 5.0),
+        500_000.0,
+        1e-9
+    ));
+    assert!(approx(
+        disc::annuity_present_value(100_000.0, 0.0, 0.0),
+        0.0,
+        1e-9
+    ));
+    assert!(approx(
+        disc::annuity_present_value(100_000.0, 0.035, 0.0),
+        0.0,
+        1e-9
+    ));
 }
 
 // Edge: a zero-year delay leaves the PV unchanged; extreme horizons stay finite and positive.
 #[test]
 fn edge_disc_delayed_pv_zero_delay_and_extreme_horizon() {
-    assert!(approx(disc::delayed_present_value(451_505.0, 0.035, 0.0), 451_505.0, 1e-9));
+    assert!(approx(
+        disc::delayed_present_value(451_505.0, 0.035, 0.0),
+        451_505.0,
+        1e-9
+    ));
     let far = disc::present_value(1e12, 0.035, 100.0);
     assert!(far.is_finite() && far > 0.0);
 }
@@ -434,25 +533,49 @@ fn edge_dora_days_to_weeks_boundaries() {
 // Edge: a worsened lead time yields a negative reduction.
 #[test]
 fn edge_dora_lead_time_reduction_negative_when_worse() {
-    assert!(approx(dora::lead_time_reduction_weeks(2.0, 6.0), -4.0, 1e-12));
+    assert!(approx(
+        dora::lead_time_reduction_weeks(2.0, 6.0),
+        -4.0,
+        1e-12
+    ));
     assert!(approx(dora::lead_time_reduction_weeks(6.0, 6.0), 0.0, 1e-9));
 }
 
 // Edge: value pulled forward is zero whenever any factor is zero, finite at 1e12.
 #[test]
 fn edge_dora_value_pulled_forward_zeros_and_extreme() {
-    assert!(approx(dora::value_pulled_forward(0.0, 5.4, 4_000.0), 0.0, 1e-9));
-    assert!(approx(dora::value_pulled_forward(30.0, 0.0, 4_000.0), 0.0, 1e-9));
-    assert!(approx(dora::value_pulled_forward(30.0, 5.4, 0.0), 0.0, 1e-9));
+    assert!(approx(
+        dora::value_pulled_forward(0.0, 5.4, 4_000.0),
+        0.0,
+        1e-9
+    ));
+    assert!(approx(
+        dora::value_pulled_forward(30.0, 0.0, 4_000.0),
+        0.0,
+        1e-9
+    ));
+    assert!(approx(
+        dora::value_pulled_forward(30.0, 5.4, 0.0),
+        0.0,
+        1e-9
+    ));
     assert!(dora::value_pulled_forward(1e12, 1.0, 1e12).is_finite());
 }
 
 // Edge: a worsening CFR gives NEGATIVE failed changes avoided (and negative cost avoided).
 #[test]
 fn edge_dora_failed_changes_avoided_negative_when_cfr_worsens() {
-    assert!(approx(dora::failed_changes_avoided(30.0, 0.05, 0.25), -6.0, 1e-12));
+    assert!(approx(
+        dora::failed_changes_avoided(30.0, 0.05, 0.25),
+        -6.0,
+        1e-12
+    ));
     assert!(dora::failure_cost_avoided(30.0, 0.05, 0.25, 15_000.0) < 0.0);
-    assert!(approx(dora::failed_changes_avoided(30.0, 0.25, 0.25), 0.0, 1e-9));
+    assert!(approx(
+        dora::failed_changes_avoided(30.0, 0.25, 0.25),
+        0.0,
+        1e-9
+    ));
 }
 
 // Edge: instant recovery or a harmless outage costs nothing.
@@ -465,8 +588,16 @@ fn edge_dora_downtime_harm_zero_inputs() {
 // Edge: SLO attainment boundaries — 0.0 delivers nothing, 1.0 delivers the full modeled benefit.
 #[test]
 fn edge_dora_reliability_adjusted_benefit_boundaries() {
-    assert!(approx(dora::reliability_adjusted_benefit(500_000.0, 0.0), 0.0, 1e-9));
-    assert!(approx(dora::reliability_adjusted_benefit(500_000.0, 1.0), 500_000.0, 1e-9));
+    assert!(approx(
+        dora::reliability_adjusted_benefit(500_000.0, 0.0),
+        0.0,
+        1e-9
+    ));
+    assert!(approx(
+        dora::reliability_adjusted_benefit(500_000.0, 1.0),
+        500_000.0,
+        1e-9
+    ));
 }
 
 // ---- downstream_resource_optimization -------------------------------------------
@@ -476,16 +607,35 @@ fn edge_dora_reliability_adjusted_benefit_boundaries() {
 #[test]
 fn edge_dro_value_of_unblocking_empty_and_pathway_only() {
     assert!(approx(dro::value_of_unblocking(&[], 0.0, 300.0), 0.0, 1e-9));
-    assert!(approx(dro::value_of_unblocking(&[], 10.0, 300.0), 3_000.0, 1e-9));
-    let free_role = [DownstreamRelease { blocked_hours_released: 100.0, unit_cost_per_hour: 0.0 }];
-    assert!(approx(dro::value_of_unblocking(&free_role, 0.0, 0.0), 0.0, 1e-9));
+    assert!(approx(
+        dro::value_of_unblocking(&[], 10.0, 300.0),
+        3_000.0,
+        1e-9
+    ));
+    let free_role = [DownstreamRelease {
+        blocked_hours_released: 100.0,
+        unit_cost_per_hour: 0.0,
+    }];
+    assert!(approx(
+        dro::value_of_unblocking(&free_role, 0.0, 0.0),
+        0.0,
+        1e-9
+    ));
 }
 
 // Edge: a gating task that got slower saves negative minutes.
 #[test]
 fn edge_dro_gating_task_negative_when_slower() {
-    assert!(approx(dro::gating_task_minutes_saved(20.0, 90.0), -70.0, 1e-12));
-    assert!(approx(dro::gating_task_minutes_saved(90.0, 90.0), 0.0, 1e-9));
+    assert!(approx(
+        dro::gating_task_minutes_saved(20.0, 90.0),
+        -70.0,
+        1e-12
+    ));
+    assert!(approx(
+        dro::gating_task_minutes_saved(90.0, 90.0),
+        0.0,
+        1e-9
+    ));
 }
 
 // Edge: annualizing zero per-day or zero operating days yields zero; 1e12 stays finite.
@@ -499,7 +649,11 @@ fn edge_dro_annualize_zero_and_extreme() {
 // Edge: recovering zero late discharges avoids zero bed days.
 #[test]
 fn edge_dro_bed_days_zero_recovered() {
-    assert!(approx(dro::bed_days_avoided_per_year(0.0, 365.0), 0.0, 1e-9));
+    assert!(approx(
+        dro::bed_days_avoided_per_year(0.0, 365.0),
+        0.0,
+        1e-9
+    ));
 }
 
 // =========================================================================
@@ -514,7 +668,10 @@ fn prop_disc_discount_factor_in_unit_interval_and_decreasing() {
         let mut prev = f64::INFINITY;
         for t in 0..=30 {
             let f = disc::present_value(1.0, r, f64::from(t));
-            assert!(f > 0.0 && f <= 1.0, "factor out of (0,1]: r={r} t={t} f={f}");
+            assert!(
+                f > 0.0 && f <= 1.0,
+                "factor out of (0,1]: r={r} t={t} f={f}"
+            );
             if r > 0.0 {
                 assert!(f < prev, "not strictly decreasing: r={r} t={t}");
             } else {
@@ -535,7 +692,11 @@ fn prop_disc_delay_strictly_reduces_present_value() {
             let slipped = disc::delayed_present_value(pv, r, delay);
             assert!(slipped < pv, "delay did not reduce PV: r={r} delay={delay}");
             // The slipped stream equals each future term discounted once more.
-            assert!(approx(slipped, pv * disc::present_value(1.0, r, delay), 1e-6));
+            assert!(approx(
+                slipped,
+                pv * disc::present_value(1.0, r, delay),
+                1e-6
+            ));
         }
     }
 }
@@ -545,7 +706,9 @@ fn prop_disc_delay_strictly_reduces_present_value() {
 fn prop_disc_annuity_equals_year_by_year_sum() {
     for &r in &[0.015, 0.035, 0.08, 0.20] {
         for &n in &[1u32, 2, 5, 10, 30] {
-            let sum: f64 = (1..=n).map(|t| disc::present_value(1_000.0, r, f64::from(t))).sum();
+            let sum: f64 = (1..=n)
+                .map(|t| disc::present_value(1_000.0, r, f64::from(t)))
+                .sum();
             let annuity = disc::annuity_present_value(1_000.0, r, f64::from(n));
             assert!(approx(annuity, sum, 1e-6), "annuity != sum at r={r} n={n}");
         }
@@ -562,8 +725,15 @@ fn prop_cua_total_qalys_additive_over_concatenation() {
     let mut part_b: Vec<HealthState> = Vec::new();
     for (i, &d) in durations.iter().enumerate() {
         for (j, &u) in utilities.iter().enumerate() {
-            let s = HealthState { duration_years: d, utility: u };
-            if (i + j) % 2 == 0 { part_a.push(s) } else { part_b.push(s) }
+            let s = HealthState {
+                duration_years: d,
+                utility: u,
+            };
+            if (i + j) % 2 == 0 {
+                part_a.push(s);
+            } else {
+                part_b.push(s);
+            }
         }
     }
     let mut concat = part_a.clone();
@@ -579,17 +749,33 @@ fn prop_cua_total_qalys_additive_over_concatenation() {
 #[test]
 fn prop_cua_delta_qalys_antisymmetric() {
     let pathways = [
-        vec![HealthState { duration_years: 0.5, utility: 0.76 }],
-        vec![HealthState { duration_years: 0.5, utility: 0.68 }],
+        vec![HealthState {
+            duration_years: 0.5,
+            utility: 0.76,
+        }],
+        vec![HealthState {
+            duration_years: 0.5,
+            utility: 0.68,
+        }],
         vec![
-            HealthState { duration_years: 1.0, utility: 0.9 },
-            HealthState { duration_years: 2.0, utility: 0.4 },
+            HealthState {
+                duration_years: 1.0,
+                utility: 0.9,
+            },
+            HealthState {
+                duration_years: 2.0,
+                utility: 0.4,
+            },
         ],
         vec![],
     ];
     for a in &pathways {
         for b in &pathways {
-            assert!(approx(cua::delta_qalys(a, b), -cua::delta_qalys(b, a), 1e-12));
+            assert!(approx(
+                cua::delta_qalys(a, b),
+                -cua::delta_qalys(b, a),
+                1e-12
+            ));
         }
     }
 }
@@ -609,8 +795,16 @@ fn prop_cua_is_dominant_quadrant() {
 fn prop_cua_displaced_care_saving_linear() {
     for &f in &[0.0, 0.1, 0.4, 1.0] {
         for &c in &[0.0, 500.0, 1_700.0] {
-            assert!(approx(cua::displaced_care_saving(2.0 * f, c), 2.0 * cua::displaced_care_saving(f, c), 1e-9));
-            assert!(approx(cua::displaced_care_saving(f, 3.0 * c), 3.0 * cua::displaced_care_saving(f, c), 1e-9));
+            assert!(approx(
+                cua::displaced_care_saving(2.0 * f, c),
+                2.0 * cua::displaced_care_saving(f, c),
+                1e-9
+            ));
+            assert!(approx(
+                cua::displaced_care_saving(f, 3.0 * c),
+                3.0 * cua::displaced_care_saving(f, c),
+                1e-9
+            ));
         }
     }
 }
@@ -629,7 +823,11 @@ fn prop_daly_who_choice_banding_grid() {
             } else {
                 WhoChoiceBand::NotCostEffective
             };
-            assert_eq!(daly::who_choice_band(cost, gdp), expected, "gdp={gdp} multiple={m}");
+            assert_eq!(
+                daly::who_choice_band(cost, gdp),
+                expected,
+                "gdp={gdp} multiple={m}"
+            );
         }
     }
 }
@@ -642,8 +840,16 @@ fn prop_daly_chain_linearity_and_additivity() {
         for &prev in &[0.0, 50.0, 200.0] {
             let yll = daly::years_of_life_lost(deaths, 20.0);
             let yld = daly::years_lived_with_disability(prev, 0.2);
-            assert!(approx(daly::years_of_life_lost(2.0 * deaths, 20.0), 2.0 * yll, 1e-9));
-            assert!(approx(daly::years_lived_with_disability(2.0 * prev, 0.2), 2.0 * yld, 1e-9));
+            assert!(approx(
+                daly::years_of_life_lost(2.0 * deaths, 20.0),
+                2.0 * yll,
+                1e-9
+            ));
+            assert!(approx(
+                daly::years_lived_with_disability(2.0 * prev, 0.2),
+                2.0 * yld,
+                1e-9
+            ));
             assert!(approx(daly::dalys(yll, yld), yll + yld, 1e-12));
         }
     }
@@ -690,7 +896,7 @@ fn prop_dom_frontier_invariants_over_input_sets() {
         vec![
             Alternative::new("p", 500.0, 40.0),
             Alternative::new("q", 50.0, 10.0),
-            Alternative::new("r", 400.0, 12.0),  // strictly dominated by p? no: cheaper than p, but s dominates
+            Alternative::new("r", 400.0, 12.0), // strictly dominated by p? no: cheaper than p, but s dominates
             Alternative::new("s", 60.0, 30.0),
             Alternative::new("t", 0.0, 0.0),
         ],
@@ -699,7 +905,10 @@ fn prop_dom_frontier_invariants_over_input_sets() {
         let frontier = dom::efficiency_frontier(options);
         // Subset of the inputs.
         for member in &frontier {
-            assert!(options.contains(member), "frontier member not from inputs: {member:?}");
+            assert!(
+                options.contains(member),
+                "frontier member not from inputs: {member:?}"
+            );
         }
         // Strictly sorted by effect and by cost.
         for w in frontier.windows(2) {
@@ -753,7 +962,10 @@ fn prop_dom_all_options_survive_when_icers_increase() {
     ];
     let frontier = dom::efficiency_frontier(&options);
     assert_eq!(frontier.len(), 4);
-    let icers: Vec<f64> = dom::frontier_icers(&frontier).into_iter().flatten().collect();
+    let icers: Vec<f64> = dom::frontier_icers(&frontier)
+        .into_iter()
+        .flatten()
+        .collect();
     assert_eq!(icers.len(), 3);
     assert!(approx(icers[0], 10.0, 1e-9));
     assert!(approx(icers[1], 20.0, 1e-9));
@@ -765,9 +977,21 @@ fn prop_dom_all_options_survive_when_icers_increase() {
 fn prop_dora_value_pulled_forward_linear_in_each_argument() {
     let base = dora::value_pulled_forward(30.0, 5.4, 4_000.0);
     for &k in &[0.0, 0.5, 2.0, 10.0] {
-        assert!(approx(dora::value_pulled_forward(30.0 * k, 5.4, 4_000.0), k * base, 1e-6));
-        assert!(approx(dora::value_pulled_forward(30.0, 5.4 * k, 4_000.0), k * base, 1e-6));
-        assert!(approx(dora::value_pulled_forward(30.0, 5.4, 4_000.0 * k), k * base, 1e-6));
+        assert!(approx(
+            dora::value_pulled_forward(30.0 * k, 5.4, 4_000.0),
+            k * base,
+            1e-6
+        ));
+        assert!(approx(
+            dora::value_pulled_forward(30.0, 5.4 * k, 4_000.0),
+            k * base,
+            1e-6
+        ));
+        assert!(approx(
+            dora::value_pulled_forward(30.0, 5.4, 4_000.0 * k),
+            k * base,
+            1e-6
+        ));
     }
 }
 
@@ -794,7 +1018,11 @@ fn prop_dora_failed_changes_avoided_formula_grid() {
 #[test]
 fn prop_dora_downtime_and_reliability_linear() {
     for &k in &[0.0, 0.5, 2.0, 24.0] {
-        assert!(approx(dora::downtime_harm(k * 2.0, 1_000.0), k * dora::downtime_harm(2.0, 1_000.0), 1e-9));
+        assert!(approx(
+            dora::downtime_harm(k * 2.0, 1_000.0),
+            k * dora::downtime_harm(2.0, 1_000.0),
+            1e-9
+        ));
         assert!(approx(
             dora::reliability_adjusted_benefit(k * 100.0, 0.99),
             k * dora::reliability_adjusted_benefit(100.0, 0.99),
@@ -809,10 +1037,26 @@ fn prop_dna_recovered_slots_and_value_scale_linearly() {
     let slots = dna::recovered_slots(200_000.0, 2.5);
     let value = dna::value_of_reduction(slots, 160.0);
     for &k in &[0.0, 0.5, 2.0, 4.0] {
-        assert!(approx(dna::recovered_slots(200_000.0 * k, 2.5), k * slots, 1e-6));
-        assert!(approx(dna::recovered_slots(200_000.0, 2.5 * k), k * slots, 1e-6));
-        assert!(approx(dna::value_of_reduction(slots * k, 160.0), k * value, 1e-6));
-        assert!(approx(dna::value_of_reduction(slots, 160.0 * k), k * value, 1e-6));
+        assert!(approx(
+            dna::recovered_slots(200_000.0 * k, 2.5),
+            k * slots,
+            1e-6
+        ));
+        assert!(approx(
+            dna::recovered_slots(200_000.0, 2.5 * k),
+            k * slots,
+            1e-6
+        ));
+        assert!(approx(
+            dna::value_of_reduction(slots * k, 160.0),
+            k * value,
+            1e-6
+        ));
+        assert!(approx(
+            dna::value_of_reduction(slots, 160.0 * k),
+            k * value,
+            1e-6
+        ));
     }
 }
 
@@ -878,8 +1122,16 @@ fn prop_deb_sample_size_sign_symmetric_and_linear() {
         let plus = deb::required_sample_size(5.0, effect, 16.0).unwrap();
         let minus = deb::required_sample_size(5.0, -effect, 16.0).unwrap();
         assert!(approx(plus, minus, 1e-9));
-        assert!(approx(deb::required_sample_size(10.0, effect, 16.0).unwrap(), 2.0 * plus, 1e-9));
-        assert!(approx(deb::required_sample_size(5.0, effect, 32.0).unwrap(), 2.0 * plus, 1e-9));
+        assert!(approx(
+            deb::required_sample_size(10.0, effect, 16.0).unwrap(),
+            2.0 * plus,
+            1e-9
+        ));
+        assert!(approx(
+            deb::required_sample_size(5.0, effect, 32.0).unwrap(),
+            2.0 * plus,
+            1e-9
+        ));
     }
 }
 
@@ -887,7 +1139,11 @@ fn prop_deb_sample_size_sign_symmetric_and_linear() {
 #[test]
 fn prop_deb_trial_saving_and_density_linear() {
     for &k in &[0.0, 0.5, 2.0, 10.0] {
-        assert!(approx(deb::trial_cost_saving(200.0 * k, 25_000.0), k * 5_000_000.0, 1e-6));
+        assert!(approx(
+            deb::trial_cost_saving(200.0 * k, 25_000.0),
+            k * 5_000_000.0,
+            1e-6
+        ));
         assert!(approx(
             deb::sampling_density_ratio(200.0 * k, 4.0).unwrap(),
             k * 50.0,
@@ -907,9 +1163,17 @@ fn prop_cod_chain_multiplicative_consistency() {
             // Direct product identity.
             assert!(approx(health, patients * weeks_removed / 52.0 * 0.12, 1e-9));
             // Monetizing with zero operational term is exactly health × λ.
-            assert!(approx(cod::cost_of_delay_money(health, 20_000.0, 0.0), health * 20_000.0, 1e-9));
+            assert!(approx(
+                cod::cost_of_delay_money(health, 20_000.0, 0.0),
+                health * 20_000.0,
+                1e-9
+            ));
             // Total loss is linear in the delay duration.
-            assert!(approx(cod::total_delay_loss(health, 10.0), 10.0 * cod::total_delay_loss(health, 1.0), 1e-9));
+            assert!(approx(
+                cod::total_delay_loss(health, 10.0),
+                10.0 * cod::total_delay_loss(health, 1.0),
+                1e-9
+            ));
         }
     }
 }
@@ -918,9 +1182,16 @@ fn prop_cod_chain_multiplicative_consistency() {
 // bed_days_avoided_per_year is exactly annualize.
 #[test]
 fn prop_dro_value_additive_and_bed_days_is_annualize() {
-    let r1 = DownstreamRelease { blocked_hours_released: 500.0, unit_cost_per_hour: 30.0 };
-    let r2 = DownstreamRelease { blocked_hours_released: 595.0, unit_cost_per_hour: 45.0 };
-    let split = dro::value_of_unblocking(&[r1], 0.0, 0.0) + dro::value_of_unblocking(&[r2], 1_460.0, 300.0);
+    let r1 = DownstreamRelease {
+        blocked_hours_released: 500.0,
+        unit_cost_per_hour: 30.0,
+    };
+    let r2 = DownstreamRelease {
+        blocked_hours_released: 595.0,
+        unit_cost_per_hour: 45.0,
+    };
+    let split =
+        dro::value_of_unblocking(&[r1], 0.0, 0.0) + dro::value_of_unblocking(&[r2], 1_460.0, 300.0);
     let joint = dro::value_of_unblocking(&[r1, r2], 1_460.0, 300.0);
     assert!(approx(joint, split, 1e-9));
     for &per_day in &[0.0, 1.0, 4.0, 6.0] {
@@ -994,7 +1265,11 @@ fn cross_discount_factors_agree_and_match_delayed_pv() {
             assert!(approx(f, qalym::discount_factor(r, t), 1e-12));
             assert!(approx(f, adc::discount_factor(r, t), 1e-12));
             // delayed_present_value(pv, r, t) divides by (1+r)^t, i.e. multiplies by f.
-            assert!(approx(disc::delayed_present_value(1_000.0, r, t), 1_000.0 * f, 1e-9));
+            assert!(approx(
+                disc::delayed_present_value(1_000.0, r, t),
+                1_000.0 * f,
+                1e-9
+            ));
         }
     }
 }
@@ -1003,7 +1278,12 @@ fn cross_discount_factors_agree_and_match_delayed_pv() {
 // and the same None convention (zero denominator).
 #[test]
 fn cross_dna_rate_and_cfr_percent_share_formula() {
-    for &(num, den) in &[(0.0, 100.0), (8.0, 100.0), (16_000.0, 200_000.0), (40.0, 40.0)] {
+    for &(num, den) in &[
+        (0.0, 100.0),
+        (8.0, 100.0),
+        (16_000.0, 200_000.0),
+        (40.0, 40.0),
+    ] {
         assert_eq!(
             dna::dna_rate_percent(num, den),
             dora::change_failure_rate_percent(num, den)
@@ -1051,7 +1331,11 @@ fn scenario_diga_launch_profit_and_loss() {
     // Provisional year: 10,000 scripts × 80% activation × €500 = €4,000,000.
     let year_one = diga::revenue(10_000.0, 0.80, 500.0);
     assert!(approx(year_one, 4_000_000.0, 1e-6));
-    assert!(approx(diga::activated_prescriptions(10_000.0, 0.80), 8_000.0, 1e-9));
+    assert!(approx(
+        diga::activated_prescriptions(10_000.0, 0.80),
+        8_000.0,
+        1e-9
+    ));
 
     // The €1.5M pivotal RCT is financed by the provisional year.
     let rct = 1_500_000.0;
@@ -1109,7 +1393,10 @@ fn scenario_dna_reduction_frontier_and_return() {
 
     // ICERs: 25,000/2,000 = £12.50, then 75,000/2,000 = £37.50 per slot — both below
     // the £160 refilled-slot value, so both steps are worth taking.
-    let icers: Vec<f64> = dom::frontier_icers(&frontier).into_iter().flatten().collect();
+    let icers: Vec<f64> = dom::frontier_icers(&frontier)
+        .into_iter()
+        .flatten()
+        .collect();
     assert!(approx(icers[0], 12.50, 1e-9));
     assert!(approx(icers[1], 37.50, 1e-9));
     assert!(icers.iter().all(|&i| i < 160.0));
@@ -1196,17 +1483,29 @@ fn scenario_global_health_platform_dalys_and_downstream() {
 
     // At $3,000 GDP per capita that is under 1× GDP: highly cost-effective;
     // the same platform in a $1,000-GDP country lands in the 1–3× band.
-    assert_eq!(daly::who_choice_band(cpd, 3_000.0), WhoChoiceBand::HighlyCostEffective);
-    assert_eq!(daly::who_choice_band(cpd, 1_000.0), WhoChoiceBand::CostEffective);
+    assert_eq!(
+        daly::who_choice_band(cpd, 3_000.0),
+        WhoChoiceBand::HighlyCostEffective
+    );
+    assert_eq!(
+        daly::who_choice_band(cpd, 1_000.0),
+        WhoChoiceBand::CostEffective
+    );
 
     // The platform also unblocks the ward's gating sign-off: 60 → 15 minutes,
     // 2 recovered discharges/day (730 bed days/yr) and 2 staff-hrs/day released (730 hrs/yr).
-    assert!(approx(dro::gating_task_minutes_saved(60.0, 15.0), 45.0, 1e-12));
+    assert!(approx(
+        dro::gating_task_minutes_saved(60.0, 15.0),
+        45.0,
+        1e-12
+    ));
     let bed_days = dro::bed_days_avoided_per_year(2.0, 365.0);
     assert!(approx(bed_days, 730.0, 1e-9));
     let hours_released = dro::annualize(2.0, 365.0);
-    let releases =
-        [DownstreamRelease { blocked_hours_released: hours_released, unit_cost_per_hour: 25.0 }];
+    let releases = [DownstreamRelease {
+        blocked_hours_released: hours_released,
+        unit_cost_per_hour: 25.0,
+    }];
     // 730 hrs × $25 + 730 bed days × $200 = $18,250 + $146,000 = $164,250.
     let unblock_value = dro::value_of_unblocking(&releases, bed_days, 200.0);
     assert!(approx(unblock_value, 164_250.0, 1e-6));
@@ -1237,8 +1536,14 @@ fn scenario_digital_endpoint_trial_and_cua() {
     // 1 year at utility 0.75 vs 0.70 → ΔC = −£300, ΔE = +0.05: dominant.
     let delta_cost = 300.0 - cua::displaced_care_saving(0.30, 2_000.0);
     assert!(approx(delta_cost, -300.0, 1e-9));
-    let new = [HealthState { duration_years: 1.0, utility: 0.75 }];
-    let old = [HealthState { duration_years: 1.0, utility: 0.70 }];
+    let new = [HealthState {
+        duration_years: 1.0,
+        utility: 0.75,
+    }];
+    let old = [HealthState {
+        duration_years: 1.0,
+        utility: 0.70,
+    }];
     let de = cua::delta_qalys(&new, &old);
     assert!(approx(de, 0.05, 1e-12));
     assert!(cua::is_dominant(delta_cost, de));

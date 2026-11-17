@@ -378,7 +378,12 @@ mod tests {
     // Doc worked example: "400 × [0.70 × 43.03 + 0.60 × 47.87] = 400 × 58.84".
     #[test]
     fn pmpm_stacks_to_58_84() {
-        let pmpm = revenue_per_member_per_month(0.70, CPT_99454_DEVICE_SUPPLY, 0.60, CPT_99457_FIRST_20_MIN);
+        let pmpm = revenue_per_member_per_month(
+            0.70,
+            CPT_99454_DEVICE_SUPPLY,
+            0.60,
+            CPT_99457_FIRST_20_MIN,
+        );
         // Doc: 0.70 × 43.03 + 0.60 × 47.87 = 58.84 (rounded)
         assert!((pmpm - 58.84).abs() < 0.005);
     }
@@ -386,7 +391,12 @@ mod tests {
     // Doc worked example: "Monthly revenue ≈ ... ≈ $23,500".
     #[test]
     fn monthly_revenue_is_about_23_500() {
-        let pmpm = revenue_per_member_per_month(0.70, CPT_99454_DEVICE_SUPPLY, 0.60, CPT_99457_FIRST_20_MIN);
+        let pmpm = revenue_per_member_per_month(
+            0.70,
+            CPT_99454_DEVICE_SUPPLY,
+            0.60,
+            CPT_99457_FIRST_20_MIN,
+        );
         let monthly = monthly_revenue(400.0, pmpm);
         // Doc: 400 × 58.84 ≈ $23,500 (exact 23,537.20)
         assert!((monthly - 23_500.0).abs() < 50.0);
@@ -395,7 +405,12 @@ mod tests {
     // Doc worked example: "Annual ≈ $282,000".
     #[test]
     fn annual_revenue_is_about_282_000() {
-        let pmpm = revenue_per_member_per_month(0.70, CPT_99454_DEVICE_SUPPLY, 0.60, CPT_99457_FIRST_20_MIN);
+        let pmpm = revenue_per_member_per_month(
+            0.70,
+            CPT_99454_DEVICE_SUPPLY,
+            0.60,
+            CPT_99457_FIRST_20_MIN,
+        );
         let annual = annual_revenue(monthly_revenue(400.0, pmpm));
         // Doc: annual ≈ $282,000 (exact 282,446.40)
         assert!((annual - 282_000.0).abs() < 500.0);
@@ -404,7 +419,12 @@ mod tests {
     // Doc worked example: "service cost ... ≈ $180,000; Margin ≈ $100k/year".
     #[test]
     fn annual_margin_is_about_100k() {
-        let pmpm = revenue_per_member_per_month(0.70, CPT_99454_DEVICE_SUPPLY, 0.60, CPT_99457_FIRST_20_MIN);
+        let pmpm = revenue_per_member_per_month(
+            0.70,
+            CPT_99454_DEVICE_SUPPLY,
+            0.60,
+            CPT_99457_FIRST_20_MIN,
+        );
         let margin = annual_margin(annual_revenue(monthly_revenue(400.0, pmpm)), 180_000.0);
         // Doc: margin ≈ $100k/year (exact 102,446.40)
         assert!((margin - 100_000.0).abs() < 3_000.0);

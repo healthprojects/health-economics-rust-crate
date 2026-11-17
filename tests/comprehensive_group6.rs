@@ -120,7 +120,10 @@ fn edge_simulate_migration_none_condition_and_n_zero() {
     };
     assert!(psa::simulate_migration_net_benefits(&bad, 1, 42).is_none());
     // n = 0 short-circuits: Some(vec![]) even with the invalid case.
-    assert_eq!(psa::simulate_migration_net_benefits(&bad, 0, 42), Some(vec![]));
+    assert_eq!(
+        psa::simulate_migration_net_benefits(&bad, 0, 42),
+        Some(vec![])
+    );
     let good = psa::MigrationCase {
         cost_mean: 800_000.0,
         cost_sd: 200_000.0,
@@ -129,7 +132,10 @@ fn edge_simulate_migration_none_condition_and_n_zero() {
         duration_low: 3.0,
         duration_high: 6.0,
     };
-    assert_eq!(psa::simulate_migration_net_benefits(&good, 0, 42), Some(vec![]));
+    assert_eq!(
+        psa::simulate_migration_net_benefits(&good, 0, 42),
+        Some(vec![])
+    );
 }
 
 // Locks down: ceac is None for no options, for zero-length draws, and for mismatched draw counts.
@@ -169,13 +175,33 @@ fn edge_opportunity_cost_single_and_negative_alternatives() {
 #[test]
 fn edge_utility_boundaries_in_qaly_math() {
     // Utility 0 contributes nothing regardless of duration.
-    assert!((qaly::qalys(&[HealthState { duration_years: 10.0, utility: 0.0 }]) - 0.0).abs() < TOL);
+    assert!(
+        (qaly::qalys(&[HealthState {
+            duration_years: 10.0,
+            utility: 0.0
+        }]) - 0.0)
+            .abs()
+            < TOL
+    );
     // Utility 1 makes QALYs equal calendar years.
-    assert!((qaly::qalys(&[HealthState { duration_years: 10.0, utility: 1.0 }]) - 10.0).abs() < TOL);
+    assert!(
+        (qaly::qalys(&[HealthState {
+            duration_years: 10.0,
+            utility: 1.0
+        }]) - 10.0)
+            .abs()
+            < TOL
+    );
     // A worse-than-death state subtracts QALYs.
     let q = qaly::qalys(&[
-        HealthState { duration_years: 1.0, utility: -0.1 },
-        HealthState { duration_years: 1.0, utility: 0.5 },
+        HealthState {
+            duration_years: 1.0,
+            utility: -0.1,
+        },
+        HealthState {
+            duration_years: 1.0,
+            utility: 0.5,
+        },
     ]);
     assert!((q - 0.4).abs() < TOL);
     // Waiting in a worse-than-death state makes the delay loss exceed the treated utility alone.
@@ -254,8 +280,12 @@ fn edge_prevention_strict_inequality_boundaries() {
     assert!(!prev::is_cost_effective(20_000.0, 20_000.0)); // strict <
     assert!(prev::is_cost_effective(19_999.999, 20_000.0));
     // Per-person condition is also strict: equality fails.
-    assert!(!prev::per_person_cost_saving_condition(180.0, 0.004, 45_000.0, 1.0));
-    assert!(prev::per_person_cost_saving_condition(179.999, 0.004, 45_000.0, 1.0));
+    assert!(!prev::per_person_cost_saving_condition(
+        180.0, 0.004, 45_000.0, 1.0
+    ));
+    assert!(prev::per_person_cost_saving_condition(
+        179.999, 0.004, 45_000.0, 1.0
+    ));
 }
 
 // Locks down: probability_positive counts strictly positive draws only — exact zeros do not count.
@@ -376,7 +406,13 @@ fn prop_psa_determinism_same_seed_identical_different_seed_differs() {
 // Locks down: Lcg::uniform(a, b) always lands in [a, b), including negative and tight ranges.
 #[test]
 fn prop_lcg_uniform_always_in_half_open_range() {
-    let ranges = [(0.0, 1.0), (3.0, 6.0), (-10.0, -2.0), (-1.0, 1.0), (5.0, 5.000_001)];
+    let ranges = [
+        (0.0, 1.0),
+        (3.0, 6.0),
+        (-10.0, -2.0),
+        (-1.0, 1.0),
+        (5.0, 5.000_001),
+    ];
     for (seed, &(lo, hi)) in ranges.iter().enumerate() {
         let mut rng = psa::Lcg::new(seed as u64 + 100);
         for _ in 0..2_000 {
@@ -396,7 +432,10 @@ fn prop_lcg_uniform_always_in_half_open_range() {
 #[test]
 fn prop_lcg_normal_sample_mean_matches_parameter() {
     let n = 20_000;
-    for (seed, &(m, s)) in [(0.0, 1.0), (350_000.0, 150_000.0), (-5.0, 2.0)].iter().enumerate() {
+    for (seed, &(m, s)) in [(0.0, 1.0), (350_000.0, 150_000.0), (-5.0, 2.0)]
+        .iter()
+        .enumerate()
+    {
         let mut rng = psa::Lcg::new(seed as u64 + 50);
         let sample_mean: f64 = (0..n).map(|_| rng.normal(m, s)).sum::<f64>() / f64::from(n);
         // Tolerance: ~7 standard errors — wide enough to be robust, tight enough to be meaningful.
@@ -454,7 +493,10 @@ fn prop_percentile_monotonicity() {
         let p0 = psa::percentile(d, 0.0).unwrap();
         let p50 = psa::percentile(d, 50.0).unwrap();
         let p100 = psa::percentile(d, 100.0).unwrap();
-        assert!(p0 <= p50 && p50 <= p100, "percentiles not monotone on {d:?}");
+        assert!(
+            p0 <= p50 && p50 <= p100,
+            "percentiles not monotone on {d:?}"
+        );
     }
     // Also holds on a simulated set.
     let case = psa::MigrationCase {
@@ -497,9 +539,15 @@ fn prop_ceac_entries_sum_to_one_and_lie_in_unit_interval() {
         let refs: Vec<&[f64]> = nmb_draws.iter().map(std::vec::Vec::as_slice).collect();
         let c = psa::ceac(&refs).unwrap();
         assert_eq!(c.len(), 3);
-        assert!((c.iter().sum::<f64>() - 1.0).abs() < TOL, "ceac at λ={lambda} must sum to 1");
+        assert!(
+            (c.iter().sum::<f64>() - 1.0).abs() < TOL,
+            "ceac at λ={lambda} must sum to 1"
+        );
         for &p in &c {
-            assert!((0.0..=1.0).contains(&p), "ceac entry {p} outside [0,1] at λ={lambda}");
+            assert!(
+                (0.0..=1.0).contains(&p),
+                "ceac entry {p} outside [0,1] at λ={lambda}"
+            );
         }
     }
 }
@@ -509,14 +557,32 @@ fn prop_ceac_entries_sum_to_one_and_lie_in_unit_interval() {
 // Locks down: qalys is additive — the QALYs of concatenated state lists equal the sum of the parts.
 #[test]
 fn prop_qalys_additive_over_concatenated_state_lists() {
-    let grid = [(0.5, 0.6), (1.0, 0.85), (2.0, 1.0), (0.25, -0.1), (3.0, 0.0)];
+    let grid = [
+        (0.5, 0.6),
+        (1.0, 0.85),
+        (2.0, 1.0),
+        (0.25, -0.1),
+        (3.0, 0.0),
+    ];
     for &(d1, u1) in &grid {
         for &(d2, u2) in &grid {
-            let part_a = qaly::qalys(&[HealthState { duration_years: d1, utility: u1 }]);
-            let part_b = qaly::qalys(&[HealthState { duration_years: d2, utility: u2 }]);
+            let part_a = qaly::qalys(&[HealthState {
+                duration_years: d1,
+                utility: u1,
+            }]);
+            let part_b = qaly::qalys(&[HealthState {
+                duration_years: d2,
+                utility: u2,
+            }]);
             let whole = qaly::qalys(&[
-                HealthState { duration_years: d1, utility: u1 },
-                HealthState { duration_years: d2, utility: u2 },
+                HealthState {
+                    duration_years: d1,
+                    utility: u1,
+                },
+                HealthState {
+                    duration_years: d2,
+                    utility: u2,
+                },
             ]);
             assert!((whole - (part_a + part_b)).abs() < TOL);
         }
@@ -560,7 +626,10 @@ fn prop_discount_factor_starts_at_one_and_decreases() {
         let mut prev = qaly::discount_factor(r, 0.0);
         for year in 1..=30 {
             let df = qaly::discount_factor(r, f64::from(year));
-            assert!(df < prev, "discount factor must strictly decrease (r={r}, year={year})");
+            assert!(
+                df < prev,
+                "discount factor must strictly decrease (r={r}, year={year})"
+            );
             assert!(df > 0.0);
             prev = df;
         }
@@ -608,7 +677,11 @@ fn prop_effective_icer_and_threshold_are_dual_views() {
                 let et = sev::effective_threshold(t, w);
                 assert!((et - t * w).abs() < TOL);
                 // Dividing the ICER or multiplying the threshold is the same decision.
-                assert_eq!(e < t, icer < et, "dual views disagree at icer={icer}, w={w}, t={t}");
+                assert_eq!(
+                    e < t,
+                    icer < et,
+                    "dual views disagree at icer={icer}, w={w}, t={t}"
+                );
             }
         }
     }
@@ -720,9 +793,18 @@ fn prop_annual_hours_saved_is_minutes_over_sixty() {
 // Locks down: population_impact == reach × effectiveness, and Stratum::impact agrees with the free function.
 #[test]
 fn prop_stratum_impact_consistent_with_free_function() {
-    let grid = [(0.12, 0.02), (0.22, 0.02), (0.04, 0.025), (0.0, 0.5), (1.0, 0.0)];
+    let grid = [
+        (0.12, 0.02),
+        (0.22, 0.02),
+        (0.04, 0.025),
+        (0.0, 0.5),
+        (1.0, 0.0),
+    ];
     for &(r, e) in &grid {
-        let s = re::Stratum { reach: r, effectiveness: e };
+        let s = re::Stratum {
+            reach: r,
+            effectiveness: e,
+        };
         assert!((s.impact() - re::population_impact(r, e)).abs() < TOL);
         assert!((re::population_impact(r, e) - r * e).abs() < TOL);
     }
@@ -747,7 +829,10 @@ fn prop_equity_gap_antisymmetric() {
 fn prop_equity_weight_one_is_identity() {
     let groups = [85.8, 18.0, 27.0, 0.0];
     let unweighted: f64 = groups.iter().sum();
-    let weighted: f64 = groups.iter().map(|&q| re::equity_weighted_qalys(q, 1.0)).sum();
+    let weighted: f64 = groups
+        .iter()
+        .map(|&q| re::equity_weighted_qalys(q, 1.0))
+        .sum();
     assert!((weighted - unweighted).abs() < TOL);
     // Any weight > 1 strictly increases a positive group's contribution.
     assert!(re::equity_weighted_qalys(10.0, 1.5) > re::equity_weighted_qalys(10.0, 1.0));
@@ -800,11 +885,7 @@ fn prop_avoided_readmissions_sign_follows_rate_direction() {
 // Locks down: total_pathway_duration == Σ stages and longest_stage == max stage, on several pathways.
 #[test]
 fn prop_pathway_sum_and_max() {
-    let pathways: [&[f64]; 3] = [
-        &[1.0, 6.0, 9.0, 2.0, 6.0],
-        &[18.0],
-        &[0.0, 0.0, 4.5],
-    ];
+    let pathways: [&[f64]; 3] = [&[1.0, 6.0, 9.0, 2.0, 6.0], &[18.0], &[0.0, 0.0, 4.5]];
     for stages in pathways {
         let sum: f64 = stages.iter().sum();
         let max = stages.iter().copied().fold(f64::NEG_INFINITY, f64::max);
@@ -818,9 +899,11 @@ fn prop_pathway_sum_and_max() {
 // Locks down: cohort QALY gain equals patients × the per-patient waiting cost of the removed weeks.
 #[test]
 fn prop_rtt_cohort_gain_matches_per_patient_cost() {
-    for &(patients, weeks, ut, uw) in
-        &[(5_000.0, 5.0, 0.80, 0.68), (400.0, 26.0, 0.85, 0.60), (1.0, 52.0, 1.0, 0.0)]
-    {
+    for &(patients, weeks, ut, uw) in &[
+        (5_000.0, 5.0, 0.80, 0.68),
+        (400.0, 26.0, 0.85, 0.60),
+        (1.0, 52.0, 1.0, 0.0),
+    ] {
         let per_patient = rtt::waiting_health_cost_qalys(weeks / 52.0, ut, uw);
         let cohort = rtt::qaly_gain_from_wait_reduction(patients, weeks, ut, uw);
         assert!((cohort - patients * per_patient).abs() < 1e-6);
@@ -868,7 +951,10 @@ fn cross_monetized_value_and_qalys_displaced_round_trip() {
     for &x in &[0.125, 1.0, 7.8, 50.0, 57.7] {
         let spend = qaly::monetized_value(x, margin);
         let displaced = oc::qalys_displaced(spend, margin).unwrap();
-        assert!((displaced - x).abs() < TOL, "QALY → £ → QALY round trip broke at {x}");
+        assert!(
+            (displaced - x).abs() < TOL,
+            "QALY → £ → QALY round trip broke at {x}"
+        );
     }
     // Reverse: a spend displaces q QALYs whose monetized value is the original spend.
     for &spend in &[13_000.0, 500_000.0, 1_000_000.0] {
@@ -904,7 +990,12 @@ fn cross_nmb_agreement_despite_different_argument_orders() {
 // Locks down: the three monetized_value implementations (QALY, PRO, RTT modules) are the same map.
 #[test]
 fn cross_monetized_value_identical_across_modules() {
-    for &(q, t) in &[(7.8, 20_000.0), (50.0, 30_000.0), (0.0, 25_000.0), (57.7, 13_000.0)] {
+    for &(q, t) in &[
+        (7.8, 20_000.0),
+        (50.0, 30_000.0),
+        (0.0, 25_000.0),
+        (57.7, 13_000.0),
+    ] {
         let a = qaly::monetized_value(q, t);
         let b = pro::monetized_value(q, t);
         let c = rtt::monetized_value(q, t);
@@ -1010,8 +1101,14 @@ fn scenario_psa_gated_by_severity_weighted_threshold() {
     // more likely rejected; under the ×1.7-weighted £51k it is more likely funded.
     let p_base = psa::probability_positive(&nmb_base).unwrap();
     let p_eff = psa::probability_positive(&nmb_eff).unwrap();
-    assert!(p_base < 0.5, "at the base threshold P(fund) = {p_base}, expected < 0.5");
-    assert!(p_eff > 0.5, "at the weighted threshold P(fund) = {p_eff}, expected > 0.5");
+    assert!(
+        p_base < 0.5,
+        "at the base threshold P(fund) = {p_base}, expected < 0.5"
+    );
+    assert!(
+        p_eff > 0.5,
+        "at the weighted threshold P(fund) = {p_eff}, expected > 0.5"
+    );
     assert!(p_eff > p_base);
 
     // CEAC framing: "treat" vs "standard care" (NMB 0 in every draw). Fractions are a
@@ -1053,7 +1150,10 @@ fn scenario_equity_stratified_depression_app_rollout() {
     assert!((q1_reach - 0.22).abs() < TOL);
     let q1_arr = pro::absolute_risk_reduction(0.48, 0.22);
     let q1_eff = q1_arr * q_per_responder;
-    let q1 = re::Stratum { reach: q1_reach, effectiveness: q1_eff };
+    let q1 = re::Stratum {
+        reach: q1_reach,
+        effectiveness: q1_eff,
+    };
     assert!((q1.impact() - 0.22 * 0.0078).abs() < TOL); // 0.001716 QALYs/eligible person
 
     // Stratum Q5 (most deprived): 2,000 of 50,000 → reach 0.04; more headroom, ARR 0.30 →
@@ -1062,7 +1162,10 @@ fn scenario_equity_stratified_depression_app_rollout() {
     assert!((q5_reach - 0.04).abs() < TOL);
     let q5_arr = pro::absolute_risk_reduction(0.52, 0.22);
     let q5_eff = q5_arr * q_per_responder;
-    let q5 = re::Stratum { reach: q5_reach, effectiveness: q5_eff };
+    let q5 = re::Stratum {
+        reach: q5_reach,
+        effectiveness: q5_eff,
+    };
     assert!((q5.impact() - 0.000_36).abs() < TOL);
 
     // Equity gap and ratio, hand-computed: 0.001716 − 0.00036 = 0.001356; ratio 4.7667.
@@ -1080,7 +1183,8 @@ fn scenario_equity_stratified_depression_app_rollout() {
 
     // Distributional view: weight Q5 at 1.5, Q1 at 1.0 → 85.8 + 27.0 = 112.8 weighted QALYs
     // versus 103.8 unweighted.
-    let weighted = re::equity_weighted_qalys(q1_qalys, 1.0) + re::equity_weighted_qalys(q5_qalys, 1.5);
+    let weighted =
+        re::equity_weighted_qalys(q1_qalys, 1.0) + re::equity_weighted_qalys(q5_qalys, 1.5);
     assert!((weighted - 112.8).abs() < 1e-6);
     assert!(weighted > q1_qalys + q5_qalys);
 
@@ -1127,7 +1231,12 @@ fn scenario_prevention_vs_cash_releasing_readmission_case() {
     assert!((p_net - 2_750_000.0).abs() < 1e-6);
     // NOT cost-saving — the per-person inequality agrees (£207.50 spent vs £180 expected avoided).
     assert!(!prev::is_cost_saving(p_net));
-    assert!(!prev::per_person_cost_saving_condition(25.0 * 8.3, 0.004, 45_000.0, 1.0));
+    assert!(!prev::per_person_cost_saving_condition(
+        25.0 * 8.3,
+        0.004,
+        45_000.0,
+        1.0
+    ));
     // But outstandingly cost-effective: £2.75M / 1,200 QALYs = £2,291.67/QALY < £20,000.
     let q = prev::qalys_gained(400.0, 3.0);
     let cpq = prev::cost_per_qaly(p_net, q).unwrap();

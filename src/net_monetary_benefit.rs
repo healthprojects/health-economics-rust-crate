@@ -269,9 +269,21 @@ mod tests {
 
     fn options() -> [EvaluatedOption; 3] {
         [
-            EvaluatedOption { name: "App + coaching", delta_cost: 400_000.0, delta_effect: 30.0 },
-            EvaluatedOption { name: "App only", delta_cost: 150_000.0, delta_effect: 12.0 },
-            EvaluatedOption { name: "Extra clinics", delta_cost: 700_000.0, delta_effect: 32.0 },
+            EvaluatedOption {
+                name: "App + coaching",
+                delta_cost: 400_000.0,
+                delta_effect: 30.0,
+            },
+            EvaluatedOption {
+                name: "App only",
+                delta_cost: 150_000.0,
+                delta_effect: 12.0,
+            },
+            EvaluatedOption {
+                name: "Extra clinics",
+                delta_cost: 700_000.0,
+                delta_effect: 32.0,
+            },
         ]
     }
 

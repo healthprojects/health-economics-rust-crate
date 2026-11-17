@@ -176,11 +176,7 @@ pub fn qalys(states: &[HealthState]) -> f64 {
 /// assert!((qaly_loss_from_delay(0.5, 0.6, 0.85) - 0.125).abs() < 1e-9);
 /// ```
 #[must_use]
-pub fn qaly_loss_from_delay(
-    delay_years: f64,
-    utility_waiting: f64,
-    utility_treated: f64,
-) -> f64 {
+pub fn qaly_loss_from_delay(delay_years: f64, utility_waiting: f64, utility_treated: f64) -> f64 {
     delay_years * (utility_treated - utility_waiting)
 }
 
@@ -304,7 +300,10 @@ mod tests {
     #[test]
     fn treated_now_yields_0_85_qalys() {
         // Worked example: "Treated now: 1 year at 0.85 = 0.85 QALYs this year."
-        let q = qalys(&[HealthState { duration_years: 1.0, utility: 0.85 }]);
+        let q = qalys(&[HealthState {
+            duration_years: 1.0,
+            utility: 0.85,
+        }]);
         assert!((q - 0.85).abs() < TOL);
     }
 
@@ -314,8 +313,14 @@ mod tests {
         // Worked example: "Treated after a 6-month delay: 0.5 × 0.6 + 0.5 ×
         // 0.85 = 0.725 QALYs."
         let q = qalys(&[
-            HealthState { duration_years: 0.5, utility: 0.6 },
-            HealthState { duration_years: 0.5, utility: 0.85 },
+            HealthState {
+                duration_years: 0.5,
+                utility: 0.6,
+            },
+            HealthState {
+                duration_years: 0.5,
+                utility: 0.85,
+            },
         ]);
         assert!((q - 0.725).abs() < TOL);
     }
@@ -325,10 +330,19 @@ mod tests {
     fn delay_costs_0_125_qalys_per_patient() {
         // Worked example: "QALY loss per patient from the delay: 0.85 − 0.725
         // = 0.125 QALYs."
-        let now = qalys(&[HealthState { duration_years: 1.0, utility: 0.85 }]);
+        let now = qalys(&[HealthState {
+            duration_years: 1.0,
+            utility: 0.85,
+        }]);
         let delayed = qalys(&[
-            HealthState { duration_years: 0.5, utility: 0.6 },
-            HealthState { duration_years: 0.5, utility: 0.85 },
+            HealthState {
+                duration_years: 0.5,
+                utility: 0.6,
+            },
+            HealthState {
+                duration_years: 0.5,
+                utility: 0.85,
+            },
         ]);
         assert!((qaly_gain(now, delayed) - 0.125).abs() < TOL);
         // The shortcut formula agrees.

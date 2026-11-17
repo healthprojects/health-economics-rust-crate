@@ -107,7 +107,7 @@
 //! Topic doc: health-economics-metrics/topics/currency-safe-cost-rollup.md
 
 use rust_decimal::Decimal;
-use rusty_money::{iso, Money, MoneyError};
+use rusty_money::{Money, MoneyError, iso};
 
 /// Sums a slice of money line items into a single exact total.
 ///
@@ -142,7 +142,8 @@ pub fn sum_line_items(
     items: &[Money<'static, iso::Currency>],
 ) -> Result<Money<'static, iso::Currency>, MoneyError> {
     let (first, rest) = items.split_first().ok_or(MoneyError::InvalidAmount)?;
-    rest.iter().try_fold(*first, |running_total, item| running_total.add(*item))
+    rest.iter()
+        .try_fold(*first, |running_total, item| running_total.add(*item))
 }
 
 /// Applies a multiplier (e.g. a contingency buffer) to a total, exactly.

@@ -48,7 +48,10 @@ fn main() {
     };
     let draws = psa::simulate_migration_net_benefits(&case, 10_000, 42).unwrap();
     println!("Mean net benefit:    £{:.0}", psa::mean(&draws).unwrap());
-    println!("P(net benefit > 0):  {:.0}%", psa::probability_positive(&draws).unwrap() * 100.0);
+    println!(
+        "P(net benefit > 0):  {:.0}%",
+        psa::probability_positive(&draws).unwrap() * 100.0
+    );
     println!(
         "5th–95th percentile: £{:.0} … £{:.0}",
         psa::percentile(&draws, 5.0).unwrap(),
@@ -58,9 +61,18 @@ fn main() {
     println!("\n=== EVPI: what is resolving the uncertainty worth? ===");
     // Two options across three possible worlds (NMB per world).
     let scenarios = [
-        evpi::Scenario { probability: 0.5, option_nmbs: vec![900_000.0, 400_000.0] },
-        evpi::Scenario { probability: 0.3, option_nmbs: vec![-200_000.0, 300_000.0] },
-        evpi::Scenario { probability: 0.2, option_nmbs: vec![100_000.0, 250_000.0] },
+        evpi::Scenario {
+            probability: 0.5,
+            option_nmbs: vec![900_000.0, 400_000.0],
+        },
+        evpi::Scenario {
+            probability: 0.3,
+            option_nmbs: vec![-200_000.0, 300_000.0],
+        },
+        evpi::Scenario {
+            probability: 0.2,
+            option_nmbs: vec![100_000.0, 250_000.0],
+        },
     ];
     let best_now = evpi::expected_nmb_of_best_option(&scenarios).unwrap();
     let with_pi = evpi::expected_nmb_with_perfect_information(&scenarios).unwrap();

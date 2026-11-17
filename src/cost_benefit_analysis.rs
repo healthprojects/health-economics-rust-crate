@@ -168,7 +168,9 @@ pub fn discount_factor(rate: f64, year: f64) -> f64 {
 #[must_use]
 pub fn annuity_factor(rate: f64, years: u32) -> f64 {
     // Σ_{t=1..years} 1/(1+r)^t — flows land at the END of each year.
-    (1..=years).map(|t| discount_factor(rate, f64::from(t))).sum()
+    (1..=years)
+        .map(|t| discount_factor(rate, f64::from(t)))
+        .sum()
 }
 
 /// Present value of a stream of cash flows, where index 0 is year 0
@@ -264,7 +266,11 @@ pub fn net_present_value(pv_benefits: f64, pv_costs: f64) -> f64 {
 /// ```
 #[must_use]
 pub fn benefit_cost_ratio(pv_benefits: f64, pv_costs: f64) -> Option<f64> {
-    if pv_costs == 0.0 { None } else { Some(pv_benefits / pv_costs) }
+    if pv_costs == 0.0 {
+        None
+    } else {
+        Some(pv_benefits / pv_costs)
+    }
 }
 
 /// Green Book optimism-bias uplift on a cost estimate: cost × (1 + uplift).
@@ -355,7 +361,14 @@ mod tests {
         let pv = 1_200_000.0 + 300_000.0 * annuity_factor(GREEN_BOOK_DISCOUNT_RATE, 5);
         assert!((pv - 2_555_000.0).abs() < 1_000.0);
         // Same figure via the general PV of a year-indexed stream.
-        let flows = [1_200_000.0, 300_000.0, 300_000.0, 300_000.0, 300_000.0, 300_000.0];
+        let flows = [
+            1_200_000.0,
+            300_000.0,
+            300_000.0,
+            300_000.0,
+            300_000.0,
+            300_000.0,
+        ];
         assert!((present_value(&flows, GREEN_BOOK_DISCOUNT_RATE) - pv).abs() < 1e-6);
     }
 

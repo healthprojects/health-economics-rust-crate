@@ -187,7 +187,11 @@ pub fn tariff_price(national_average_unit_cost: f64, market_forces_factor: f64) 
 /// assert!((payment - 1_080_000.0).abs() < 1e-9);
 /// ```
 #[must_use]
-pub fn blended_payment(fixed_element: f64, variable_price_per_unit: f64, activity_units: f64) -> f64 {
+pub fn blended_payment(
+    fixed_element: f64,
+    variable_price_per_unit: f64,
+    activity_units: f64,
+) -> f64 {
     fixed_element + variable_price_per_unit * activity_units
 }
 

@@ -368,10 +368,7 @@ pub fn population_value(completers: f64, value_per_completer: f64) -> f64 {
 /// assert!(per_eligible_person_value(1_248_000.0, 0.0).is_none());
 /// ```
 #[must_use]
-pub fn per_eligible_person_value(
-    population_value: f64,
-    eligible_population: f64,
-) -> Option<f64> {
+pub fn per_eligible_person_value(population_value: f64, eligible_population: f64) -> Option<f64> {
     if eligible_population == 0.0 {
         None
     } else {

@@ -191,7 +191,11 @@ pub fn unit_cost(total_allocated_cost: f64, units_delivered: f64) -> Option<f64>
 /// ```
 #[must_use]
 pub fn unit_cost_ratio(unit_cost_a: f64, unit_cost_b: f64) -> Option<f64> {
-    if unit_cost_b == 0.0 { None } else { Some(unit_cost_a / unit_cost_b) }
+    if unit_cost_b == 0.0 {
+        None
+    } else {
+        Some(unit_cost_a / unit_cost_b)
+    }
 }
 
 /// Fractional change in unit cost between periods:
@@ -236,7 +240,11 @@ mod tests {
     // (compute £30k, data £18k, shared platform £14k), 380,000 episodes/month.
 
     fn spend() -> CloudSpend {
-        CloudSpend { compute: 30_000.0, data: 18_000.0, shared_platform: 14_000.0 }
+        CloudSpend {
+            compute: 30_000.0,
+            data: 18_000.0,
+            shared_platform: 14_000.0,
+        }
     }
 
     // Worked-example setup: "cloud spend £62,000/month (compute £30k, data

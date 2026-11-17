@@ -111,7 +111,7 @@
 // dependency (which would otherwise risk a version mismatch: a `Money`
 // from a different `rusty-money` version is a different, incompatible
 // type).
-pub use rusty_money::{iso, Money};
+pub use rusty_money::{Money, iso};
 
 /// Long-form tutorials rendered into rustdoc. Each walks a complete
 /// analysis with runnable, doctested code.

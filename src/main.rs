@@ -22,8 +22,7 @@ fn main() {
 
     // Suppose the pathway software costs £500,000/year to run.
     let delta_cost = 500_000.0;
-    let ratio = icer::icer(delta_cost, population_qalys)
-        .expect("population QALY gain is non-zero");
+    let ratio = icer::icer(delta_cost, population_qalys).expect("population QALY gain is non-zero");
     let net_benefit = nmb::net_monetary_benefit(population_qalys, delta_cost, 20_000.0);
     println!("ICER at £{delta_cost}/year: £{ratio:.0} per QALY");
     println!(

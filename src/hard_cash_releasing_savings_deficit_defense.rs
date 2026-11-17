@@ -226,8 +226,11 @@ pub fn hard_saving(
     contracts_cancelled: f64,
     contract_value: f64,
 ) -> f64 {
-    premium_shift_saving(premium_shifts_avoided, premium_rate_per_shift, substantive_rate_per_shift)
-        + overtime_saving(overtime_hours_avoided, overtime_premium_per_hour)
+    premium_shift_saving(
+        premium_shifts_avoided,
+        premium_rate_per_shift,
+        substantive_rate_per_shift,
+    ) + overtime_saving(overtime_hours_avoided, overtime_premium_per_hour)
         + cancelled_contract_saving(contracts_cancelled, contract_value)
 }
 
@@ -375,15 +378,7 @@ mod tests {
         // 15 shifts/week × 52 weeks avoided at a £180/shift premium over
         // substantive, plus 300 × 2.5 × 46 overtime hours at £8 premium,
         // no cancelled contracts — reproduces the worked-example total.
-        let total = hard_saving(
-            15.0 * 52.0,
-            180.0,
-            0.0,
-            300.0 * 2.5 * 46.0,
-            8.0,
-            0.0,
-            0.0,
-        );
+        let total = hard_saving(15.0 * 52.0, 180.0, 0.0, 300.0 * 2.5 * 46.0, 8.0, 0.0, 0.0);
         assert!((total - 416_400.0).abs() < 1e-9, "got {total}");
     }
 
