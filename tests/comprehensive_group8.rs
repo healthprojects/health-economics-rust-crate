@@ -22,18 +22,18 @@ use health_economics::waiting_list_impact::{
     wait_reduction_fraction, waiting_time_gain,
 };
 use health_economics::wearable_validation::{
-    absolute_error_at, annual_false_alert_cost, bland_altman, classify_heart_rate_mape,
-    concordance_correlation, data_completeness_percent, mape_percent,
-    wear_time_compliance_percent, HeartRateMapeGrade,
+    HeartRateMapeGrade, absolute_error_at, annual_false_alert_cost, bland_altman,
+    classify_heart_rate_mape, concordance_correlation, data_completeness_percent, mape_percent,
+    wear_time_compliance_percent,
 };
 use health_economics::willingness_to_pay_thresholds::{
     adopt_by_icer, adopt_by_nmb, icer, max_defensible_price, net_monetary_benefit,
 };
 use health_economics::workforce_retention::{
-    annual_turnover_cost, retention_value, software_value, vacancy_cover_cost, CostPerLeaver,
+    CostPerLeaver, annual_turnover_cost, retention_value, software_value, vacancy_cover_cost,
 };
 use health_economics::wsjf_and_cd3::{
-    cd3, sequence_by_cd3, sequencing_savings, total_delay_cost, wsjf, Feature,
+    Feature, cd3, sequence_by_cd3, sequencing_savings, total_delay_cost, wsjf,
 };
 
 const TOL: f64 = 1e-9;
@@ -154,7 +154,11 @@ fn edge_mape_none_conditions() {
 #[test]
 fn edge_mape_single_element_and_perfect_agreement() {
     assert_close(mape_percent(&[100.0], &[80.0]).unwrap(), 25.0, TOL);
-    assert_close(mape_percent(&[70.0, 80.0], &[70.0, 80.0]).unwrap(), 0.0, TOL);
+    assert_close(
+        mape_percent(&[70.0, 80.0], &[70.0, 80.0]).unwrap(),
+        0.0,
+        TOL,
+    );
 }
 
 /// CCC is None for empty slices, length mismatch, and constant series with equal means.
@@ -208,7 +212,11 @@ fn edge_wear_time_compliance_none_and_zero() {
 /// Compliance is not clamped: wearing longer than protocol reports > 100%.
 #[test]
 fn edge_wear_time_compliance_exceeds_100_uncapped() {
-    assert_close(wear_time_compliance_percent(45.0, 30.0).unwrap(), 150.0, TOL);
+    assert_close(
+        wear_time_compliance_percent(45.0, 30.0).unwrap(),
+        150.0,
+        TOL,
+    );
 }
 
 /// Data completeness is None only at zero expected points; zero observed is 0%.
@@ -223,8 +231,14 @@ fn edge_data_completeness_none_and_zero() {
 fn edge_mape_grade_boundary_equality() {
     assert_eq!(classify_heart_rate_mape(5.0), HeartRateMapeGrade::Strict);
     assert_eq!(classify_heart_rate_mape(10.0), HeartRateMapeGrade::Lenient);
-    assert_eq!(classify_heart_rate_mape(5.000_001), HeartRateMapeGrade::Lenient);
-    assert_eq!(classify_heart_rate_mape(10.000_001), HeartRateMapeGrade::Fail);
+    assert_eq!(
+        classify_heart_rate_mape(5.000_001),
+        HeartRateMapeGrade::Lenient
+    );
+    assert_eq!(
+        classify_heart_rate_mape(10.000_001),
+        HeartRateMapeGrade::Fail
+    );
     assert_eq!(classify_heart_rate_mape(0.0), HeartRateMapeGrade::Strict);
 }
 
@@ -312,10 +326,17 @@ fn edge_wtp_extreme_magnitudes_stay_finite() {
 /// An all-zero leaver costs nothing; each component contributes additively to `total()`.
 #[test]
 fn edge_cost_per_leaver_zero_and_single_component() {
-    let zero = CostPerLeaver { recruitment: 0.0, onboarding_ramp: 0.0, vacancy_cover: 0.0 };
+    let zero = CostPerLeaver {
+        recruitment: 0.0,
+        onboarding_ramp: 0.0,
+        vacancy_cover: 0.0,
+    };
     assert_close(zero.total(), 0.0, TOL);
-    let only_recruitment =
-        CostPerLeaver { recruitment: 4_500.0, onboarding_ramp: 0.0, vacancy_cover: 0.0 };
+    let only_recruitment = CostPerLeaver {
+        recruitment: 4_500.0,
+        onboarding_ramp: 0.0,
+        vacancy_cover: 0.0,
+    };
     assert_close(only_recruitment.total(), 4_500.0, TOL);
 }
 
@@ -332,14 +353,22 @@ fn edge_vacancy_cover_zero_factors() {
 #[test]
 fn edge_turnover_rate_boundaries() {
     assert_close(annual_turnover_cost(1_200.0, 0.0, 18_500.0), 0.0, TOL);
-    assert_close(annual_turnover_cost(1_200.0, 1.0, 18_500.0), 1_200.0 * 18_500.0, TOL);
+    assert_close(
+        annual_turnover_cost(1_200.0, 1.0, 18_500.0),
+        1_200.0 * 18_500.0,
+        TOL,
+    );
 }
 
 /// Zero claimed turnover reduction is worth zero; `software_value` then rests on sickness only.
 #[test]
 fn edge_retention_value_zero_reduction() {
     assert_close(retention_value(1_200.0, 0.0, 18_500.0), 0.0, TOL);
-    assert_close(software_value(1_200.0, 0.0, 18_500.0, 100.0, 250.0), 25_000.0, TOL);
+    assert_close(
+        software_value(1_200.0, 0.0, 18_500.0, 100.0, 250.0),
+        25_000.0,
+        TOL,
+    );
 }
 
 /// 1e12-scale headcounts keep the turnover math finite.
@@ -356,7 +385,10 @@ fn edge_workforce_extreme_magnitudes_stay_finite() {
 #[test]
 fn edge_cd3_none_at_zero_duration() {
     assert!(cd3(10_000.0, 0.0).is_none());
-    let f = Feature { cost_of_delay_per_week: 10_000.0, duration_weeks: 0.0 };
+    let f = Feature {
+        cost_of_delay_per_week: 10_000.0,
+        duration_weeks: 0.0,
+    };
     assert!(f.cd3().is_none());
 }
 
@@ -371,7 +403,10 @@ fn edge_wsjf_none_and_zero_numerator() {
 #[test]
 fn edge_total_delay_cost_empty_and_single() {
     assert_close(total_delay_cost(&[]), 0.0, TOL);
-    let solo = Feature { cost_of_delay_per_week: 30_000.0, duration_weeks: 10.0 };
+    let solo = Feature {
+        cost_of_delay_per_week: 30_000.0,
+        duration_weeks: 10.0,
+    };
     assert_close(total_delay_cost(&[solo]), 0.0, TOL);
 }
 
@@ -379,7 +414,10 @@ fn edge_total_delay_cost_empty_and_single() {
 #[test]
 fn edge_sequence_empty_and_single() {
     assert!(sequence_by_cd3(&[]).is_empty());
-    let solo = Feature { cost_of_delay_per_week: 5_000.0, duration_weeks: 1.0 };
+    let solo = Feature {
+        cost_of_delay_per_week: 5_000.0,
+        duration_weeks: 1.0,
+    };
     assert_eq!(sequence_by_cd3(&[solo]), vec![solo]);
     assert_close(sequencing_savings(&[solo]), 0.0, TOL);
 }
@@ -387,8 +425,14 @@ fn edge_sequence_empty_and_single() {
 /// Zero-duration items (undefined CD3) are scheduled first — they consume no capacity.
 #[test]
 fn edge_zero_duration_feature_sorts_first() {
-    let instant = Feature { cost_of_delay_per_week: 1.0, duration_weeks: 0.0 };
-    let big = Feature { cost_of_delay_per_week: 100_000.0, duration_weeks: 1.0 };
+    let instant = Feature {
+        cost_of_delay_per_week: 1.0,
+        duration_weeks: 0.0,
+    };
+    let big = Feature {
+        cost_of_delay_per_week: 100_000.0,
+        duration_weeks: 1.0,
+    };
     let ordered = sequence_by_cd3(&[big, instant]);
     assert_eq!(ordered[0], instant);
     // Running the instant item first adds no delay cost to the big item.
@@ -399,8 +443,14 @@ fn edge_zero_duration_feature_sorts_first() {
 #[test]
 fn edge_wsjf_cd3_extreme_magnitudes_stay_finite() {
     assert!(cd3(1e12, 2.0).unwrap().is_finite());
-    let f1 = Feature { cost_of_delay_per_week: 1e12, duration_weeks: 3.0 };
-    let f2 = Feature { cost_of_delay_per_week: 1e11, duration_weeks: 1.0 };
+    let f1 = Feature {
+        cost_of_delay_per_week: 1e12,
+        duration_weeks: 3.0,
+    };
+    let f2 = Feature {
+        cost_of_delay_per_week: 1e11,
+        duration_weeks: 1.0,
+    };
     assert!(total_delay_cost(&[f1, f2]).is_finite());
     assert!(sequencing_savings(&[f1, f2]).is_finite());
 }
@@ -416,9 +466,21 @@ fn prop_capacity_value_is_linear_in_each_factor() {
         for units in [0.5, 1.0, 2.0, 4.0] {
             for days in [200.0, 250.0] {
                 let base = annual_capacity_value(staff, units, days, 120.0);
-                assert_close(annual_capacity_value(2.0 * staff, units, days, 120.0), 2.0 * base, 1e-6);
-                assert_close(annual_capacity_value(staff, 2.0 * units, days, 120.0), 2.0 * base, 1e-6);
-                assert_close(annual_capacity_value(staff, units, 2.0 * days, 120.0), 2.0 * base, 1e-6);
+                assert_close(
+                    annual_capacity_value(2.0 * staff, units, days, 120.0),
+                    2.0 * base,
+                    1e-6,
+                );
+                assert_close(
+                    annual_capacity_value(staff, 2.0 * units, days, 120.0),
+                    2.0 * base,
+                    1e-6,
+                );
+                assert_close(
+                    annual_capacity_value(staff, units, 2.0 * days, 120.0),
+                    2.0 * base,
+                    1e-6,
+                );
             }
         }
     }
@@ -447,7 +509,12 @@ fn prop_higher_dna_rate_sees_fewer_patients() {
         for pair in rates.windows(2) {
             let more = patients_seen(slots, pair[0]);
             let fewer = patients_seen(slots, pair[1]);
-            assert!(fewer <= more + TOL, "DNA {} should see <= DNA {}", pair[1], pair[0]);
+            assert!(
+                fewer <= more + TOL,
+                "DNA {} should see <= DNA {}",
+                pair[1],
+                pair[0]
+            );
         }
     }
 }
@@ -488,7 +555,11 @@ fn prop_waiting_list_scaling_linearity() {
         assert_close(hours_released(2.0 * staff, 0.75, 250.0), 2.0 * base, 1e-6);
     }
     for seen in [100.0, 5_929.0] {
-        assert_close(activity_value(2.0 * seen, 160.0), 2.0 * activity_value(seen, 160.0), 1e-6);
+        assert_close(
+            activity_value(2.0 * seen, 160.0),
+            2.0 * activity_value(seen, 160.0),
+            1e-6,
+        );
     }
 }
 
@@ -510,7 +581,9 @@ fn prop_ccc_bounded_in_minus_one_to_one() {
     // A deterministic LCG supplies varied but reproducible perturbations.
     let mut seed: u64 = 42;
     let mut next = || {
-        seed = seed.wrapping_mul(6_364_136_223_846_793_005).wrapping_add(1_442_695_040_888_963_407);
+        seed = seed
+            .wrapping_mul(6_364_136_223_846_793_005)
+            .wrapping_add(1_442_695_040_888_963_407);
         // seed >> 33 fits in 31 bits, well within f64's 52-bit mantissa.
         #[allow(clippy::cast_precision_loss)]
         let shifted = (seed >> 33) as f64;
@@ -518,8 +591,10 @@ fn prop_ccc_bounded_in_minus_one_to_one() {
     };
     for bias in [-30.0, -5.0, 0.0, 5.0, 30.0] {
         for scale in [-2.0, -1.0, 0.5, 1.0, 3.0] {
-            let measured: Vec<f64> =
-                reference.iter().map(|r| scale * r + bias + next()).collect();
+            let measured: Vec<f64> = reference
+                .iter()
+                .map(|r| scale * r + bias + next())
+                .collect();
             let ccc = concordance_correlation(&measured, &reference).unwrap();
             assert!(
                 (-1.0 - 1e-12..=1.0 + 1e-12).contains(&ccc),
@@ -538,7 +613,10 @@ fn prop_ccc_bias_penalty_monotone() {
     for bias in [1.0, 5.0, 10.0, 25.0, 50.0] {
         let measured: Vec<f64> = reference.iter().map(|r| r + bias).collect();
         let ccc = concordance_correlation(&measured, &reference).unwrap();
-        assert!(ccc < prev, "bias {bias} should lower CCC below {prev}, got {ccc}");
+        assert!(
+            ccc < prev,
+            "bias {bias} should lower CCC below {prev}, got {ccc}"
+        );
         prev = ccc;
     }
 }
@@ -558,7 +636,11 @@ fn prop_bland_altman_limits_bracket_bias() {
             assert!(ba.lower_limit <= ba.mean_bias + TOL);
             assert!(ba.upper_limit >= ba.mean_bias - TOL);
             // Symmetry: bias is the midpoint of the limits.
-            assert_close(f64::midpoint(ba.lower_limit, ba.upper_limit), ba.mean_bias, 1e-9);
+            assert_close(
+                f64::midpoint(ba.lower_limit, ba.upper_limit),
+                ba.mean_bias,
+                1e-9,
+            );
         }
     }
 }
@@ -568,11 +650,17 @@ fn prop_bland_altman_limits_bracket_bias() {
 fn prop_percent_gates_in_0_to_100_for_valid_inputs() {
     for worn in [0.0, 4.0, 16.0, 29.0, 30.0] {
         let pct = wear_time_compliance_percent(worn, 30.0).unwrap();
-        assert!((0.0..=100.0).contains(&pct), "compliance {pct} out of range");
+        assert!(
+            (0.0..=100.0).contains(&pct),
+            "compliance {pct} out of range"
+        );
     }
     for observed in [0.0, 250.0, 900.0, 1_000.0] {
         let pct = data_completeness_percent(observed, 1_000.0).unwrap();
-        assert!((0.0..=100.0).contains(&pct), "completeness {pct} out of range");
+        assert!(
+            (0.0..=100.0).contains(&pct),
+            "completeness {pct} out of range"
+        );
     }
 }
 
@@ -621,9 +709,21 @@ fn prop_false_alert_cost_linear_in_each_factor() {
     for patients in [50.0, 500.0] {
         for alerts in [0.5, 2.0] {
             let base = annual_false_alert_cost(patients, alerts, 40.0);
-            assert_close(annual_false_alert_cost(2.0 * patients, alerts, 40.0), 2.0 * base, 1e-6);
-            assert_close(annual_false_alert_cost(patients, 2.0 * alerts, 40.0), 2.0 * base, 1e-6);
-            assert_close(annual_false_alert_cost(patients, alerts, 80.0), 2.0 * base, 1e-6);
+            assert_close(
+                annual_false_alert_cost(2.0 * patients, alerts, 40.0),
+                2.0 * base,
+                1e-6,
+            );
+            assert_close(
+                annual_false_alert_cost(patients, 2.0 * alerts, 40.0),
+                2.0 * base,
+                1e-6,
+            );
+            assert_close(
+                annual_false_alert_cost(patients, alerts, 80.0),
+                2.0 * base,
+                1e-6,
+            );
         }
     }
 }
@@ -656,7 +756,10 @@ fn prop_adoption_monotone_in_threshold() {
             let mut adopted = false;
             for lambda in lambdas {
                 let now = adopt_by_nmb(lambda, de, dc);
-                assert!(!adopted || now, "adoption flipped off as λ rose to {lambda}");
+                assert!(
+                    !adopted || now,
+                    "adoption flipped off as λ rose to {lambda}"
+                );
                 adopted = now;
             }
         }
@@ -712,7 +815,10 @@ fn prop_software_value_decomposition() {
 fn prop_feature_cd3_agrees_with_free_function() {
     for cod in [0.0, 5_000.0, 12_000.0, 30_000.0, 1e9] {
         for dur in [0.0, 0.5, 1.0, 2.0, 10.0] {
-            let f = Feature { cost_of_delay_per_week: cod, duration_weeks: dur };
+            let f = Feature {
+                cost_of_delay_per_week: cod,
+                duration_weeks: dur,
+            };
             assert_eq!(f.cd3(), cd3(cod, dur));
         }
     }
@@ -722,11 +828,26 @@ fn prop_feature_cd3_agrees_with_free_function() {
 #[test]
 fn prop_sequence_by_cd3_is_sorted_descending() {
     let backlog = [
-        Feature { cost_of_delay_per_week: 30_000.0, duration_weeks: 10.0 },
-        Feature { cost_of_delay_per_week: 12_000.0, duration_weeks: 2.0 },
-        Feature { cost_of_delay_per_week: 5_000.0, duration_weeks: 1.0 },
-        Feature { cost_of_delay_per_week: 7_000.0, duration_weeks: 3.5 },
-        Feature { cost_of_delay_per_week: 1_000.0, duration_weeks: 0.25 },
+        Feature {
+            cost_of_delay_per_week: 30_000.0,
+            duration_weeks: 10.0,
+        },
+        Feature {
+            cost_of_delay_per_week: 12_000.0,
+            duration_weeks: 2.0,
+        },
+        Feature {
+            cost_of_delay_per_week: 5_000.0,
+            duration_weeks: 1.0,
+        },
+        Feature {
+            cost_of_delay_per_week: 7_000.0,
+            duration_weeks: 3.5,
+        },
+        Feature {
+            cost_of_delay_per_week: 1_000.0,
+            duration_weeks: 0.25,
+        },
     ];
     let ordered = sequence_by_cd3(&backlog);
     assert_eq!(ordered.len(), backlog.len());
@@ -740,11 +861,26 @@ fn prop_sequence_by_cd3_is_sorted_descending() {
 /// Optimality: the CD3 order beats or ties ALL 6 permutations of a 3-feature set.
 #[test]
 fn prop_cd3_order_is_brute_force_optimal_over_all_permutations() {
-    let a = Feature { cost_of_delay_per_week: 30_000.0, duration_weeks: 10.0 };
-    let b = Feature { cost_of_delay_per_week: 12_000.0, duration_weeks: 2.0 };
-    let c = Feature { cost_of_delay_per_week: 5_000.0, duration_weeks: 1.0 };
-    let perms: [[Feature; 3]; 6] =
-        [[a, b, c], [a, c, b], [b, a, c], [b, c, a], [c, a, b], [c, b, a]];
+    let a = Feature {
+        cost_of_delay_per_week: 30_000.0,
+        duration_weeks: 10.0,
+    };
+    let b = Feature {
+        cost_of_delay_per_week: 12_000.0,
+        duration_weeks: 2.0,
+    };
+    let c = Feature {
+        cost_of_delay_per_week: 5_000.0,
+        duration_weeks: 1.0,
+    };
+    let perms: [[Feature; 3]; 6] = [
+        [a, b, c],
+        [a, c, b],
+        [b, a, c],
+        [b, c, a],
+        [c, a, b],
+        [c, b, a],
+    ];
     let cd3_cost = total_delay_cost(&sequence_by_cd3(&[a, b, c]));
     for perm in &perms {
         let cost = total_delay_cost(perm);
@@ -756,18 +892,36 @@ fn prop_cd3_order_is_brute_force_optimal_over_all_permutations() {
         assert!(sequencing_savings(perm) >= -TOL);
     }
     // And the best permutation IS the CD3 cost.
-    let best = perms.iter().map(|p| total_delay_cost(p)).fold(f64::INFINITY, f64::min);
+    let best = perms
+        .iter()
+        .map(|p| total_delay_cost(p))
+        .fold(f64::INFINITY, f64::min);
     assert_close(cd3_cost, best, TOL);
 }
 
 /// Optimality holds on a second, irregular 3-feature set (guards against coincidence).
 #[test]
 fn prop_cd3_optimality_on_second_feature_set() {
-    let x = Feature { cost_of_delay_per_week: 9_000.0, duration_weeks: 4.0 };
-    let y = Feature { cost_of_delay_per_week: 2_500.0, duration_weeks: 0.5 };
-    let z = Feature { cost_of_delay_per_week: 15_000.0, duration_weeks: 6.0 };
-    let perms: [[Feature; 3]; 6] =
-        [[x, y, z], [x, z, y], [y, x, z], [y, z, x], [z, x, y], [z, y, x]];
+    let x = Feature {
+        cost_of_delay_per_week: 9_000.0,
+        duration_weeks: 4.0,
+    };
+    let y = Feature {
+        cost_of_delay_per_week: 2_500.0,
+        duration_weeks: 0.5,
+    };
+    let z = Feature {
+        cost_of_delay_per_week: 15_000.0,
+        duration_weeks: 6.0,
+    };
+    let perms: [[Feature; 3]; 6] = [
+        [x, y, z],
+        [x, z, y],
+        [y, x, z],
+        [y, z, x],
+        [z, x, y],
+        [z, y, x],
+    ];
     let cd3_cost = total_delay_cost(&sequence_by_cd3(&[x, y, z]));
     for perm in &perms {
         assert!(cd3_cost <= total_delay_cost(perm) + TOL);
@@ -777,9 +931,18 @@ fn prop_cd3_optimality_on_second_feature_set() {
 /// Consistency: `sequencing_savings` is exactly given-order cost minus CD3-order cost.
 #[test]
 fn prop_sequencing_savings_identity() {
-    let a = Feature { cost_of_delay_per_week: 30_000.0, duration_weeks: 10.0 };
-    let b = Feature { cost_of_delay_per_week: 12_000.0, duration_weeks: 2.0 };
-    let c = Feature { cost_of_delay_per_week: 5_000.0, duration_weeks: 1.0 };
+    let a = Feature {
+        cost_of_delay_per_week: 30_000.0,
+        duration_weeks: 10.0,
+    };
+    let b = Feature {
+        cost_of_delay_per_week: 12_000.0,
+        duration_weeks: 2.0,
+    };
+    let c = Feature {
+        cost_of_delay_per_week: 5_000.0,
+        duration_weeks: 1.0,
+    };
     for order in [[a, b, c], [c, a, b], [b, c, a]] {
         let expected = total_delay_cost(&order) - total_delay_cost(&sequence_by_cd3(&order));
         assert_close(sequencing_savings(&order), expected, TOL);
@@ -984,9 +1147,8 @@ fn scenario_wearable_validation_verdict_from_raw_series() {
 
     // MAPE = mean(2/60, 2/70, 2/80, 2/90, 2/100) × 100 ≈ 2.5825%.
     let mape = mape_percent(&measured, &reference).unwrap();
-    let expected_mape = (2.0 / 60.0 + 2.0 / 70.0 + 2.0 / 80.0 + 2.0 / 90.0 + 2.0 / 100.0)
-        / 5.0
-        * 100.0;
+    let expected_mape =
+        (2.0 / 60.0 + 2.0 / 70.0 + 2.0 / 80.0 + 2.0 / 90.0 + 2.0 / 100.0) / 5.0 * 100.0;
     assert_close(mape, expected_mape, 1e-12);
     assert!((mape - 2.582_539_682_539_682_6).abs() < 1e-9);
 
@@ -1011,7 +1173,11 @@ fn scenario_wearable_validation_verdict_from_raw_series() {
     let compliance = wear_time_compliance_percent(20.0, 30.0).unwrap();
     assert_close(compliance, 200.0 / 3.0, 1e-9);
     assert!(compliance > wear_time_compliance_percent(16.0, 30.0).unwrap() - 1e-9);
-    assert_close(data_completeness_percent(950.0, 1_000.0).unwrap(), 95.0, TOL);
+    assert_close(
+        data_completeness_percent(950.0, 1_000.0).unwrap(),
+        95.0,
+        TOL,
+    );
 
     // The rejected rival's inaccuracy bill: 300 patients × 1.5 extra false
     // alerts/week × £40 × 52 = £936,000/year avoided by this verdict.
@@ -1055,11 +1221,20 @@ fn scenario_workforce_retention_business_case() {
 #[test]
 fn scenario_backlog_sequencing_saves_delay_cost() {
     // P: platform migration — CoD £9,000/wk, 4 weeks on the constrained team.
-    let p = Feature { cost_of_delay_per_week: 9_000.0, duration_weeks: 4.0 };
+    let p = Feature {
+        cost_of_delay_per_week: 9_000.0,
+        duration_weeks: 4.0,
+    };
     // Q: quick compliance fix — CoD £2,500/wk, 0.5 weeks.
-    let q = Feature { cost_of_delay_per_week: 2_500.0, duration_weeks: 0.5 };
+    let q = Feature {
+        cost_of_delay_per_week: 2_500.0,
+        duration_weeks: 0.5,
+    };
     // R: reporting feature — CoD £15,000/wk, 6 weeks.
-    let r = Feature { cost_of_delay_per_week: 15_000.0, duration_weeks: 6.0 };
+    let r = Feature {
+        cost_of_delay_per_week: 15_000.0,
+        duration_weeks: 6.0,
+    };
 
     // CD3 scores: P = 2,250; Q = 5,000; R = 2,500 → order Q, R, P.
     assert_close(p.cd3().unwrap(), 2_250.0, TOL);

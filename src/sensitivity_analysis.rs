@@ -162,7 +162,9 @@ impl CodingAssistantCase {
     /// ```
     #[must_use]
     pub fn annual_benefit(&self) -> f64 {
-        self.developers * self.hours_saved_per_day * self.working_days_per_year
+        self.developers
+            * self.hours_saved_per_day
+            * self.working_days_per_year
             * self.loaded_cost_per_hour
     }
 
@@ -369,7 +371,10 @@ mod tests {
         low.hours_saved_per_day = 0.1;
         let mut high = base_case();
         high.hours_saved_per_day = 1.0;
-        let r = OneWayResult { result_at_low: low.net_benefit(), result_at_high: high.net_benefit() };
+        let r = OneWayResult {
+            result_at_low: low.net_benefit(),
+            result_at_high: high.net_benefit(),
+        };
         assert!((r.result_at_low - 170_400.0).abs() < 1e-9);
         assert!((r.result_at_high - 2_546_400.0).abs() < 1e-9);
         // Doc: swing £2.38M (exact 2,376,000)
@@ -384,7 +389,10 @@ mod tests {
         low.loaded_cost_per_hour = 40.0;
         let mut high = base_case();
         high.loaded_cost_per_hour = 80.0;
-        let r = OneWayResult { result_at_low: low.net_benefit(), result_at_high: high.net_benefit() };
+        let r = OneWayResult {
+            result_at_low: low.net_benefit(),
+            result_at_high: high.net_benefit(),
+        };
         assert!((r.result_at_low - 786_400.0).abs() < 1e-9);
         assert!((r.result_at_high - 1_666_400.0).abs() < 1e-9);
         assert!((r.swing() - 880_000.0).abs() < 1e-9);
@@ -398,7 +406,10 @@ mod tests {
         low.working_days_per_year = 200.0;
         let mut high = base_case();
         high.working_days_per_year = 240.0;
-        let r = OneWayResult { result_at_low: low.net_benefit(), result_at_high: high.net_benefit() };
+        let r = OneWayResult {
+            result_at_low: low.net_benefit(),
+            result_at_high: high.net_benefit(),
+        };
         assert!((r.result_at_low - 1_106_400.0).abs() < 1e-9);
         assert!((r.result_at_high - 1_346_400.0).abs() < 1e-9);
         assert!((r.swing() - 240_000.0).abs() < 1e-9);
@@ -412,7 +423,10 @@ mod tests {
         low.license_per_dev_per_month = 30.0;
         let mut high = base_case();
         high.license_per_dev_per_month = 50.0;
-        let r = OneWayResult { result_at_low: low.net_benefit(), result_at_high: high.net_benefit() };
+        let r = OneWayResult {
+            result_at_low: low.net_benefit(),
+            result_at_high: high.net_benefit(),
+        };
         assert!((r.result_at_low - 1_248_000.0).abs() < 1e-9);
         assert!((r.result_at_high - 1_200_000.0).abs() < 1e-9);
         assert!((r.swing() - 48_000.0).abs() < 1e-9);

@@ -149,7 +149,10 @@
 /// assert!(hallucination_rate(1.0, 0.0).is_none());
 /// ```
 #[must_use]
-pub fn hallucination_rate(outputs_with_unsupported_content: f64, total_outputs: f64) -> Option<f64> {
+pub fn hallucination_rate(
+    outputs_with_unsupported_content: f64,
+    total_outputs: f64,
+) -> Option<f64> {
     if total_outputs == 0.0 {
         None
     } else {
@@ -251,7 +254,9 @@ pub fn expected_harm_cost_per_output(error_types: &[ErrorType]) -> f64 {
         .iter()
         .map(|e| {
             // Per error type: rate × P(undetected) × P(acted upon) × cost.
-            e.rate * e.probability_undetected * e.probability_acted_upon
+            e.rate
+                * e.probability_undetected
+                * e.probability_acted_upon
                 * e.cost_per_acted_upon_error
         })
         .sum()

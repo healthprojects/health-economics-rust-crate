@@ -377,7 +377,9 @@ mod tests {
             psa_reported: true,
         };
         assert!(checklist.passes());
-        assert!(recommend_routine_commissioning(&checklist, 15_000.0, 20_000.0));
+        assert!(recommend_routine_commissioning(
+            &checklist, 15_000.0, 20_000.0
+        ));
     }
 
     /// A submission using the strawman comparator fails the reference case
@@ -391,6 +393,8 @@ mod tests {
             comparator_is_current_care_pathway: false,
             psa_reported: true,
         };
-        assert!(!recommend_routine_commissioning(&checklist, 9_000.0, 20_000.0));
+        assert!(!recommend_routine_commissioning(
+            &checklist, 9_000.0, 20_000.0
+        ));
     }
 }

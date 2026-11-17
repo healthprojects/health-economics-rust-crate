@@ -254,8 +254,7 @@ pub fn cost_of_delay_money(
     operational_savings_per_week: f64,
 ) -> f64 {
     // Monetize health at λ, then add operational £/week forgone.
-    cost_of_delay_health_qalys_per_week * willingness_to_pay_per_qaly
-        + operational_savings_per_week
+    cost_of_delay_health_qalys_per_week * willingness_to_pay_per_qaly + operational_savings_per_week
 }
 
 #[cfg(test)]

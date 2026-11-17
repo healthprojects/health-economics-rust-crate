@@ -128,7 +128,11 @@
 #[must_use]
 pub fn sensitivity(true_positives: f64, false_negatives: f64) -> Option<f64> {
     let denom = true_positives + false_negatives;
-    if denom == 0.0 { None } else { Some(true_positives / denom) }
+    if denom == 0.0 {
+        None
+    } else {
+        Some(true_positives / denom)
+    }
 }
 
 /// Specificity = TN / (TN + FP): of the truly negative, the share cleared.
@@ -157,7 +161,11 @@ pub fn sensitivity(true_positives: f64, false_negatives: f64) -> Option<f64> {
 #[must_use]
 pub fn specificity(true_negatives: f64, false_positives: f64) -> Option<f64> {
     let denom = true_negatives + false_positives;
-    if denom == 0.0 { None } else { Some(true_negatives / denom) }
+    if denom == 0.0 {
+        None
+    } else {
+        Some(true_negatives / denom)
+    }
 }
 
 /// Positive predictive value from counts: PPV = TP / (TP + FP).
@@ -188,7 +196,11 @@ pub fn specificity(true_negatives: f64, false_positives: f64) -> Option<f64> {
 #[must_use]
 pub fn ppv_from_counts(true_positives: f64, false_positives: f64) -> Option<f64> {
     let denom = true_positives + false_positives;
-    if denom == 0.0 { None } else { Some(true_positives / denom) }
+    if denom == 0.0 {
+        None
+    } else {
+        Some(true_positives / denom)
+    }
 }
 
 /// Negative predictive value from counts: NPV = TN / (TN + FN).
@@ -216,7 +228,11 @@ pub fn ppv_from_counts(true_positives: f64, false_positives: f64) -> Option<f64>
 #[must_use]
 pub fn npv_from_counts(true_negatives: f64, false_negatives: f64) -> Option<f64> {
     let denom = true_negatives + false_negatives;
-    if denom == 0.0 { None } else { Some(true_negatives / denom) }
+    if denom == 0.0 {
+        None
+    } else {
+        Some(true_negatives / denom)
+    }
 }
 
 /// Share of the screened population flagged positive at a given prevalence:
@@ -351,7 +367,11 @@ pub fn npv_from_rates(sensitivity: f64, specificity: f64, prevalence: f64) -> Op
 #[must_use]
 pub fn number_needed_to_screen(prevalence: f64, sensitivity: f64) -> Option<f64> {
     let denom = prevalence * sensitivity;
-    if denom == 0.0 { None } else { Some(1.0 / denom) }
+    if denom == 0.0 {
+        None
+    } else {
+        Some(1.0 / denom)
+    }
 }
 
 /// Cost per true case from counts = program cost / true positives.
@@ -381,7 +401,11 @@ pub fn number_needed_to_screen(prevalence: f64, sensitivity: f64) -> Option<f64>
 /// ```
 #[must_use]
 pub fn cost_per_true_case_from_counts(program_cost: f64, true_positives: f64) -> Option<f64> {
-    if true_positives == 0.0 { None } else { Some(program_cost / true_positives) }
+    if true_positives == 0.0 {
+        None
+    } else {
+        Some(program_cost / true_positives)
+    }
 }
 
 /// Cost per true case found when every positive triggers a workup:

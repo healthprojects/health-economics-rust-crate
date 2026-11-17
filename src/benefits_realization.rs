@@ -203,7 +203,11 @@ impl Benefit {
 /// ```
 #[must_use]
 pub fn realization_rate(realized: f64, forecast: f64) -> Option<f64> {
-    if forecast == 0.0 { None } else { Some(realized / forecast) }
+    if forecast == 0.0 {
+        None
+    } else {
+        Some(realized / forecast)
+    }
 }
 
 /// Observed optimism error of a forecast: (forecast − realized) / forecast.
@@ -276,13 +280,23 @@ mod tests {
     use super::*;
 
     fn benefit(name: &str, class: BenefitClass, forecast: f64, realized: f64) -> Benefit {
-        Benefit { name: name.to_string(), class, forecast, realized }
+        Benefit {
+            name: name.to_string(),
+            class,
+            forecast,
+            realized,
+        }
     }
 
     // Worked-example row: "Agency spend  £450,000  £287,000  64%".
     #[test]
     fn agency_spend_realization_rate_is_64_percent() {
-        let b = benefit("Agency spend", BenefitClass::CashReleasing, 450_000.0, 287_000.0);
+        let b = benefit(
+            "Agency spend",
+            BenefitClass::CashReleasing,
+            450_000.0,
+            287_000.0,
+        );
         let rate = b.realization_rate().unwrap();
         // Doc quotes 64% (rounded); exact is 287,000/450,000.
         assert!((rate - 287_000.0 / 450_000.0).abs() < 1e-9);
@@ -292,7 +306,12 @@ mod tests {
     // Worked-example row: "Manager hours  8,000  5,100  64%".
     #[test]
     fn manager_hours_realization_rate_is_64_percent() {
-        let b = benefit("Manager hours", BenefitClass::NonCashReleasing, 8_000.0, 5_100.0);
+        let b = benefit(
+            "Manager hours",
+            BenefitClass::NonCashReleasing,
+            8_000.0,
+            5_100.0,
+        );
         let rate = b.realization_rate().unwrap();
         assert!((rate - 0.6375).abs() < 1e-9);
         assert!((rate - 0.64).abs() < 0.005);

@@ -337,9 +337,18 @@ mod tests {
     fn space_rule_accepts_three_dimensions_with_mixed_sources() {
         let metrics = [
             // CI duration (telemetry) + "waiting feels slow" (survey)
-            SpaceMetric { dimension: SpaceDimension::Efficiency, source: MetricSource::System },
-            SpaceMetric { dimension: SpaceDimension::Satisfaction, source: MetricSource::Perceptual },
-            SpaceMetric { dimension: SpaceDimension::Performance, source: MetricSource::System },
+            SpaceMetric {
+                dimension: SpaceDimension::Efficiency,
+                source: MetricSource::System,
+            },
+            SpaceMetric {
+                dimension: SpaceDimension::Satisfaction,
+                source: MetricSource::Perceptual,
+            },
+            SpaceMetric {
+                dimension: SpaceDimension::Performance,
+                source: MetricSource::System,
+            },
         ];
         assert!(space_rule_satisfied(&metrics));
     }
@@ -349,8 +358,14 @@ mod tests {
     #[test]
     fn space_rule_rejects_too_few_dimensions() {
         let metrics = [
-            SpaceMetric { dimension: SpaceDimension::Activity, source: MetricSource::System },
-            SpaceMetric { dimension: SpaceDimension::Efficiency, source: MetricSource::Perceptual },
+            SpaceMetric {
+                dimension: SpaceDimension::Activity,
+                source: MetricSource::System,
+            },
+            SpaceMetric {
+                dimension: SpaceDimension::Efficiency,
+                source: MetricSource::Perceptual,
+            },
         ];
         assert!(!space_rule_satisfied(&metrics));
     }
@@ -361,9 +376,18 @@ mod tests {
     fn space_rule_rejects_telemetry_only_dashboards() {
         // Three dimensions but no perceptual metric — gameable, per the doc.
         let metrics = [
-            SpaceMetric { dimension: SpaceDimension::Activity, source: MetricSource::System },
-            SpaceMetric { dimension: SpaceDimension::Efficiency, source: MetricSource::System },
-            SpaceMetric { dimension: SpaceDimension::Performance, source: MetricSource::System },
+            SpaceMetric {
+                dimension: SpaceDimension::Activity,
+                source: MetricSource::System,
+            },
+            SpaceMetric {
+                dimension: SpaceDimension::Efficiency,
+                source: MetricSource::System,
+            },
+            SpaceMetric {
+                dimension: SpaceDimension::Performance,
+                source: MetricSource::System,
+            },
         ];
         assert!(!space_rule_satisfied(&metrics));
     }

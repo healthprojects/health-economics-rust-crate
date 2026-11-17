@@ -167,11 +167,7 @@ pub fn hours_released(
 /// assert!(extra_slots(3_750.0, 0.0, 0.85).is_none());
 /// ```
 #[must_use]
-pub fn extra_slots(
-    hours_released: f64,
-    slot_duration_hours: f64,
-    utilization: f64,
-) -> Option<f64> {
+pub fn extra_slots(hours_released: f64, slot_duration_hours: f64, utilization: f64) -> Option<f64> {
     if slot_duration_hours == 0.0 {
         None
     } else {

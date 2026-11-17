@@ -134,10 +134,7 @@
 /// assert_eq!(daily_minutes_saved(2.0, 30.0), 60.0);
 /// ```
 #[must_use]
-pub fn daily_minutes_saved(
-    minutes_saved_per_consultation: f64,
-    consultations_per_day: f64,
-) -> f64 {
+pub fn daily_minutes_saved(minutes_saved_per_consultation: f64, consultations_per_day: f64) -> f64 {
     minutes_saved_per_consultation * consultations_per_day
 }
 

@@ -251,11 +251,7 @@ pub fn annual_turnover_cost(headcount: f64, turnover_rate: f64, cost_per_leaver:
 /// assert_eq!(value, 222_000.0);
 /// ```
 #[must_use]
-pub fn retention_value(
-    headcount: f64,
-    turnover_rate_reduction: f64,
-    cost_per_leaver: f64,
-) -> f64 {
+pub fn retention_value(headcount: f64, turnover_rate_reduction: f64, cost_per_leaver: f64) -> f64 {
     headcount * turnover_rate_reduction * cost_per_leaver
 }
 

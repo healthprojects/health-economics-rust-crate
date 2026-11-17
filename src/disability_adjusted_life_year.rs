@@ -321,8 +321,14 @@ mod tests {
     // Why it matters: the WHO-CHOICE bands split at 1× and 3× GDP per capita.
     #[test]
     fn who_choice_bands_split_at_1x_and_3x_gdp() {
-        assert_eq!(who_choice_band(10_000.0, 8_000.0), WhoChoiceBand::CostEffective);
-        assert_eq!(who_choice_band(30_000.0, 8_000.0), WhoChoiceBand::NotCostEffective);
+        assert_eq!(
+            who_choice_band(10_000.0, 8_000.0),
+            WhoChoiceBand::CostEffective
+        );
+        assert_eq!(
+            who_choice_band(30_000.0, 8_000.0),
+            WhoChoiceBand::NotCostEffective
+        );
     }
 
     // Edge case: no DALYs averted means the ratio is undefined.

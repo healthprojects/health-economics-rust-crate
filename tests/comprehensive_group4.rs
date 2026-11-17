@@ -149,7 +149,10 @@ fn edge_evpi_none_conditions() {
     assert!(evpi_mod::evpi(&[]).is_none());
     assert!(evpi_mod::expected_nmb_of_best_option(&[]).is_none());
     assert!(evpi_mod::expected_nmb_with_perfect_information(&[]).is_none());
-    let no_options = vec![Scenario { probability: 1.0, option_nmbs: vec![] }];
+    let no_options = vec![Scenario {
+        probability: 1.0,
+        option_nmbs: vec![],
+    }];
     assert!(evpi_mod::evpi(&no_options).is_none());
     assert!(evpi_mod::expected_nmb_of_best_option(&no_options).is_none());
     assert!(evpi_mod::expected_nmb_with_perfect_information(&no_options).is_none());
@@ -161,11 +164,20 @@ fn edge_evpi_none_conditions() {
 // single option always give EVPI == 0 (no uncertainty / no choice).
 #[test]
 fn edge_evpi_degenerate_worlds_and_options() {
-    let one_world = vec![Scenario { probability: 1.0, option_nmbs: vec![5.0, -2.0] }];
+    let one_world = vec![Scenario {
+        probability: 1.0,
+        option_nmbs: vec![5.0, -2.0],
+    }];
     assert!((evpi_mod::evpi(&one_world).unwrap() - 0.0).abs() < TOL);
     let one_option = vec![
-        Scenario { probability: 0.5, option_nmbs: vec![7.0] },
-        Scenario { probability: 0.5, option_nmbs: vec![-7.0] },
+        Scenario {
+            probability: 0.5,
+            option_nmbs: vec![7.0],
+        },
+        Scenario {
+            probability: 0.5,
+            option_nmbs: vec![-7.0],
+        },
     ];
     assert!((evpi_mod::evpi(&one_option).unwrap() - 0.0).abs() < TOL);
     // population_evpi with zero decisions is zero.
@@ -207,12 +219,10 @@ fn edge_eq5d_code_roundtrip_and_full_health_exhaustive() {
                         let code = p.code();
                         assert_eq!(code, format!("{mo}{sc}{ua}{pd}{ad}"));
                         // Round-trip: rebuild the profile from the code digits.
-                        let digits: Vec<u8> =
-                            code.bytes().map(|b| b - b'0').collect();
-                        let p2 = Eq5dProfile::new(
-                            digits[0], digits[1], digits[2], digits[3], digits[4],
-                        )
-                        .unwrap();
+                        let digits: Vec<u8> = code.bytes().map(|b| b - b'0').collect();
+                        let p2 =
+                            Eq5dProfile::new(digits[0], digits[1], digits[2], digits[3], digits[4])
+                                .unwrap();
                         assert_eq!(p, p2);
                         assert_eq!(p.is_full_health(), code == "11111");
                     }
@@ -257,16 +267,31 @@ fn edge_hale_none_conditions_and_empty_slices() {
 // weight at 0 and 1; total burden > 1 goes negative (documented, no clamp).
 #[test]
 fn edge_hale_proportion_boundaries() {
-    let none = [ConditionBurden { prevalence: 0.0, disability_weight: 1.0 }];
+    let none = [ConditionBurden {
+        prevalence: 0.0,
+        disability_weight: 1.0,
+    }];
     assert!((hale_mod::proportion_in_full_health(&none) - 1.0).abs() < TOL);
-    let weightless = [ConditionBurden { prevalence: 1.0, disability_weight: 0.0 }];
+    let weightless = [ConditionBurden {
+        prevalence: 1.0,
+        disability_weight: 0.0,
+    }];
     assert!((hale_mod::proportion_in_full_health(&weightless) - 1.0).abs() < TOL);
-    let total = [ConditionBurden { prevalence: 1.0, disability_weight: 1.0 }];
+    let total = [ConditionBurden {
+        prevalence: 1.0,
+        disability_weight: 1.0,
+    }];
     assert!((hale_mod::proportion_in_full_health(&total) - 0.0).abs() < TOL);
     // Two death-like universal conditions: additive model goes to −1.0.
     let double = [
-        ConditionBurden { prevalence: 1.0, disability_weight: 1.0 },
-        ConditionBurden { prevalence: 1.0, disability_weight: 1.0 },
+        ConditionBurden {
+            prevalence: 1.0,
+            disability_weight: 1.0,
+        },
+        ConditionBurden {
+            prevalence: 1.0,
+            disability_weight: 1.0,
+        },
     ];
     assert!((hale_mod::proportion_in_full_health(&double) - (-1.0)).abs() < TOL);
 }
@@ -329,7 +354,9 @@ fn edge_emergency_avoidance_boundaries() {
     assert!(ea::avoided_events(3_000.0, 0.7, 0.9) < 0.0);
     assert!((ea::avoided_events(0.0, 0.9, 0.7) - 0.0).abs() < TOL);
     assert!((ea::gross_saving(0.0, 300.0) - 0.0).abs() < TOL);
-    assert!((ea::gross_saving_attendances_and_admissions(0.0, 300.0, 0.0, 3_800.0) - 0.0).abs() < TOL);
+    assert!(
+        (ea::gross_saving_attendances_and_admissions(0.0, 300.0, 0.0, 3_800.0) - 0.0).abs() < TOL
+    );
     // Intervention costing more than it saves: negative net (QALYs separate).
     assert!(ea::net_saving(100_000.0, 90_000.0, 20_000.0) < 0.0);
 }
@@ -363,8 +390,14 @@ fn edge_extreme_magnitudes_stay_finite() {
     assert!(evpi_mod::population_evpi(1.0e100, 1.0e100).is_finite());
     // Tiny magnitudes survive too.
     let tiny = evpi_mod::evpi(&[
-        Scenario { probability: 0.5, option_nmbs: vec![1.0e-12, 0.0] },
-        Scenario { probability: 0.5, option_nmbs: vec![-1.0e-12, 0.0] },
+        Scenario {
+            probability: 0.5,
+            option_nmbs: vec![1.0e-12, 0.0],
+        },
+        Scenario {
+            probability: 0.5,
+            option_nmbs: vec![-1.0e-12, 0.0],
+        },
     ])
     .unwrap();
     assert!(tiny.is_finite() && tiny >= 0.0);
@@ -393,7 +426,9 @@ fn prop_evpi_nonnegative_and_identity_over_random_scenarios() {
             .iter()
             .map(|w| Scenario {
                 probability: w / total,
-                option_nmbs: (0..n_options).map(|_| lcg(&mut seed) * 20.0 - 10.0).collect(),
+                option_nmbs: (0..n_options)
+                    .map(|_| lcg(&mut seed) * 20.0 - 10.0)
+                    .collect(),
             })
             .collect();
         let pi = evpi_mod::expected_nmb_with_perfect_information(&scenarios).unwrap();
@@ -401,7 +436,11 @@ fn prop_evpi_nonnegative_and_identity_over_random_scenarios() {
         let v = evpi_mod::evpi(&scenarios).unwrap();
         assert!(pi >= best - 1e-9, "E[max] {pi} < max E[] {best}");
         assert!(v >= -1e-9, "EVPI negative: {v}");
-        assert!((v - (pi - best)).abs() < 1e-9, "identity broken: {v} vs {}", pi - best);
+        assert!(
+            (v - (pi - best)).abs() < 1e-9,
+            "identity broken: {v} vs {}",
+            pi - best
+        );
     }
 }
 
@@ -422,7 +461,10 @@ fn prop_evpi_zero_under_dominance() {
             .map(|w| {
                 let base = lcg(&mut seed) * 10.0 - 5.0;
                 let gap = 0.5 + lcg(&mut seed); // option 0 strictly better everywhere
-                Scenario { probability: w / total, option_nmbs: vec![base, base - gap] }
+                Scenario {
+                    probability: w / total,
+                    option_nmbs: vec![base, base - gap],
+                }
             })
             .collect();
         let v = evpi_mod::evpi(&scenarios).unwrap();
@@ -443,7 +485,11 @@ fn prop_evpi_psa_draws_match_equal_probability_scenarios() {
         #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         let n_options = 2 + (lcg(&mut seed) * 2.0) as usize; // 2–3 options
         let draws: Vec<Vec<f64>> = (0..n_draws)
-            .map(|_| (0..n_options).map(|_| lcg(&mut seed) * 12.0 - 6.0).collect())
+            .map(|_| {
+                (0..n_options)
+                    .map(|_| lcg(&mut seed) * 12.0 - 6.0)
+                    .collect()
+            })
             .collect();
         let from_draws = evpi_mod::evpi_from_psa_draws(&draws).unwrap();
         // n_draws is a small loop-bounded count (3..=10): no precision loss.
@@ -451,7 +497,10 @@ fn prop_evpi_psa_draws_match_equal_probability_scenarios() {
         let p = 1.0 / n_draws as f64;
         let scenarios: Vec<Scenario> = draws
             .iter()
-            .map(|d| Scenario { probability: p, option_nmbs: d.clone() })
+            .map(|d| Scenario {
+                probability: p,
+                option_nmbs: d.clone(),
+            })
             .collect();
         let from_scenarios = evpi_mod::evpi(&scenarios).unwrap();
         assert!((from_draws - from_scenarios).abs() < 1e-9);
@@ -562,16 +611,31 @@ fn prop_funnel_share_and_overstatement_are_reciprocals() {
 #[test]
 fn prop_hale_proportion_decreases_as_burdens_added() {
     let all = [
-        ConditionBurden { prevalence: 0.10, disability_weight: 0.32 },
-        ConditionBurden { prevalence: 0.20, disability_weight: 0.10 },
-        ConditionBurden { prevalence: 0.05, disability_weight: 0.50 },
-        ConditionBurden { prevalence: 0.15, disability_weight: 0.05 },
+        ConditionBurden {
+            prevalence: 0.10,
+            disability_weight: 0.32,
+        },
+        ConditionBurden {
+            prevalence: 0.20,
+            disability_weight: 0.10,
+        },
+        ConditionBurden {
+            prevalence: 0.05,
+            disability_weight: 0.50,
+        },
+        ConditionBurden {
+            prevalence: 0.15,
+            disability_weight: 0.05,
+        },
     ];
     let mut prev = hale_mod::proportion_in_full_health(&all[..0]);
     assert!((prev - 1.0).abs() < TOL);
     for n in 1..=all.len() {
         let p = hale_mod::proportion_in_full_health(&all[..n]);
-        assert!(p < prev, "adding burden {n} did not reduce full-health share");
+        assert!(
+            p < prev,
+            "adding burden {n} did not reduce full-health share"
+        );
         prev = p;
     }
 }
@@ -671,7 +735,10 @@ fn prop_failure_demand_falls_with_completion_rate() {
     for c_i in 0..=10 {
         let completion = 0.1 * f64::from(c_i);
         let cost = gds::failure_demand_cost(2_000_000.0, 0.40, completion, 3.20);
-        assert!(cost < prev, "failure demand did not fall at completion {completion}");
+        assert!(
+            cost < prev,
+            "failure demand did not fall at completion {completion}"
+        );
         prev = cost;
     }
     // And at completion 1.0 it is exactly zero.
@@ -755,7 +822,10 @@ fn cross_eq5d_qalys_match_qaly_module_single_state() {
             let duration = 0.5 * f64::from(d_i);
             let utility = 0.1 * f64::from(u_i); // −0.2 … 1.0
             let via_eq5d = eq_5d::qalys(duration, utility);
-            let via_qaly = qaly_mod::qalys(&[HealthState { duration_years: duration, utility }]);
+            let via_qaly = qaly_mod::qalys(&[HealthState {
+                duration_years: duration,
+                utility,
+            }]);
             assert!((via_eq5d - via_qaly).abs() < 1e-12);
         }
     }
@@ -766,9 +836,18 @@ fn cross_eq5d_qalys_match_qaly_module_single_state() {
 #[test]
 fn cross_eq5d_stream_sum_and_monetization_agree() {
     let states = [
-        HealthState { duration_years: 0.5, utility: 0.62 },
-        HealthState { duration_years: 0.5, utility: 0.71 },
-        HealthState { duration_years: 1.0, utility: 0.85 },
+        HealthState {
+            duration_years: 0.5,
+            utility: 0.62,
+        },
+        HealthState {
+            duration_years: 0.5,
+            utility: 0.71,
+        },
+        HealthState {
+            duration_years: 1.0,
+            utility: 0.85,
+        },
     ];
     let stream_total = qaly_mod::qalys(&states);
     let piecewise: f64 = states
@@ -790,8 +869,14 @@ fn cross_eq5d_stream_sum_and_monetization_agree() {
 fn cross_eq5d_gain_equals_stream_difference() {
     for d_i in 1..=6 {
         let duration = 0.25 * f64::from(d_i);
-        let before = qaly_mod::qalys(&[HealthState { duration_years: duration, utility: 0.62 }]);
-        let after = qaly_mod::qalys(&[HealthState { duration_years: duration, utility: 0.71 }]);
+        let before = qaly_mod::qalys(&[HealthState {
+            duration_years: duration,
+            utility: 0.62,
+        }]);
+        let after = qaly_mod::qalys(&[HealthState {
+            duration_years: duration,
+            utility: 0.71,
+        }]);
         let gain = eq_5d::qaly_gain(0.62, 0.71, duration);
         assert!((gain - (after - before)).abs() < 1e-12);
         // attributable gain nets a control stream computed the same way.
@@ -817,8 +902,10 @@ fn cross_health_value_per_user_matches_retention_composition() {
         let total_value = rc::monetized_health_value(total_qalys, threshold);
         // Per-user route (health_app_unit_economics): retention-weighted
         // QALYs per acquired user = completion fraction × QALYs/completer.
-        let per_user =
-            ue::health_value_per_acquired_user(completion_fraction * qalys_per_completer, threshold);
+        let per_user = ue::health_value_per_acquired_user(
+            completion_fraction * qalys_per_completer,
+            threshold,
+        );
         assert!((per_user * cohort - total_value).abs() < 1e-6);
     }
 }
@@ -955,8 +1042,14 @@ fn scenario_evpi_gated_pilot_for_ai_grading_rollout() {
     // If it fails (p = 0.4): no clinical benefit, cost only → −£300,000.
     let nmb_fails = -300_000.0;
     let worlds = vec![
-        Scenario { probability: 0.6, option_nmbs: vec![nmb_works, 0.0] },
-        Scenario { probability: 0.4, option_nmbs: vec![nmb_fails, 0.0] },
+        Scenario {
+            probability: 0.6,
+            option_nmbs: vec![nmb_works, 0.0],
+        },
+        Scenario {
+            probability: 0.4,
+            option_nmbs: vec![nmb_fails, 0.0],
+        },
     ];
     // Decide now: 0.6 × 233,333.33 − 0.4 × 300,000 = £20,000 → still roll out.
     let decide_now = evpi_mod::expected_nmb_of_best_option(&worlds).unwrap();
@@ -1000,7 +1093,10 @@ fn scenario_gds_redesign_with_flow_and_hale_rollup() {
     let fd_after = gds::failure_demand_cost(2_000_000.0, 0.55, 0.93, 3.20);
     assert!((fd_before - fd_after - 60_800.0).abs() < 1e-6);
     // Digital unit cost check: £500k service cost / 2M completions = £0.25.
-    assert_eq!(gds::cost_per_transaction(500_000.0, 2_000_000.0), Some(0.25));
+    assert_eq!(
+        gds::cost_per_transaction(500_000.0, 2_000_000.0),
+        Some(0.25)
+    );
     // Delivery economics of the redesign team: WIP 12 at 3 items/week is a
     // 4-week cycle; WIP-limited to 6 it is 2 weeks, and at £8,000/week of
     // delay cost the queue policy alone banks 3 × 2 × £8,000 = £48,000/week.

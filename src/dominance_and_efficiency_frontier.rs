@@ -142,7 +142,11 @@ impl Alternative {
     /// ```
     #[must_use]
     pub fn new(name: &str, cost: f64, effect: f64) -> Self {
-        Alternative { name: name.to_string(), cost, effect }
+        Alternative {
+            name: name.to_string(),
+            cost,
+            effect,
+        }
     }
 }
 
@@ -260,7 +264,11 @@ pub fn efficiency_frontier(options: &[Alternative]) -> Vec<Alternative> {
     // so the cheaper of two equal-effect options comes first (the dearer one
     // will then be removed as strictly dominated).
     let mut sorted: Vec<Alternative> = options.to_vec();
-    sorted.sort_by(|a, b| a.effect.total_cmp(&b.effect).then(a.cost.total_cmp(&b.cost)));
+    sorted.sort_by(|a, b| {
+        a.effect
+            .total_cmp(&b.effect)
+            .then(a.cost.total_cmp(&b.cost))
+    });
 
     // Step 2: remove strictly dominated options — keep a candidate only if
     // no other option costs no more AND delivers no less (with one strict
@@ -292,12 +300,13 @@ pub fn efficiency_frontier(options: &[Alternative]) -> Vec<Alternative> {
                 // ...and of the next point over frontier[i].
                 let high = icer(&frontier[i + 1], &frontier[i]);
                 if let (Some(low), Some(high)) = (low, high)
-                    && high < low {
-                        // Decreasing ICERs: frontier[i] is extended-dominated.
-                        frontier.remove(i);
-                        removed = true;
-                        break;
-                    }
+                    && high < low
+                {
+                    // Decreasing ICERs: frontier[i] is extended-dominated.
+                    frontier.remove(i);
+                    removed = true;
+                    break;
+                }
             }
         }
         if !removed {
@@ -374,7 +383,10 @@ mod tests {
     fn frontier_is_nothing_then_sms_then_sms_plus_ai() {
         let frontier = efficiency_frontier(&worked_example());
         let names: Vec<&str> = frontier.iter().map(|o| o.name.as_str()).collect();
-        assert_eq!(names, vec!["Do nothing", "SMS reminders", "SMS + AI triage"]);
+        assert_eq!(
+            names,
+            vec!["Do nothing", "SMS reminders", "SMS + AI triage"]
+        );
     }
 
     // Worked example: "ICER(SMS vs nothing) = 20,000 / 2,000 = £10 per

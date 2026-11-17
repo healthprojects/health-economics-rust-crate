@@ -285,8 +285,14 @@ mod tests {
     #[test]
     fn delta_qalys_is_plus_0_04() {
         // 6 months at utility 0.76 instead of 0.68 while waiting
-        let new = [HealthState { duration_years: 0.5, utility: 0.76 }];
-        let old = [HealthState { duration_years: 0.5, utility: 0.68 }];
+        let new = [HealthState {
+            duration_years: 0.5,
+            utility: 0.76,
+        }];
+        let old = [HealthState {
+            duration_years: 0.5,
+            utility: 0.68,
+        }];
         assert!((delta_qalys(&new, &old) - 0.04).abs() < 1e-9);
     }
 
@@ -294,8 +300,14 @@ mod tests {
     #[test]
     fn app_dominates_waiting_list() {
         let dc = APP_COST - displaced_care_saving(0.40, THERAPY_COST);
-        let new = [HealthState { duration_years: 0.5, utility: 0.76 }];
-        let old = [HealthState { duration_years: 0.5, utility: 0.68 }];
+        let new = [HealthState {
+            duration_years: 0.5,
+            utility: 0.76,
+        }];
+        let old = [HealthState {
+            duration_years: 0.5,
+            utility: 0.68,
+        }];
         assert!(is_dominant(dc, delta_qalys(&new, &old)));
     }
 

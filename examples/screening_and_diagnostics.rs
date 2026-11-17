@@ -54,7 +54,10 @@ fn main() {
     // Event rate falls from 8% (control) to 5% (with the intervention).
     let arr = nnt::absolute_risk_reduction(0.08, 0.05);
     let needed = nnt::number_needed_to_treat(arr).unwrap();
-    println!("ARR: {:.1} percentage points → NNT {needed:.0}", arr * 100.0);
+    println!(
+        "ARR: {:.1} percentage points → NNT {needed:.0}",
+        arr * 100.0
+    );
     let cost_per_prevented = nnt::cost_per_event_prevented(needed, 150.0);
     println!("At £150/course: £{cost_per_prevented:.0} per event prevented");
     println!(

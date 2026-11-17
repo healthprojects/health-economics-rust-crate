@@ -186,7 +186,11 @@ pub fn icer(cost_a: f64, effect_a: f64, cost_b: f64, effect_b: f64) -> Option<f6
 /// ```
 #[must_use]
 pub fn average_cost_effectiveness_ratio(cost: f64, effect: f64) -> Option<f64> {
-    if effect == 0.0 { None } else { Some(cost / effect) }
+    if effect == 0.0 {
+        None
+    } else {
+        Some(cost / effect)
+    }
 }
 
 /// Incremental ICERs along a list of options already sorted by increasing

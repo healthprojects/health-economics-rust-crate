@@ -218,7 +218,11 @@ impl CostConsequenceTable {
 /// ```
 #[must_use]
 pub fn cost_per_unit_gained(incremental_cost: f64, units_gained: f64) -> Option<f64> {
-    if units_gained == 0.0 { None } else { Some(incremental_cost / units_gained) }
+    if units_gained == 0.0 {
+        None
+    } else {
+        Some(incremental_cost / units_gained)
+    }
 }
 
 /// Value of avoided events at a unit value (e.g. avoided on-day
@@ -258,7 +262,11 @@ mod tests {
     // phone-based process, per year, one trust.
 
     fn row(name: &str, digital: f64, phone: f64) -> ConsequenceRow {
-        ConsequenceRow { name: name.to_string(), intervention: digital, comparator: phone }
+        ConsequenceRow {
+            name: name.to_string(),
+            intervention: digital,
+            comparator: phone,
+        }
     }
 
     fn table() -> CostConsequenceTable {

@@ -31,19 +31,17 @@ use health_economics::ai_developer_productivity::{
     perception_gap_ratio, retention_rate, speedup, throughput_delta,
 };
 use health_economics::ai_quality_metrics::{
-    errors_reaching_submission, expected_error_cost, expected_harm_cost_per_output, faithfulness,
-    hallucination_rate, review_cost, ErrorType,
+    ErrorType, errors_reaching_submission, expected_error_cost, expected_harm_cost_per_output,
+    faithfulness, hallucination_rate, review_cost,
 };
 use health_economics::ai_regulatory_evaluation::{
     benefit_months_gained, pccp_lifetime_cost, pccp_saving, traditional_lifetime_cost,
     traditional_update_cost,
 };
-use health_economics::ai_return_on_investment::{
-    ai_roi, attributable_benefit, AiCostStack,
-};
+use health_economics::ai_return_on_investment::{AiCostStack, ai_roi, attributable_benefit};
 use health_economics::analysis_perspective::{
-    false_reassurance_harm, net_value_from_perspective, patient_time_value, payer_savings,
-    ImpactItem, Perspective,
+    ImpactItem, Perspective, false_reassurance_harm, net_value_from_perspective,
+    patient_time_value, payer_savings,
 };
 use health_economics::avoidable_outsourcing_costs::{
     avoidable_outsourcing_saving, net_benefit, outsourcing_premium_ratio, outsourcing_spend,
@@ -53,9 +51,8 @@ use health_economics::avoided_downstream_costs::{
     probability_weighted_offset,
 };
 use health_economics::bed_days_saved::{
-    additional_elective_spells, bed_days_saved_from_avoided_admissions,
+    FreedCapacityUse, additional_elective_spells, bed_days_saved_from_avoided_admissions,
     bed_days_saved_from_earlier_discharge, freed_capacity_value, naive_bed_day_value,
-    FreedCapacityUse,
 };
 
 /// Float-comparison helper: asserts |a − b| < tol with a readable panic message.
@@ -90,11 +87,31 @@ fn edge_activation_and_uptake_zero_denominators_are_none() {
 #[test]
 fn edge_funnel_value_zero_at_any_zero_stage() {
     // Locks down: any zero funnel stage collapses population value to exactly zero.
-    assert_close(funnel_population_value(0.0, 0.5, 0.5, 0.5, 780.0), 0.0, 1e-12);
-    assert_close(funnel_population_value(80_000.0, 0.0, 0.5, 0.5, 780.0), 0.0, 1e-12);
-    assert_close(funnel_population_value(80_000.0, 0.5, 0.0, 0.5, 780.0), 0.0, 1e-12);
-    assert_close(funnel_population_value(80_000.0, 0.5, 0.5, 0.0, 780.0), 0.0, 1e-12);
-    assert_close(funnel_population_value(80_000.0, 0.5, 0.5, 0.5, 0.0), 0.0, 1e-12);
+    assert_close(
+        funnel_population_value(0.0, 0.5, 0.5, 0.5, 780.0),
+        0.0,
+        1e-12,
+    );
+    assert_close(
+        funnel_population_value(80_000.0, 0.0, 0.5, 0.5, 780.0),
+        0.0,
+        1e-12,
+    );
+    assert_close(
+        funnel_population_value(80_000.0, 0.5, 0.0, 0.5, 780.0),
+        0.0,
+        1e-12,
+    );
+    assert_close(
+        funnel_population_value(80_000.0, 0.5, 0.5, 0.0, 780.0),
+        0.0,
+        1e-12,
+    );
+    assert_close(
+        funnel_population_value(80_000.0, 0.5, 0.5, 0.5, 0.0),
+        0.0,
+        1e-12,
+    );
 }
 
 #[test]
@@ -176,7 +193,13 @@ fn edge_qalys_and_spend_zero_inputs() {
     assert_close(qalys_realized(1_000.0, 0.0, 0.025), 0.0, 1e-12);
     assert_close(payer_spend(0.0, 250.0), 0.0, 1e-12);
     // A fully non-adherent cohort makes cost/QALY undefined, not infinite.
-    assert!(cost_per_qaly(payer_spend(1_000.0, 250.0), qalys_realized(1_000.0, 0.0, 0.025)).is_none());
+    assert!(
+        cost_per_qaly(
+            payer_spend(1_000.0, 250.0),
+            qalys_realized(1_000.0, 0.0, 0.025)
+        )
+        .is_none()
+    );
 }
 
 // ----- ai_developer_productivity -----
@@ -211,7 +234,11 @@ fn edge_throughput_delta_can_be_negative() {
 #[test]
 fn edge_capacity_value_utilization_boundaries() {
     // Locks down: utilization 0.0 zeroes the value; 1.0 gives the undiscounted product.
-    assert_close(annual_capacity_value(500.0, 0.25, 220.0, 60.0, 0.0), 0.0, 1e-12);
+    assert_close(
+        annual_capacity_value(500.0, 0.25, 220.0, 60.0, 0.0),
+        0.0,
+        1e-12,
+    );
     assert_close(
         annual_capacity_value(500.0, 0.25, 220.0, 60.0, 1.0),
         500.0 * 0.25 * 220.0 * 60.0,
@@ -251,7 +278,11 @@ fn edge_expected_harm_empty_slice_is_zero() {
 fn edge_errors_reaching_submission_catch_rate_boundaries() {
     // Locks down: catch rate 1.0 means zero uncaught errors; 0.0 means all errors survive.
     assert_close(errors_reaching_submission(200_000.0, 0.02, 1.0), 0.0, 1e-9);
-    assert_close(errors_reaching_submission(200_000.0, 0.02, 0.0), 4_000.0, 1e-9);
+    assert_close(
+        errors_reaching_submission(200_000.0, 0.02, 0.0),
+        4_000.0,
+        1e-9,
+    );
     assert_close(errors_reaching_submission(0.0, 0.02, 0.5), 0.0, 1e-12);
     assert_close(expected_error_cost(0.0, 250.0), 0.0, 1e-12);
     assert_close(review_cost(2.0, 0.0, 0.5), 0.0, 1e-12);
@@ -271,8 +302,16 @@ fn edge_harm_cost_extreme_magnitudes_stay_finite() {
 #[test]
 fn edge_regulatory_zero_updates_isolate_fixed_costs() {
     // Locks down: with zero updates, traditional cost is 0 but PCCP still pays authoring.
-    assert_close(traditional_lifetime_cost(0.0, 80_000.0, 4.0, 50_000.0), 0.0, 1e-12);
-    assert_close(pccp_lifetime_cost(250_000.0, 0.0, 30_000.0), 250_000.0, 1e-9);
+    assert_close(
+        traditional_lifetime_cost(0.0, 80_000.0, 4.0, 50_000.0),
+        0.0,
+        1e-12,
+    );
+    assert_close(
+        pccp_lifetime_cost(250_000.0, 0.0, 30_000.0),
+        250_000.0,
+        1e-9,
+    );
     // So at zero updates the PCCP route is strictly worse: negative saving.
     assert!(pccp_saving(0.0, 250_000.0) < 0.0);
     assert_close(benefit_months_gained(0.0, 4.0), 0.0, 1e-12);
@@ -281,7 +320,11 @@ fn edge_regulatory_zero_updates_isolate_fixed_costs() {
 #[test]
 fn edge_traditional_update_cost_zero_delay_is_submission_only() {
     // Locks down: with no review delay the cost-of-delay term vanishes entirely.
-    assert_close(traditional_update_cost(80_000.0, 0.0, 50_000.0), 80_000.0, 1e-9);
+    assert_close(
+        traditional_update_cost(80_000.0, 0.0, 50_000.0),
+        80_000.0,
+        1e-9,
+    );
     assert_close(traditional_update_cost(0.0, 0.0, 50_000.0), 0.0, 1e-12);
 }
 
@@ -324,9 +367,21 @@ fn edge_cost_stack_all_zero_lines_total_zero() {
 fn edge_perspective_empty_inventory_is_zero_everywhere() {
     // Locks down: an empty impact inventory nets to 0.0 from every perspective.
     let items: Vec<ImpactItem> = vec![];
-    assert_close(net_value_from_perspective(&items, Perspective::Payer), 0.0, 1e-12);
-    assert_close(net_value_from_perspective(&items, Perspective::Provider), 0.0, 1e-12);
-    assert_close(net_value_from_perspective(&items, Perspective::Societal), 0.0, 1e-12);
+    assert_close(
+        net_value_from_perspective(&items, Perspective::Payer),
+        0.0,
+        1e-12,
+    );
+    assert_close(
+        net_value_from_perspective(&items, Perspective::Provider),
+        0.0,
+        1e-12,
+    );
+    assert_close(
+        net_value_from_perspective(&items, Perspective::Societal),
+        0.0,
+        1e-12,
+    );
 }
 
 #[test]
@@ -391,7 +446,11 @@ fn edge_probability_weighted_offset_zero_probability() {
     // Locks down: probability 0.0 kills the offset; probability 1.0 is the full discounted cost.
     let df = discount_factor(0.035, 4.0);
     assert_close(probability_weighted_offset(0.0, 500_000.0, df), 0.0, 1e-12);
-    assert_close(probability_weighted_offset(1.0, 500_000.0, df), 500_000.0 * df, 1e-9);
+    assert_close(
+        probability_weighted_offset(1.0, 500_000.0, df),
+        500_000.0 * df,
+        1e-9,
+    );
 }
 
 // ----- bed_days_saved -----
@@ -400,7 +459,11 @@ fn edge_probability_weighted_offset_zero_probability() {
 fn edge_bed_days_zero_inputs() {
     // Locks down: zero patients or zero LOS reduction save zero bed days on both routes.
     assert_close(bed_days_saved_from_earlier_discharge(0.0, 2.0), 0.0, 1e-12);
-    assert_close(bed_days_saved_from_earlier_discharge(600.0, 0.0), 0.0, 1e-12);
+    assert_close(
+        bed_days_saved_from_earlier_discharge(600.0, 0.0),
+        0.0,
+        1e-12,
+    );
     assert_close(bed_days_saved_from_avoided_admissions(0.0, 3.0), 0.0, 1e-12);
     assert_close(naive_bed_day_value(0.0, 400.0), 0.0, 1e-12);
 }
@@ -415,8 +478,12 @@ fn edge_refill_zero_elective_los_is_none_other_mechanisms_never_none() {
     assert!(freed_capacity_value(1_200.0, &refill_zero).is_none());
     assert!(additional_elective_spells(1_200.0, 0.0).is_none());
     // Ward closure and slack always return Some, even for zero bed days.
-    let closed = FreedCapacityUse::WardClosedOrFlexedDown { cost_released_per_bed_day: 400.0 };
-    let slack = FreedCapacityUse::AbsorbedAsSlack { marginal_hotel_cost_per_bed_day: 100.0 };
+    let closed = FreedCapacityUse::WardClosedOrFlexedDown {
+        cost_released_per_bed_day: 400.0,
+    };
+    let slack = FreedCapacityUse::AbsorbedAsSlack {
+        marginal_hotel_cost_per_bed_day: 100.0,
+    };
     assert_close(freed_capacity_value(0.0, &closed).unwrap(), 0.0, 1e-12);
     assert_close(freed_capacity_value(0.0, &slack).unwrap(), 0.0, 1e-12);
 }
@@ -556,10 +623,7 @@ fn prop_zero_rate_error_type_contributes_nothing() {
         probability_acted_upon: 1.0,
         cost_per_acted_upon_error: 1e9,
     };
-    let with_dead = expected_harm_cost_per_output(&[
-        ErrorType { ..live },
-        dead,
-    ]);
+    let with_dead = expected_harm_cost_per_output(&[ErrorType { ..live }, dead]);
     let without = expected_harm_cost_per_output(&[live]);
     assert_close(with_dead, without, 1e-12);
 }
@@ -631,7 +695,11 @@ fn prop_item_in_no_perspective_contributes_to_none() {
     };
     assert!(base.included_in(Perspective::Provider));
     let items = vec![base, phantom];
-    for p in [Perspective::Payer, Perspective::Provider, Perspective::Societal] {
+    for p in [
+        Perspective::Payer,
+        Perspective::Provider,
+        Perspective::Societal,
+    ] {
         assert_close(net_value_from_perspective(&items, p), 100.0, 1e-9);
     }
 }
@@ -650,14 +718,18 @@ fn prop_refill_value_is_spells_times_income_slack_matches_naive_form() {
             let spells = additional_elective_spells(bed_days, los).unwrap();
             assert_close(value, spells * 6_000.0, 1e-6);
         }
-        let slack = FreedCapacityUse::AbsorbedAsSlack { marginal_hotel_cost_per_bed_day: 100.0 };
+        let slack = FreedCapacityUse::AbsorbedAsSlack {
+            marginal_hotel_cost_per_bed_day: 100.0,
+        };
         // Slack valuation is exactly the naive bed-day formula priced at marginal hotel cost.
         assert_close(
             freed_capacity_value(bed_days, &slack).unwrap(),
             naive_bed_day_value(bed_days, 100.0),
             1e-9,
         );
-        let closed = FreedCapacityUse::WardClosedOrFlexedDown { cost_released_per_bed_day: 400.0 };
+        let closed = FreedCapacityUse::WardClosedOrFlexedDown {
+            cost_released_per_bed_day: 400.0,
+        };
         // Ward closure is the only mechanism where the naive average-cost claim is honest.
         assert_close(
             freed_capacity_value(bed_days, &closed).unwrap(),
@@ -684,7 +756,11 @@ fn prop_attributable_benefit_subtracts_new_costs() {
     // Locks down: benefit == stopped spend − new costs, exactly, over a grid.
     for &stopped in &[0.0, 100.0, 380_000.0] {
         for &new_cost in &[0.0, 60_000.0, 500_000.0] {
-            assert_close(attributable_benefit(stopped, new_cost), stopped - new_cost, 1e-9);
+            assert_close(
+                attributable_benefit(stopped, new_cost),
+                stopped - new_cost,
+                1e-9,
+            );
         }
     }
 }
@@ -810,7 +886,11 @@ fn cross_net_benefit_and_ai_roi_tell_same_adopt_reject_story() {
             let net = net_benefit(b, c);
             let roi = ai_roi(b, c).unwrap();
             assert_eq!(roi > 0.0, net > 0.0, "adopt signal mismatch at b={b} c={c}");
-            assert_eq!(roi < 0.0, net < 0.0, "reject signal mismatch at b={b} c={c}");
+            assert_eq!(
+                roi < 0.0,
+                net < 0.0,
+                "reject signal mismatch at b={b} c={c}"
+            );
             // Exact identity: roi == net / cost.
             assert_close(roi, net / c, 1e-9);
         }

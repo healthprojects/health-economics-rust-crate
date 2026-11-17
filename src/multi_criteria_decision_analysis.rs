@@ -181,10 +181,22 @@ mod tests {
 
     fn digital_therapeutic_criteria() -> Vec<WeightedCriterion> {
         vec![
-            WeightedCriterion { weight: 0.4, score: 0.8 }, // clinical benefit
-            WeightedCriterion { weight: 0.3, score: 0.5 }, // cost impact
-            WeightedCriterion { weight: 0.2, score: 0.9 }, // disease severity / unmet need
-            WeightedCriterion { weight: 0.1, score: 0.6 }, // innovation
+            WeightedCriterion {
+                weight: 0.4,
+                score: 0.8,
+            }, // clinical benefit
+            WeightedCriterion {
+                weight: 0.3,
+                score: 0.5,
+            }, // cost impact
+            WeightedCriterion {
+                weight: 0.2,
+                score: 0.9,
+            }, // disease severity / unmet need
+            WeightedCriterion {
+                weight: 0.1,
+                score: 0.6,
+            }, // innovation
         ]
     }
 
@@ -205,8 +217,14 @@ mod tests {
     #[test]
     fn mis_specified_weights_fail_validity_check() {
         let criteria = vec![
-            WeightedCriterion { weight: 0.5, score: 0.8 },
-            WeightedCriterion { weight: 0.3, score: 0.5 },
+            WeightedCriterion {
+                weight: 0.5,
+                score: 0.8,
+            },
+            WeightedCriterion {
+                weight: 0.3,
+                score: 0.5,
+            },
         ];
         assert!(!weights_sum_to_one(&criteria));
     }

@@ -130,10 +130,7 @@ pub const RTT_STANDARD_PERCENT: f64 = 92.0;
 /// assert_eq!(rtt_performance_percent(0.0, 0.0), None);
 /// ```
 #[must_use]
-pub fn rtt_performance_percent(
-    treated_within_18_weeks: f64,
-    total_treated: f64,
-) -> Option<f64> {
+pub fn rtt_performance_percent(treated_within_18_weeks: f64, total_treated: f64) -> Option<f64> {
     if total_treated == 0.0 {
         None
     } else {

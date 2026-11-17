@@ -145,7 +145,9 @@ impl Lcg {
         Lcg {
             // One LCG step applied to the seed itself, so consecutive seeds
             // start from well-separated states.
-            state: seed.wrapping_mul(6_364_136_223_846_793_005).wrapping_add(1_442_695_040_888_963_407),
+            state: seed
+                .wrapping_mul(6_364_136_223_846_793_005)
+                .wrapping_add(1_442_695_040_888_963_407),
         }
     }
 
@@ -693,7 +695,10 @@ mod tests {
         let p5 = percentile(&d, 5.0).unwrap();
         let p95 = percentile(&d, 95.0).unwrap();
         assert!(p5 <= -180_000.0, "5th percentile {p5} should lose £180k+");
-        assert!(p95 >= 1_900_000.0, "95th percentile {p95} should reach £1.9M+");
+        assert!(
+            p95 >= 1_900_000.0,
+            "95th percentile {p95} should reach £1.9M+"
+        );
     }
 
     /// `NMB_j(θ)` = λ × `Effect_j(θ)` − `Cost_j(θ)`.

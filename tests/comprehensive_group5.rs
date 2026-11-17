@@ -115,25 +115,38 @@ fn edge_checklist_single_failure_and_boundary_icer_reject() {
             psa_reported: i != 2,
         };
         assert!(!cl.passes());
-        assert!(!hta::recommend_routine_commissioning(&cl, 1_000.0, 20_000.0));
+        assert!(!hta::recommend_routine_commissioning(
+            &cl, 1_000.0, 20_000.0
+        ));
     }
     // Conformant but ICER exactly at threshold → rejected (strict comparison).
-    assert!(!hta::recommend_routine_commissioning(&all_true, 20_000.0, 20_000.0));
+    assert!(!hta::recommend_routine_commissioning(
+        &all_true, 20_000.0, 20_000.0
+    ));
 }
 
 /// Locks down: `classify_quadrant`'s ΔE = 0 axis is `OnAxis` for every sign of ΔC.
 #[test]
 fn edge_classify_quadrant_zero_effect_axis() {
     for dc in [-5.0, 0.0, 5.0, 1e12] {
-        assert_eq!(icer_mod::classify_quadrant(dc, 0.0), CostEffectivenessQuadrant::OnAxis);
+        assert_eq!(
+            icer_mod::classify_quadrant(dc, 0.0),
+            CostEffectivenessQuadrant::OnAxis
+        );
     }
 }
 
 /// Locks down: ΔC = 0 boundary — free-and-better is Dominant, free-and-worse is `SavingsForLoss`.
 #[test]
 fn edge_classify_quadrant_zero_cost_boundary() {
-    assert_eq!(icer_mod::classify_quadrant(0.0, 1.0), CostEffectivenessQuadrant::Dominant);
-    assert_eq!(icer_mod::classify_quadrant(0.0, -1.0), CostEffectivenessQuadrant::SavingsForLoss);
+    assert_eq!(
+        icer_mod::classify_quadrant(0.0, 1.0),
+        CostEffectivenessQuadrant::Dominant
+    );
+    assert_eq!(
+        icer_mod::classify_quadrant(0.0, -1.0),
+        CostEffectivenessQuadrant::SavingsForLoss
+    );
 }
 
 /// Locks down: `net_incremental_cost` goes negative when offsets exceed gross (dominance candidate).
@@ -147,10 +160,16 @@ fn edge_net_incremental_cost_offsets_exceed_gross() {
 /// Locks down: zero-token calls cost 0, empty call slice costs 0, and 1e12 tokens stay finite.
 #[test]
 fn edge_inference_zero_and_extreme_tokens() {
-    let zero = LlmCall { input_tokens: 0.0, output_tokens: 0.0 };
+    let zero = LlmCall {
+        input_tokens: 0.0,
+        output_tokens: 0.0,
+    };
     assert!((infer::cost_per_call(&zero, 3.0, 15.0) - 0.0).abs() < TOL);
     assert!((infer::cost_per_unit(&[], 3.0, 15.0) - 0.0).abs() < TOL);
-    let huge = LlmCall { input_tokens: 1e12, output_tokens: 1e12 };
+    let huge = LlmCall {
+        input_tokens: 1e12,
+        output_tokens: 1e12,
+    };
     let c = infer::cost_per_call(&huge, 3.0, 15.0);
     assert!(c.is_finite());
     assert!((c - 18e6).abs() < 1e-3); // 1e12 × (3+15)/1e6 = 18,000,000
@@ -215,7 +234,9 @@ fn edge_area_between_curves_malformed_inputs() {
     assert!(lyg::area_between_survival_curves(&[0.0], &[1.0], &[1.0]).is_none());
     assert!(lyg::area_between_survival_curves(&[0.0, 1.0], &[1.0], &[1.0, 0.9]).is_none());
     assert!(lyg::area_between_survival_curves(&[0.0, 1.0], &[1.0, 0.9], &[1.0]).is_none());
-    assert!(lyg::area_between_survival_curves(&[0.0, 1.0, 2.0], &[1.0, 0.9], &[1.0, 0.9]).is_none());
+    assert!(
+        lyg::area_between_survival_curves(&[0.0, 1.0, 2.0], &[1.0, 0.9], &[1.0, 0.9]).is_none()
+    );
 }
 
 /// Locks down: crossing curves — the negative region after the cross subtracts from the area.
@@ -313,7 +334,11 @@ fn edge_adopt_zero_nmb_is_not_adoption() {
 #[test]
 fn edge_best_option_index_empty_and_singleton() {
     assert!(nmb_mod::best_option_index(&[], 20_000.0).is_none());
-    let one = [EvaluatedOption { name: "only", delta_cost: 1e9, delta_effect: -5.0 }];
+    let one = [EvaluatedOption {
+        name: "only",
+        delta_cost: 1e9,
+        delta_effect: -5.0,
+    }];
     assert_eq!(nmb_mod::best_option_index(&one, 20_000.0), Some(0)); // even a value-destroying option is argmax of itself
 }
 
@@ -323,15 +348,28 @@ fn edge_years_to_recoup_none_at_zero_revenue() {
     assert!(esf::years_to_recoup_evidence_cost(600_000.0, 0.0).is_none());
     let instant = esf::years_to_recoup_evidence_cost(0.0, 200_000.0).unwrap();
     assert!((instant - 0.0).abs() < TOL); // zero evidence cost breaks even immediately
-    assert!(esf::years_to_recoup_evidence_cost(1e12, 1.0).unwrap().is_finite());
+    assert!(
+        esf::years_to_recoup_evidence_cost(1e12, 1.0)
+            .unwrap()
+            .is_finite()
+    );
 }
 
 /// Locks down: `evidence_investment_range` endpoints for every tier as coded.
 #[test]
 fn edge_evidence_ranges_exact_endpoints() {
-    assert_eq!(esf::evidence_investment_range(EsfTier::A), (10_000.0, 50_000.0));
-    assert_eq!(esf::evidence_investment_range(EsfTier::B), (50_000.0, 250_000.0));
-    assert_eq!(esf::evidence_investment_range(EsfTier::C), (250_000.0, 2_000_000.0));
+    assert_eq!(
+        esf::evidence_investment_range(EsfTier::A),
+        (10_000.0, 50_000.0)
+    );
+    assert_eq!(
+        esf::evidence_investment_range(EsfTier::B),
+        (50_000.0, 250_000.0)
+    );
+    assert_eq!(
+        esf::evidence_investment_range(EsfTier::C),
+        (250_000.0, 2_000_000.0)
+    );
 }
 
 /// Locks down: NNT is None exactly at zero ARR; a negative ARR (harm) yields a negative NNT.
@@ -423,7 +461,12 @@ fn prop_classify_quadrant_four_sign_combinations() {
 /// Locks down: NMB is linear in λ — the difference of NMBs at two thresholds is ΔE × Δλ.
 #[test]
 fn prop_nmb_linearity_in_lambda() {
-    let cases = [(30.0, 400_000.0), (12.0, 150_000.0), (-2.0, -1_000.0), (0.0, 500.0)];
+    let cases = [
+        (30.0, 400_000.0),
+        (12.0, 150_000.0),
+        (-2.0, -1_000.0),
+        (0.0, 500.0),
+    ];
     let lambdas = [0.0, 10_000.0, 20_000.0, 30_000.0];
     for &(de, dc) in &cases {
         for &l1 in &lambdas {
@@ -440,23 +483,50 @@ fn prop_nmb_linearity_in_lambda() {
 #[test]
 fn prop_best_option_index_is_argmax_and_tie_stable() {
     let options = [
-        EvaluatedOption { name: "a", delta_cost: 400_000.0, delta_effect: 30.0 },
-        EvaluatedOption { name: "b", delta_cost: 150_000.0, delta_effect: 12.0 },
-        EvaluatedOption { name: "c", delta_cost: 700_000.0, delta_effect: 32.0 },
+        EvaluatedOption {
+            name: "a",
+            delta_cost: 400_000.0,
+            delta_effect: 30.0,
+        },
+        EvaluatedOption {
+            name: "b",
+            delta_cost: 150_000.0,
+            delta_effect: 12.0,
+        },
+        EvaluatedOption {
+            name: "c",
+            delta_cost: 700_000.0,
+            delta_effect: 32.0,
+        },
     ];
     for lambda in [5_000.0, 20_000.0, 50_000.0] {
         let winner = nmb_mod::best_option_index(&options, lambda).unwrap();
-        let winner_nmb = nmb_mod::net_monetary_benefit(options[winner].delta_effect, options[winner].delta_cost, lambda);
+        let winner_nmb = nmb_mod::net_monetary_benefit(
+            options[winner].delta_effect,
+            options[winner].delta_cost,
+            lambda,
+        );
         for opt in &options {
-            assert!(nmb_mod::net_monetary_benefit(opt.delta_effect, opt.delta_cost, lambda) <= winner_nmb + TOL);
+            assert!(
+                nmb_mod::net_monetary_benefit(opt.delta_effect, opt.delta_cost, lambda)
+                    <= winner_nmb + TOL
+            );
         }
     }
     // At λ = 5,000: a: −250k, b: −90k, c: −540k → b wins even though all are negative.
     assert_eq!(nmb_mod::best_option_index(&options, 5_000.0), Some(1));
     // Exact tie: identical options — the earliest index wins.
     let tied = [
-        EvaluatedOption { name: "first", delta_cost: 100.0, delta_effect: 0.01 },
-        EvaluatedOption { name: "second", delta_cost: 100.0, delta_effect: 0.01 },
+        EvaluatedOption {
+            name: "first",
+            delta_cost: 100.0,
+            delta_effect: 0.01,
+        },
+        EvaluatedOption {
+            name: "second",
+            delta_cost: 100.0,
+            delta_effect: 0.01,
+        },
     ];
     assert_eq!(nmb_mod::best_option_index(&tied, 20_000.0), Some(0));
 }
@@ -470,12 +540,21 @@ fn prop_probability_cost_effective_matches_hand_count() {
     //   (300, 0.03)  → 600 − 300 = 300  > 0 ✓
     //   (−50, 0.0)   → 0 + 50 = 50      > 0 ✓  (cost-saving, zero effect)
     //   (200, 0.01)  → 200 − 200 = 0    ✗  (boundary is unfavorable)
-    let draws = [(100.0, 0.02), (500.0, 0.01), (300.0, 0.03), (-50.0, 0.0), (200.0, 0.01)];
+    let draws = [
+        (100.0, 0.02),
+        (500.0, 0.01),
+        (300.0, 0.03),
+        (-50.0, 0.0),
+        (200.0, 0.01),
+    ];
     let p = hta::probability_cost_effective(&draws, 20_000.0).unwrap();
     assert!((p - 0.6).abs() < TOL);
     for lambda in [0.0, 1_000.0, 20_000.0, 1e6] {
         let p = hta::probability_cost_effective(&draws, lambda).unwrap();
-        assert!((0.0..=1.0).contains(&p), "p out of [0,1] at lambda={lambda}");
+        assert!(
+            (0.0..=1.0).contains(&p),
+            "p out of [0,1] at lambda={lambda}"
+        );
     }
 }
 
@@ -484,8 +563,12 @@ fn prop_probability_cost_effective_matches_hand_count() {
 fn prop_beds_occupied_bilinear() {
     for rate in [1.0, 7.0, 40.0] {
         for l in [0.5, 4.0, 6.0] {
-            assert!((los::beds_occupied(2.0 * rate, l) - 2.0 * los::beds_occupied(rate, l)).abs() < TOL);
-            assert!((los::beds_occupied(rate, 3.0 * l) - 3.0 * los::beds_occupied(rate, l)).abs() < TOL);
+            assert!(
+                (los::beds_occupied(2.0 * rate, l) - 2.0 * los::beds_occupied(rate, l)).abs() < TOL
+            );
+            assert!(
+                (los::beds_occupied(rate, 3.0 * l) - 3.0 * los::beds_occupied(rate, l)).abs() < TOL
+            );
             assert!((los::beds_occupied(rate, l) - rate * l).abs() < TOL);
         }
     }
@@ -544,7 +627,9 @@ fn prop_area_constant_gap_is_gap_times_horizon() {
 fn prop_area_invariant_under_collinear_midpoint() {
     let coarse = lyg::area_between_survival_curves(&[0.0, 10.0], &[1.0, 0.0], &[0.8, 0.0]).unwrap();
     // Midpoint at t = 5 on the straight lines: s_new = 0.5, s_comp = 0.4.
-    let fine = lyg::area_between_survival_curves(&[0.0, 5.0, 10.0], &[1.0, 0.5, 0.0], &[0.8, 0.4, 0.0]).unwrap();
+    let fine =
+        lyg::area_between_survival_curves(&[0.0, 5.0, 10.0], &[1.0, 0.5, 0.0], &[0.8, 0.4, 0.0])
+            .unwrap();
     assert!((coarse - fine).abs() < TOL);
     assert!((coarse - 1.0).abs() < TOL); // hand value: (5.0 − 4.0) mean survival difference
 }
@@ -632,9 +717,18 @@ fn prop_esf_tier_ordering_and_total_classification() {
     assert!(EsfTier::A < EsfTier::B);
     assert!(EsfTier::B < EsfTier::C);
     assert!(EsfTier::A < EsfTier::C);
-    assert_eq!(esf::classify_tier(ClinicalFunction::SystemService), EsfTier::A);
-    assert_eq!(esf::classify_tier(ClinicalFunction::InformOrMonitor), EsfTier::B);
-    assert_eq!(esf::classify_tier(ClinicalFunction::TreatDiagnoseOrGuide), EsfTier::C);
+    assert_eq!(
+        esf::classify_tier(ClinicalFunction::SystemService),
+        EsfTier::A
+    );
+    assert_eq!(
+        esf::classify_tier(ClinicalFunction::InformOrMonitor),
+        EsfTier::B
+    );
+    assert_eq!(
+        esf::classify_tier(ClinicalFunction::TreatDiagnoseOrGuide),
+        EsfTier::C
+    );
 }
 
 /// Locks down: evidence ranges escalate with tier and are contiguous (each high == next low).
@@ -653,12 +747,24 @@ fn prop_esf_evidence_ranges_escalate_and_touch() {
 #[test]
 fn prop_cost_per_unit_is_sum_of_calls() {
     let calls = [
-        LlmCall { input_tokens: 12_000.0, output_tokens: 1_200.0 },
-        LlmCall { input_tokens: 6_000.0, output_tokens: 300.0 },
-        LlmCall { input_tokens: 0.0, output_tokens: 50.0 },
+        LlmCall {
+            input_tokens: 12_000.0,
+            output_tokens: 1_200.0,
+        },
+        LlmCall {
+            input_tokens: 6_000.0,
+            output_tokens: 300.0,
+        },
+        LlmCall {
+            input_tokens: 0.0,
+            output_tokens: 50.0,
+        },
     ];
     for &(inr, outr) in &[(3.0, 15.0), (0.4, 1.6), (75.0, 150.0)] {
-        let sum: f64 = calls.iter().map(|c| infer::cost_per_call(c, inr, outr)).sum();
+        let sum: f64 = calls
+            .iter()
+            .map(|c| infer::cost_per_call(c, inr, outr))
+            .sum();
         assert!((infer::cost_per_unit(&calls, inr, outr) - sum).abs() < TOL);
     }
 }
@@ -690,19 +796,36 @@ fn prop_projected_cost_identity_monotone_and_compounding() {
 /// Locks down: `hta::icer` and `incremental_cost_effectiveness_ratio::icer` agree on values and None conditions.
 #[test]
 fn cross_icer_implementations_agree() {
-    let cases = [(450.0, 0.03), (300_000.0, 25.0), (-56.0, 8e-5), (900_000.0, 25.0), (0.0, 1.0), (5.0, -2.0)];
+    let cases = [
+        (450.0, 0.03),
+        (300_000.0, 25.0),
+        (-56.0, 8e-5),
+        (900_000.0, 25.0),
+        (0.0, 1.0),
+        (5.0, -2.0),
+    ];
     for &(dc, de) in &cases {
         let a = hta::icer(dc, de).unwrap();
         let b = icer_mod::icer(dc, de).unwrap();
         assert!((a - b).abs() < TOL, "icer mismatch at dc={dc} de={de}");
     }
-    assert_eq!(hta::icer(450.0, 0.0).is_none(), icer_mod::icer(450.0, 0.0).is_none());
+    assert_eq!(
+        hta::icer(450.0, 0.0).is_none(),
+        icer_mod::icer(450.0, 0.0).is_none()
+    );
 }
 
 /// Locks down: `hta::meets_threshold` and `icer_mod::adopt_at_threshold` implement the same strict rule.
 #[test]
 fn cross_threshold_rules_agree_including_equality() {
-    for icer_value in [11_999.9, 12_000.0, 20_000.0, 20_000.000_001, 36_000.0, -700_000.0] {
+    for icer_value in [
+        11_999.9,
+        12_000.0,
+        20_000.0,
+        20_000.000_001,
+        36_000.0,
+        -700_000.0,
+    ] {
         for threshold in [12_000.0, 20_000.0, 30_000.0] {
             assert_eq!(
                 hta::meets_threshold(icer_value, threshold),
@@ -725,7 +848,10 @@ fn cross_single_draw_probability_matches_nmb_adopt() {
     for &(dc, de) in &draws {
         let p = hta::probability_cost_effective(&[(dc, de)], 20_000.0).unwrap();
         let adopt = nmb_mod::adopt(nmb_mod::net_monetary_benefit(de, dc, 20_000.0));
-        assert!((p - if adopt { 1.0 } else { 0.0 }).abs() < TOL, "mismatch at dc={dc} de={de}");
+        assert!(
+            (p - if adopt { 1.0 } else { 0.0 }).abs() < TOL,
+            "mismatch at dc={dc} de={de}"
+        );
     }
 }
 
@@ -738,11 +864,17 @@ fn cross_quadrant_icer_nmb_and_recommendation_align() {
         psa_reported: true,
     };
     for &(dc, de) in &[(300_000.0, 25.0), (700_000.0, 32.0), (150_000.0, 12.0)] {
-        assert_eq!(icer_mod::classify_quadrant(dc, de), CostEffectivenessQuadrant::TradeOff);
+        assert_eq!(
+            icer_mod::classify_quadrant(dc, de),
+            CostEffectivenessQuadrant::TradeOff
+        );
         let ratio = icer_mod::icer(dc, de).unwrap();
         let adopt = nmb_mod::adopt(nmb_mod::net_monetary_benefit(de, dc, 20_000.0));
         assert_eq!(adopt, icer_mod::adopt_at_threshold(ratio, 20_000.0));
-        assert_eq!(adopt, hta::recommend_routine_commissioning(&checklist, ratio, 20_000.0));
+        assert_eq!(
+            adopt,
+            hta::recommend_routine_commissioning(&checklist, ratio, 20_000.0)
+        );
     }
 }
 
@@ -757,7 +889,12 @@ fn cross_annualization_constants_agree() {
 /// Locks down: NHB × λ == NMB (the two decision forms are the same rule in different units).
 #[test]
 fn cross_nhb_scales_to_nmb() {
-    for &(de, dc) in &[(30.0, 400_000.0), (12.0, 150_000.0), (32.0, 700_000.0), (-1.0, -30_000.0)] {
+    for &(de, dc) in &[
+        (30.0, 400_000.0),
+        (12.0, 150_000.0),
+        (32.0, 700_000.0),
+        (-1.0, -30_000.0),
+    ] {
         for lambda in [10_000.0, 20_000.0, 30_000.0] {
             let nhb = nmb_mod::net_health_benefit(de, dc, lambda).unwrap();
             let nmb = nmb_mod::net_monetary_benefit(de, dc, lambda);
@@ -776,7 +913,10 @@ fn scenario_hta_submission_end_to_end() {
     // Digital therapeutic: gross £700/patient, £250 of displaced spend → ΔC = £450; ΔE = 0.03 QALYs.
     let dc = icer_mod::net_incremental_cost(700.0, 250.0);
     assert!((dc - 450.0).abs() < TOL);
-    assert_eq!(icer_mod::classify_quadrant(dc, 0.03), CostEffectivenessQuadrant::TradeOff);
+    assert_eq!(
+        icer_mod::classify_quadrant(dc, 0.03),
+        CostEffectivenessQuadrant::TradeOff
+    );
 
     // ICER = 450 / 0.03 = £15,000/QALY; both modules agree and it clears £20k.
     let ratio = hta::icer(dc, 0.03).unwrap();
@@ -803,14 +943,18 @@ fn scenario_hta_submission_end_to_end() {
         comparator_is_current_care_pathway: true,
         psa_reported: true,
     };
-    assert!(hta::recommend_routine_commissioning(&checklist, ratio, 20_000.0));
+    assert!(hta::recommend_routine_commissioning(
+        &checklist, ratio, 20_000.0
+    ));
     // The identical numbers fail at appraisal if the comparator was a strawman.
     let strawman = hta::ReferenceCaseChecklist {
         utilities_from_mandated_instrument: true,
         comparator_is_current_care_pathway: false,
         psa_reported: true,
     };
-    assert!(!hta::recommend_routine_commissioning(&strawman, ratio, 20_000.0));
+    assert!(!hta::recommend_routine_commissioning(
+        &strawman, ratio, 20_000.0
+    ));
 }
 
 /// Locks down: ward-flow business case — LOS cut → beds freed → honest marginal vs naive vs tariff claims.
@@ -860,8 +1004,14 @@ fn scenario_ward_flow_business_case() {
 #[test]
 fn scenario_llm_feature_unit_economics_and_esf() {
     // Discharge-summary drafts: 12k in / 1.2k out plus a 6k/300 verify pass at $3/M in, $15/M out.
-    let draft = LlmCall { input_tokens: 12_000.0, output_tokens: 1_200.0 };
-    let verify = LlmCall { input_tokens: 6_000.0, output_tokens: 300.0 };
+    let draft = LlmCall {
+        input_tokens: 12_000.0,
+        output_tokens: 1_200.0,
+    };
+    let verify = LlmCall {
+        input_tokens: 6_000.0,
+        output_tokens: 300.0,
+    };
     assert!((infer::cost_per_call(&draft, 3.0, 15.0) - 0.054).abs() < TOL);
     assert!((infer::cost_per_call(&verify, 3.0, 15.0) - 0.0225).abs() < TOL);
     let per_unit = infer::cost_per_unit(&[draft, verify], 3.0, 15.0);
@@ -913,7 +1063,10 @@ fn scenario_falls_prevention_nnt_to_nmb() {
     let dc = icer_mod::net_incremental_cost(40.0, arr * 12_000.0);
     assert!((dc - -56.0).abs() < TOL);
     let de = arr * 0.01;
-    assert_eq!(icer_mod::classify_quadrant(dc, de), CostEffectivenessQuadrant::Dominant);
+    assert_eq!(
+        icer_mod::classify_quadrant(dc, de),
+        CostEffectivenessQuadrant::Dominant
+    );
     // Dominant: NMB positive at any non-negative λ — even λ = 0 keeps the £56 saving.
     let nmb0 = nmb_mod::net_monetary_benefit(de, dc, 0.0);
     assert!((nmb0 - 56.0).abs() < TOL);
@@ -935,8 +1088,16 @@ fn scenario_falls_prevention_nnt_to_nmb() {
 
     // Ranking the bundle against a cheaper leaflet-only option: the bundle's NMB wins at £20k.
     let options = [
-        EvaluatedOption { name: "sensor bundle", delta_cost: -56.0, delta_effect: 8e-5 },
-        EvaluatedOption { name: "leaflets only", delta_cost: -1.0, delta_effect: 0.0 },
+        EvaluatedOption {
+            name: "sensor bundle",
+            delta_cost: -56.0,
+            delta_effect: 8e-5,
+        },
+        EvaluatedOption {
+            name: "leaflets only",
+            delta_cost: -1.0,
+            delta_effect: 0.0,
+        },
     ];
     assert_eq!(nmb_mod::best_option_index(&options, 20_000.0), Some(0));
 }

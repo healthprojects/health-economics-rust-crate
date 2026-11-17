@@ -335,8 +335,14 @@ mod tests {
     #[test]
     fn proportion_in_full_health_subtracts_weighted_prevalence() {
         let conditions = [
-            ConditionBurden { prevalence: 0.10, disability_weight: 0.32 },
-            ConditionBurden { prevalence: 0.20, disability_weight: 0.10 },
+            ConditionBurden {
+                prevalence: 0.10,
+                disability_weight: 0.32,
+            },
+            ConditionBurden {
+                prevalence: 0.20,
+                disability_weight: 0.10,
+            },
         ];
         let p = proportion_in_full_health(&conditions);
         assert!((p - (1.0 - 0.032 - 0.02)).abs() < 1e-9, "got {p}");

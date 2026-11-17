@@ -107,7 +107,7 @@
 //!
 //! Topic doc: health-economics-metrics/topics/cross-currency-icer-comparison.md
 
-use rusty_money::{iso, ExchangeRate, Money, MoneyError};
+use rusty_money::{ExchangeRate, Money, MoneyError, iso};
 
 /// Converts `amount` into another currency using an explicit, auditable
 /// exchange rate.

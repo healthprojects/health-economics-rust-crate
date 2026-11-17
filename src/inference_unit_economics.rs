@@ -137,7 +137,11 @@ pub struct LlmCall {
 /// assert!((cost_per_call(&draft, 3.0, 15.0) - 0.054).abs() < 1e-9);
 /// ```
 #[must_use]
-pub fn cost_per_call(call: &LlmCall, input_rate_per_million: f64, output_rate_per_million: f64) -> f64 {
+pub fn cost_per_call(
+    call: &LlmCall,
+    input_rate_per_million: f64,
+    output_rate_per_million: f64,
+) -> f64 {
     // Rates are per million tokens, so scale each side down by 1e6:
     // input term + output term, priced independently (output ≈ 4× input).
     call.input_tokens * input_rate_per_million / 1_000_000.0
@@ -175,7 +179,11 @@ pub fn cost_per_call(call: &LlmCall, input_rate_per_million: f64, output_rate_pe
 /// assert!((per_summary - 0.0765).abs() < 1e-9);
 /// ```
 #[must_use]
-pub fn cost_per_unit(calls: &[LlmCall], input_rate_per_million: f64, output_rate_per_million: f64) -> f64 {
+pub fn cost_per_unit(
+    calls: &[LlmCall],
+    input_rate_per_million: f64,
+    output_rate_per_million: f64,
+) -> f64 {
     calls
         .iter()
         .map(|c| cost_per_call(c, input_rate_per_million, output_rate_per_million))
@@ -290,11 +298,17 @@ mod tests {
     const OUTPUT_RATE: f64 = 15.0; // $/M tokens
 
     fn draft() -> LlmCall {
-        LlmCall { input_tokens: 12_000.0, output_tokens: 1_200.0 }
+        LlmCall {
+            input_tokens: 12_000.0,
+            output_tokens: 1_200.0,
+        }
     }
 
     fn verify() -> LlmCall {
-        LlmCall { input_tokens: 6_000.0, output_tokens: 300.0 }
+        LlmCall {
+            input_tokens: 6_000.0,
+            output_tokens: 300.0,
+        }
     }
 
     /// Draft: 12,000 × 3/1M + 1,200 × 15/1M = $0.036 + $0.018 = $0.054.

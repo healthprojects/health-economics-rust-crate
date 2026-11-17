@@ -296,7 +296,10 @@ pub fn strict_financial_roi(lines: &[BenefitLine], costs: f64) -> Option<f64> {
 #[must_use]
 pub fn economic_roi(lines: &[BenefitLine], costs: f64) -> Option<f64> {
     roi(
-        total_benefits(lines, &[BenefitClass::CashReleasing, BenefitClass::Capacity]),
+        total_benefits(
+            lines,
+            &[BenefitClass::CashReleasing, BenefitClass::Capacity],
+        ),
         costs,
     )
 }
@@ -308,11 +311,20 @@ mod tests {
     fn e_rostering_benefits() -> Vec<BenefitLine> {
         vec![
             // Cash-releasing: agency shift reduction £450,000
-            BenefitLine { class: BenefitClass::CashReleasing, amount: 450_000.0 },
+            BenefitLine {
+                class: BenefitClass::CashReleasing,
+                amount: 450_000.0,
+            },
             // Capacity: ward-manager admin time freed £600,000 (valued, not banked)
-            BenefitLine { class: BenefitClass::Capacity, amount: 600_000.0 },
+            BenefitLine {
+                class: BenefitClass::Capacity,
+                amount: 600_000.0,
+            },
             // Qualitative: staff satisfaction, safety — not monetized
-            BenefitLine { class: BenefitClass::Qualitative, amount: 0.0 },
+            BenefitLine {
+                class: BenefitClass::Qualitative,
+                amount: 0.0,
+            },
         ]
     }
 

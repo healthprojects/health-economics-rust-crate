@@ -17,13 +17,25 @@ fn main() {
     // A discharge-automation feature saves £250/patient for 60 patients/week.
     let cod_per_week = cod::operational_cost_of_delay(250.0, 60.0);
     println!("CoD: £{cod_per_week:.0}/week");
-    println!("A 4-week slip costs: £{:.0}", cod::total_delay_loss(cod_per_week, 4.0));
+    println!(
+        "A 4-week slip costs: £{:.0}",
+        cod::total_delay_loss(cod_per_week, 4.0)
+    );
 
     println!("\n=== Sequencing by CD3 (cost of delay / duration) ===");
     let features = [
-        wsjf::Feature { cost_of_delay_per_week: 9_000.0, duration_weeks: 3.0 },
-        wsjf::Feature { cost_of_delay_per_week: 12_000.0, duration_weeks: 2.0 },
-        wsjf::Feature { cost_of_delay_per_week: 15_000.0, duration_weeks: 3.0 },
+        wsjf::Feature {
+            cost_of_delay_per_week: 9_000.0,
+            duration_weeks: 3.0,
+        },
+        wsjf::Feature {
+            cost_of_delay_per_week: 12_000.0,
+            duration_weeks: 2.0,
+        },
+        wsjf::Feature {
+            cost_of_delay_per_week: 15_000.0,
+            duration_weeks: 3.0,
+        },
     ];
     for f in &features {
         println!(
@@ -33,10 +45,19 @@ fn main() {
             f.cd3().unwrap()
         );
     }
-    println!("Delay cost in given order: £{:.0}", wsjf::total_delay_cost(&features));
+    println!(
+        "Delay cost in given order: £{:.0}",
+        wsjf::total_delay_cost(&features)
+    );
     let ordered = wsjf::sequence_by_cd3(&features);
-    println!("Delay cost in CD3 order:   £{:.0}", wsjf::total_delay_cost(&ordered));
-    println!("Saved by re-sequencing alone: £{:.0}", wsjf::sequencing_savings(&features));
+    println!(
+        "Delay cost in CD3 order:   £{:.0}",
+        wsjf::total_delay_cost(&ordered)
+    );
+    println!(
+        "Saved by re-sequencing alone: £{:.0}",
+        wsjf::sequencing_savings(&features)
+    );
 
     println!("\n=== DORA: monetizing faster, safer delivery ===");
     let freq = dora::deployment_frequency(120.0, 30.0).unwrap();
@@ -65,7 +86,10 @@ fn main() {
     let principal = debt::sqale_principal(3_800.0, 75.0);
     let tdr = debt::technical_debt_ratio_percent(principal, 6_000_000.0).unwrap();
     println!("Principal (3,800 h × £75): £{principal:.0}");
-    println!("Debt ratio vs £6M redevelopment: {tdr:.1}% → grade {:?}", debt::sqale_grade(tdr));
+    println!(
+        "Debt ratio vs £6M redevelopment: {tdr:.1}% → grade {:?}",
+        debt::sqale_grade(tdr)
+    );
     // 20,000 dev hours/year absorbing a 25% velocity drag at £75/h, plus 12
     // extra failures/year at £8k each.
     let interest = debt::annual_interest(20_000.0, 0.25, 75.0, 12.0, 8_000.0);

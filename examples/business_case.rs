@@ -14,7 +14,9 @@ use health_economics::time_horizon;
 fn main() {
     println!("=== Discounted cost-benefit analysis (HM Treasury 3.5%) ===");
     // Year 0: build (£800k). Years 1-5: £150k running cost, £450k benefit.
-    let costs: Vec<f64> = vec![800_000.0, 150_000.0, 150_000.0, 150_000.0, 150_000.0, 150_000.0];
+    let costs: Vec<f64> = vec![
+        800_000.0, 150_000.0, 150_000.0, 150_000.0, 150_000.0, 150_000.0,
+    ];
     let benefits: Vec<f64> = vec![0.0, 450_000.0, 450_000.0, 450_000.0, 450_000.0, 450_000.0];
     let pv_costs = cba::present_value(&costs, cba::GREEN_BOOK_DISCOUNT_RATE);
     let pv_benefits = cba::present_value(&benefits, cba::GREEN_BOOK_DISCOUNT_RATE);
@@ -33,9 +35,18 @@ fn main() {
     println!("\n=== ROI: cash-releasing vs economic ===");
     // Only the first line releases cash a budget holder can bank.
     let lines = [
-        roi::BenefitLine { class: roi::BenefitClass::CashReleasing, amount: 180_000.0 },
-        roi::BenefitLine { class: roi::BenefitClass::Capacity, amount: 240_000.0 },
-        roi::BenefitLine { class: roi::BenefitClass::Qualitative, amount: 0.0 },
+        roi::BenefitLine {
+            class: roi::BenefitClass::CashReleasing,
+            amount: 180_000.0,
+        },
+        roi::BenefitLine {
+            class: roi::BenefitClass::Capacity,
+            amount: 240_000.0,
+        },
+        roi::BenefitLine {
+            class: roi::BenefitClass::Qualitative,
+            amount: 0.0,
+        },
     ];
     let annual_cost = 200_000.0;
     let strict = roi::strict_financial_roi(&lines, annual_cost).unwrap();
@@ -46,7 +57,8 @@ fn main() {
     println!("Payback on £800k at £300k/yr net: {payback:.1} years");
 
     println!("\n=== Time horizon: when does it break even? ===");
-    let breakeven = time_horizon::break_even_horizon_years(800_000.0, 450_000.0, 150_000.0).unwrap();
+    let breakeven =
+        time_horizon::break_even_horizon_years(800_000.0, 450_000.0, 150_000.0).unwrap();
     for years in [1.0, 3.0, 5.0] {
         let net = time_horizon::net_benefit_at_horizon(800_000.0, 450_000.0, 150_000.0, years);
         println!("Net benefit at {years:.0}-year horizon: £{net:>9.0}");
@@ -63,5 +75,8 @@ fn main() {
         net_cost_per_patient: net_per_patient,
     }]);
     println!("Net cost per patient: £{net_per_patient:.0}");
-    println!("Year-1 budget impact: £{:.0}", bia::budget_impact(with_new, current));
+    println!(
+        "Year-1 budget impact: £{:.0}",
+        bia::budget_impact(with_new, current)
+    );
 }

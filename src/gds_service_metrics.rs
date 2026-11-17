@@ -157,7 +157,11 @@ pub fn cost_per_transaction(total_service_cost: f64, completed_transactions: f64
 /// ```
 #[must_use]
 pub fn completion_rate_percent(completed: f64, started: f64) -> Option<f64> {
-    if started == 0.0 { None } else { Some(completed / started * 100.0) }
+    if started == 0.0 {
+        None
+    } else {
+        Some(completed / started * 100.0)
+    }
 }
 
 /// Digital take-up as a percentage: digital over all-channel transactions.
@@ -184,7 +188,10 @@ pub fn completion_rate_percent(completed: f64, started: f64) -> Option<f64> {
 /// assert!((take_up - 55.0).abs() < 1e-9);
 /// ```
 #[must_use]
-pub fn digital_take_up_percent(digital_transactions: f64, all_channel_transactions: f64) -> Option<f64> {
+pub fn digital_take_up_percent(
+    digital_transactions: f64,
+    all_channel_transactions: f64,
+) -> Option<f64> {
     if all_channel_transactions == 0.0 {
         None
     } else {

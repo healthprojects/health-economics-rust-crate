@@ -332,7 +332,10 @@ mod tests {
     #[test]
     fn least_deprived_quintile_impact_is_0_0044() {
         // Worked example: "Q1 (least deprived): reach 22%, effect 0.02 → 0.0044."
-        let q1 = Stratum { reach: 0.22, effectiveness: 0.02 };
+        let q1 = Stratum {
+            reach: 0.22,
+            effectiveness: 0.02,
+        };
         assert!((q1.impact() - 0.0044).abs() < TOL);
     }
 
@@ -340,7 +343,10 @@ mod tests {
     #[test]
     fn most_deprived_quintile_impact_is_0_0010() {
         // Worked example: "Q5 (most deprived): reach 4%, effect 0.025 → 0.0010."
-        let q5 = Stratum { reach: 0.04, effectiveness: 0.025 };
+        let q5 = Stratum {
+            reach: 0.04,
+            effectiveness: 0.025,
+        };
         assert!((q5.impact() - 0.0010).abs() < TOL);
     }
 

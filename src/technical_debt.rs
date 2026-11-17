@@ -179,10 +179,7 @@ pub fn sqale_principal(remediation_hours: f64, cost_per_hour: f64) -> f64 {
 /// assert!(technical_debt_ratio_percent(285_000.0, 0.0).is_none());
 /// ```
 #[must_use]
-pub fn technical_debt_ratio_percent(
-    remediation_cost: f64,
-    redevelopment_cost: f64,
-) -> Option<f64> {
+pub fn technical_debt_ratio_percent(remediation_cost: f64, redevelopment_cost: f64) -> Option<f64> {
     if redevelopment_cost == 0.0 {
         None
     } else {
@@ -326,10 +323,7 @@ pub fn interest_avoided_per_year(annual_interest: f64, interest_reduction_fracti
 /// assert!((months - 6.0).abs() < 0.5);
 /// ```
 #[must_use]
-pub fn payback_period_years(
-    remediation_cost: f64,
-    interest_avoided_per_year: f64,
-) -> Option<f64> {
+pub fn payback_period_years(remediation_cost: f64, interest_avoided_per_year: f64) -> Option<f64> {
     if interest_avoided_per_year == 0.0 {
         None
     } else {

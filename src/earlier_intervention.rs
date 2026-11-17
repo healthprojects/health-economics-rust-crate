@@ -294,7 +294,10 @@ mod tests {
             events,
             value_per_avoided_progression(4_000.0, 0.0, 0.8, 0.0, 20_000.0),
         );
-        assert!((value_unrounded - 540_000.0).abs() < 10_000.0, "got {value_unrounded}");
+        assert!(
+            (value_unrounded - 540_000.0).abs() < 10_000.0,
+            "got {value_unrounded}"
+        );
     }
 
     // Doc formula: value per patient is probability-weighted; summed over the

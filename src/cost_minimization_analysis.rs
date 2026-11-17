@@ -217,7 +217,11 @@ pub fn cost_minimization(
     if !equivalence_evidenced {
         return None;
     }
-    Some(if cost_b < cost_a { Selection::OptionB } else { Selection::OptionA })
+    Some(if cost_b < cost_a {
+        Selection::OptionB
+    } else {
+        Selection::OptionA
+    })
 }
 
 /// Cost saving of choosing the cheaper option: |`cost_a` − `cost_b`|.
@@ -252,11 +256,19 @@ mod tests {
     // pilot with a pre-agreed δ of 2 percentage points; 3-year costs.
 
     fn platform_a() -> CostLines {
-        CostLines { licences: 360_000.0, integration: 80_000.0, training_support: 60_000.0 }
+        CostLines {
+            licences: 360_000.0,
+            integration: 80_000.0,
+            training_support: 60_000.0,
+        }
     }
 
     fn platform_b() -> CostLines {
-        CostLines { licences: 210_000.0, integration: 150_000.0, training_support: 90_000.0 }
+        CostLines {
+            licences: 210_000.0,
+            integration: 150_000.0,
+            training_support: 90_000.0,
+        }
     }
 
     // Worked-example line: "completion rates 94.1% vs 93.8% ... inside the
@@ -290,8 +302,7 @@ mod tests {
     // higher integration cost".
     #[test]
     fn platform_b_wins_by_50k_including_higher_integration_cost() {
-        let equivalent = outcomes_equivalent(94.1, 93.8, 2.0)
-            && outcomes_equivalent(4.4, 4.4, 2.0);
+        let equivalent = outcomes_equivalent(94.1, 93.8, 2.0) && outcomes_equivalent(4.4, 4.4, 2.0);
         let choice = cost_minimization(platform_a().total(), platform_b().total(), equivalent);
         assert_eq!(choice, Some(Selection::OptionB));
         assert!((cost_saving(platform_a().total(), platform_b().total()) - 50_000.0).abs() < 1e-6);

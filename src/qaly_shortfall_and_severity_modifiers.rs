@@ -130,10 +130,7 @@
 /// assert!((a - 12.1).abs() < 1e-9);
 /// ```
 #[must_use]
-pub fn absolute_shortfall(
-    general_population_qalys: f64,
-    qalys_with_condition: f64,
-) -> f64 {
+pub fn absolute_shortfall(general_population_qalys: f64, qalys_with_condition: f64) -> f64 {
     general_population_qalys - qalys_with_condition
 }
 

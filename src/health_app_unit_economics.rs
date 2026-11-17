@@ -162,7 +162,11 @@ pub fn cac(sales_and_marketing_spend: f64, new_paying_customers: f64) -> Option<
 /// ```
 #[must_use]
 pub fn arpu(revenue: f64, active_users: f64) -> Option<f64> {
-    if active_users == 0.0 { None } else { Some(revenue / active_users) }
+    if active_users == 0.0 {
+        None
+    } else {
+        Some(revenue / active_users)
+    }
 }
 
 /// Lifetime value: `ARPU / churn rate`.
@@ -194,7 +198,11 @@ pub fn arpu(revenue: f64, active_users: f64) -> Option<f64> {
 #[must_use]
 pub fn ltv(arpu: f64, churn_rate: f64) -> Option<f64> {
     // LTV = ARPU × average lifetime, and average lifetime = 1 / churn.
-    if churn_rate == 0.0 { None } else { Some(arpu / churn_rate) }
+    if churn_rate == 0.0 {
+        None
+    } else {
+        Some(arpu / churn_rate)
+    }
 }
 
 /// LTV:CAC ratio — the standard viability test asks for ≥ 3.
@@ -275,7 +283,11 @@ pub fn is_viable_ltv_cac(ltv: f64, cac: f64) -> bool {
 /// ```
 #[must_use]
 pub fn effective_cac_per_retained_user(cac: f64, retention_at_t: f64) -> Option<f64> {
-    if retention_at_t == 0.0 { None } else { Some(cac / retention_at_t) }
+    if retention_at_t == 0.0 {
+        None
+    } else {
+        Some(cac / retention_at_t)
+    }
 }
 
 /// PMPM revenue: `rate × enrolled members × months`.

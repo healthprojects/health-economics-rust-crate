@@ -276,7 +276,10 @@ mod tests {
     fn dose_recommendation_feature_moves_it_to_tier_c() {
         // Worked example: "With dose recommendations: Tier C — comparative
         // effectiveness evidence (likely an RCT) plus economic analysis".
-        assert_eq!(classify_tier(ClinicalFunction::TreatDiagnoseOrGuide), EsfTier::C);
+        assert_eq!(
+            classify_tier(ClinicalFunction::TreatDiagnoseOrGuide),
+            EsfTier::C
+        );
         assert!(EsfTier::C > EsfTier::B);
     }
 
