@@ -16,8 +16,18 @@ Run the same checks CI runs (format, clippy, tests, doctests, docs):
 
 ```sh
 make ci                                     # runs bin/ci
+make check-spec-coverage                    # all specs are implemented and indexed
 make test-minimum-supported-rust-version    # MSRV (1.98) and the next release
+make coverage                               # 100% line/function/region coverage
 ```
+
+The project supports `just ci`, `just coverage`, and `just msrv` as aliases.
+An optional local pre-commit hook is configured in `.pre-commit-config.yaml`;
+installing the third-party `pre-commit` runner is not required to contribute.
+
+Code review follows [REVIEW.md](REVIEW.md). Maintainer triage and release
+processes are documented in [MAINTAINERS.md](MAINTAINERS.md) and
+[RELEASING.md](RELEASING.md).
 
 ## Code of conduct
 

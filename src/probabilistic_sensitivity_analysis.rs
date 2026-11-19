@@ -731,6 +731,79 @@ mod tests {
         assert_eq!(a, b);
     }
 
+    #[test]
+    fn seeded_uniform_sequence_is_stable() {
+        let mut rng = Lcg::new(42);
+        let expected = [
+            0.339_596_968_695_475_07,
+            0.923_579_294_789_912_1,
+            0.583_492_222_639_732_9,
+            0.798_238_865_583_332_4,
+            0.198_919_542_421_271_3,
+        ];
+        for value in expected {
+            assert!((rng.next_uniform() - value).abs() < 1e-15);
+        }
+    }
+
+    #[test]
+    fn seeded_normal_sequence_is_stable() {
+        let mut rng = Lcg::new(3);
+        let expected = [
+            10.218_503_131_840_33,
+            11.731_326_530_018_507,
+            10.905_822_484_713_097,
+        ];
+        for value in expected {
+            assert!((rng.normal(10.0, 2.0) - value).abs() < 1e-12);
+        }
+    }
+
+    #[test]
+    fn seeded_gamma_sequences_cover_both_shape_branches() {
+        let mut large_shape = Lcg::new(4);
+        let large_expected = [
+            1_028_355.259_730_151_2,
+            960_886.872_693_845_3,
+            902_611.740_823_055_4,
+        ];
+        for value in large_expected {
+            assert!((large_shape.gamma(16.0, 50_000.0) - value).abs() < 1e-6);
+        }
+
+        let mut small_shape = Lcg::new(9);
+        let small_expected = [
+            0.014_902_997_207_239_812,
+            0.370_330_867_014_244_45,
+            0.867_966_864_790_349_5,
+        ];
+        for value in small_expected {
+            assert!((small_shape.gamma(0.5, 2.0) - value).abs() < 1e-12);
+        }
+
+        // Shape 1 sits exactly on the direct Marsaglia–Tsang branch boundary.
+        let mut boundary_shape = Lcg::new(7);
+        assert!((boundary_shape.gamma(1.0, 3.0) - 1.785_752_813_560_957_7).abs() < 1e-12);
+
+        // Seed 5 fails the fast squeeze check and succeeds via the exact log
+        // acceptance test; seed 978 rejects its first proposal altogether.
+        let mut exact_fallback = Lcg::new(5);
+        assert!((exact_fallback.gamma(16.0, 50_000.0) - 1_024_268.611_334_601_3).abs() < 1e-6);
+        let mut rejection = Lcg::new(978);
+        assert!((rejection.gamma(16.0, 50_000.0) - 633_665.499_419_101_3).abs() < 1e-6);
+
+        // Seed 1696 distinguishes every term in the exact log expression,
+        // including multiplication precedence inside `1 - v + ln(v)`.
+        let mut log_expression = Lcg::new(1_696);
+        assert!((log_expression.gamma(16.0, 50_000.0) - 1_648_103.819_405_577_8).abs() < 1e-6);
+    }
+
+    #[test]
+    fn percentile_interpolates_between_nonzero_neighbors() {
+        let value = percentile(&[10.0, 20.0], 25.0).unwrap();
+        assert!((value - 12.5).abs() < 1e-12);
+    }
+
     /// Sampler sanity: gamma-by-mean/sd reproduces its mean and sd, and
     /// uniform stays in range.
     #[test]

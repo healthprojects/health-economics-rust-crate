@@ -1,0 +1,36 @@
+name: Metric or feature request
+description: Propose a calculation contract or repository capability.
+title: "feature: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: decision
+    attributes:
+      label: Decision need
+      description: What real health-economic decision cannot be handled today?
+    validations:
+      required: true
+  - type: textarea
+    id: contract
+    attributes:
+      label: Proposed contract
+      description: Give the formula, signature, units, undefined conditions, and a worked example.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Authoritative sources
+      description: Link primary guidance, standards, or papers supporting the calculation.
+    validations:
+      required: true
+  - type: dropdown
+    id: dependency
+    attributes:
+      label: Does this require another dependency?
+      options:
+        - "No"
+        - "Yes"
+        - "Unsure"
+    validations:
+      required: true

@@ -1,5 +1,9 @@
 # Quality Improvement Tasks for `health-economics` Rust Crate
 
+> Implementation status and applicability decisions are recorded in
+> [`disposition.md`](disposition.md), with every named item traced in
+> [`task-status.md`](task-status.md).
+
 ## Overview
 
 This is a mature, well-structured public open-source project (Rust crate) with 91 calculation modules for health economics metrics. It has strong foundations: spec-driven development, comprehensive testing, strict linting, CI/CD, and good documentation. Below are **specific, actionable improvement tasks** categorized to help **new visitors, promotion, and upskilling**, as well as **engineering, coding, testing, and auditing**.

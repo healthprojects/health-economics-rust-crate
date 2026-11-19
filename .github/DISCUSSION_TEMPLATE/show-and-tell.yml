@@ -1,0 +1,10 @@
+title: "[Show and tell] "
+labels: []
+body:
+  - type: textarea
+    id: use
+    attributes:
+      label: What did you build or analyze?
+      description: Describe the modules used and what you learned. Do not include confidential data.
+    validations:
+      required: true

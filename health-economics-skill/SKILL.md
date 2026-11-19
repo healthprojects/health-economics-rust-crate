@@ -25,6 +25,7 @@ themes `src/lib.rs`'s module index uses.
 | EQ-5D is the `EuroQol` group's standardized questionnaire for measuring health-related quality of life. | [`eq_5d`](../src/eq_5d.rs) |
 | A DALY is one lost year of healthy life — the burden-side mirror of the QALY. | [`disability_adjusted_life_year`](../src/disability_adjusted_life_year.rs) |
 | Life-years gained is the additional survival attributable to an intervention, with no quality adjustment: the area between the survival curves with and without it. | [`life_years_gained`](../src/life_years_gained.rs) |
+| Time trade-off elicits a health-state utility from the lifetime a respondent would exchange for fewer years in full health. | [`time_trade_off_utility`](../src/time_trade_off_utility.rs) |
 | HALE is a population-level summary: the number of years a person can expect to live *in full health*, discounting years spent in illness or disability. | [`health_adjusted_life_expectancy`](../src/health_adjusted_life_expectancy.rs) |
 | PROMs are standardized instruments where patients report their own health status (symptoms, function, quality of life); PREMs capture the care *experience*. | [`patient_reported_outcomes`](../src/patient_reported_outcomes.rs) |
 | NNT is the number of patients who must receive an intervention for **one** additional patient to benefit, over a stated time frame. | [`number_needed_to_treat`](../src/number_needed_to_treat.rs) |
@@ -43,6 +44,7 @@ themes `src/lib.rs`'s module index uses.
 | SROI extends ROI to outcomes that markets don't price — wellbeing, social connection, carer relief, environmental impact — by monetizing them with financial proxies, for *all* stakeholders affected. | [`social_return_on_investment`](../src/social_return_on_investment.rs) |
 | HTA is the formal, institutionalized process by which health systems decide whether a technology — drug, device, or software — is worth paying for. | [`health_technology_assessment`](../src/health_technology_assessment.rs) |
 | These are the two competing methods for valuing lost productivity — from illness, disability, or death — in cost-of-illness and cost-benefit studies. | [`human_capital_and_friction_cost`](../src/human_capital_and_friction_cost.rs) |
+| A Markov cohort model propagates a population across health states over repeated cycles and accumulates discounted costs and outcomes. | [`markov_cohort_simulation`](../src/markov_cohort_simulation.rs) |
 
 ### Decision rules and thresholds
 
@@ -72,6 +74,7 @@ themes `src/lib.rs`'s module index uses.
 | EVPI is the maximum amount a decision-maker should pay to eliminate uncertainty before deciding — the formal price of "let's run a study first". | [`expected_value_of_perfect_information`](../src/expected_value_of_perfect_information.rs) |
 | EVSI is the value of a *specific proposed study* — a given design, a given sample size — before it is run, as opposed to expected value of perfect information (EVPI), which prices eliminating all uncertainty outright. | [`expected_value_of_sample_information`](../src/expected_value_of_sample_information.rs) |
 | Benefits realization management (BRM) is the discipline of identifying, baselining, tracking, and *evidencing* that the benefits promised in a business case actually materialized after delivery. | [`benefits_realization`](../src/benefits_realization.rs) |
+| Real-options valuation prices the flexibility to expand a project after uncertainty resolves. | [`real_options_valuation`](../src/real_options_valuation.rs) |
 
 ### Healthcare operations
 
@@ -92,6 +95,8 @@ themes `src/lib.rs`'s module index uses.
 | Values the double dividend of moving patients from waiting list to active treatment sooner. | [`earlier_intervention`](../src/earlier_intervention.rs) |
 | The economics of intervening before disease occurs or progresses. | [`prevention_economics`](../src/prevention_economics.rs) |
 | Screening economics govern the value of testing asymptomatic populations. | [`screening_economics`](../src/screening_economics.rs) |
+| Population attributable fraction estimates the share of cases associated with an exposure and converts it into attributable cases. | [`population_attributable_fraction`](../src/population_attributable_fraction.rs) |
+| Number needed to screen links baseline risk and screening effectiveness to the screens and programme cost required per outcome prevented. | [`number_needed_to_screen`](../src/number_needed_to_screen.rs) |
 | Workforce retention economics quantify what staff turnover costs a health system — recruitment, onboarding/productivity ramp, and vacancy cover at agency premium — and therefore what software that reduces administrative burnout is worth. | [`workforce_retention`](../src/workforce_retention.rs) |
 | Cash-releasing savings reduce actual expenditure — a budget line gets smaller. | [`cash_releasing_vs_non_cash_releasing`](../src/cash_releasing_vs_non_cash_releasing.rs) |
 | Hard cash-releasing savings are line items a hospital can actively **delete from next month's budget** because of your software. | [`hard_cash_releasing_savings_deficit_defense`](../src/hard_cash_releasing_savings_deficit_defense.rs) |
@@ -113,6 +118,7 @@ themes `src/lib.rs`'s module index uses.
 | `DiGA` (Digitale Gesundheitsanwendungen) is Germany's statutory "apps on prescription" pathway — the world's first national system where doctors prescribe approved health apps and statutory insurance must reimburse them. | [`diga_fast_track`](../src/diga_fast_track.rs) |
 | The ESF is NICE's framework specifying **how much evidence a digital health technology needs, proportionate to its risk**. | [`nice_evidence_standards_framework`](../src/nice_evidence_standards_framework.rs) |
 | The UK Government Digital Service (GDS) Service Manual mandates four KPIs for every government digital service: **cost per transaction, user satisfaction, completion rate, and digital take-up**. | [`gds_service_metrics`](../src/gds_service_metrics.rs) |
+| The concentration index measures whether health outcomes or service use are distributed toward lower- or higher-ranked socioeconomic groups. | [`concentration_index`](../src/concentration_index.rs) |
 
 ### AI evaluation and economics
 

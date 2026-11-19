@@ -1,0 +1,46 @@
+name: Bug report
+description: Report incorrect behavior or a calculation that disagrees with its spec.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Please do not report security vulnerabilities here; use SECURITY.md.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: 1.0.2
+    validations:
+      required: true
+  - type: input
+    id: module
+    attributes:
+      label: Module or spec
+      placeholder: quality_adjusted_life_year / spec/quality-adjusted-life-year.md
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include inputs, code, actual output, and expected output.
+      render: rust
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Why is the expected result correct?
+      description: Link a source when proposing a formula or threshold correction.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I checked the corresponding file under spec/.
+          required: true
+        - label: This is not a private security report.
+          required: true

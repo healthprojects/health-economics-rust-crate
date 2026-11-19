@@ -1,1 +1,8 @@
-cargo bench
+#!/usr/bin/env bash
+# Run the dependency-free core performance benchmarks.
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+if [[ "${CARGO_TARGET_AARCH64_APPLE_DARWIN_RUNNER:-}" == "kache test-runner" ]]; then
+  unset CARGO_TARGET_AARCH64_APPLE_DARWIN_RUNNER
+fi
+cargo bench --bench core

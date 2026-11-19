@@ -4,6 +4,8 @@ message: >-
   If you use this work and you want to cite it,
   then you can use the metadata from this file.
 type: software
+version: 1.0.3
+date-released: '2026-11-19'
 authors:
   - given-names: Joel Parker
     family-names: Henderson

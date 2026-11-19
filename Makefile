@@ -19,6 +19,13 @@ test:
 	bin/test
 
 ##
+# make check-spec-coverage: verify every spec is implemented and indexed.
+##
+.PHONY: check-spec-coverage
+check-spec-coverage:
+	bin/check-spec-coverage
+
+##
 # make test-minimum-supported-rust-version: test with the minimum supported Rust version
 ##
 .PHONY: test-minimum-supported-rust-version
@@ -26,7 +33,7 @@ test-minimum-supported-rust-version:
 	bin/test-minimum-supported-rust-version
 
 ##
-# make benchmarks: run bin/benchmarks to generate code benchmarks with criterion.
+# make benchmarks: run the dependency-free core performance benchmarks.
 ##
 .PHONY: benchmarks
 benchmarks:
@@ -40,7 +47,7 @@ ci:
 	bin/ci
 
 ##
-# make coverage: : run bin/coverage to generate code coverage analysis with tarpaulin.
+# make coverage: enforce 100% coverage and generate an HTML report.
 ##
 .PHONY: coverage
 coverage:

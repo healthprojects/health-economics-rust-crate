@@ -1,0 +1,21 @@
+[files]
+extend-exclude = ["target/**"]
+
+[default.extend-identifiers]
+MAPE = "MAPE"
+Mape = "Mape"
+TTO = "TTO"
+VAS = "VAS"
+ba = "ba"
+mape = "mape"
+mis = "mis"
+ot = "ot"
+ue = "ue"
+Unio = "Unio"
+
+[default.extend-words]
+ba = "ba"
+mape = "mape"
+mis = "mis"
+ot = "ot"
+ue = "ue"

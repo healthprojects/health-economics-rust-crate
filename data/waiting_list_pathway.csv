@@ -1,0 +1,6 @@
+stage,duration_weeks_before,duration_weeks_after
+referral_triage,1,1
+first_outpatient,6,4
+diagnostic_wait,9,5
+decision_to_treat,2,2
+treatment_wait,6,4

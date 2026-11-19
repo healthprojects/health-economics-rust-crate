@@ -420,4 +420,22 @@ mod tests {
         assert!(evpi(&[]).is_none());
         assert!(evpi_from_psa_draws(&[]).is_none());
     }
+
+    #[test]
+    fn evpi_returns_none_for_mismatched_option_counts() {
+        let scenarios = [
+            Scenario {
+                probability: 0.5,
+                option_nmbs: vec![1.0],
+            },
+            Scenario {
+                probability: 0.5,
+                option_nmbs: vec![1.0, 2.0],
+            },
+        ];
+
+        assert!(expected_nmb_with_perfect_information(&scenarios).is_some());
+        assert!(expected_nmb_of_best_option(&scenarios).is_none());
+        assert!(evpi(&scenarios).is_none());
+    }
 }

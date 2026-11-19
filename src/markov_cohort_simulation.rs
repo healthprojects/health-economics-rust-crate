@@ -138,11 +138,19 @@ pub fn advance_cohort(state: &[f64], transition_matrix: &[Vec<f64>]) -> Option<V
     if transition_matrix.len() != n || transition_matrix.iter().any(|row| row.len() != n) {
         return None;
     }
-    Some(
-        (0..n)
-            .map(|j| (0..n).map(|i| state[i] * transition_matrix[i][j]).sum())
-            .collect(),
-    )
+    Some(advance_cohort_well_shaped(state, transition_matrix))
+}
+
+fn advance_cohort_well_shaped(state: &[f64], transition_matrix: &[Vec<f64>]) -> Vec<f64> {
+    (0..state.len())
+        .map(|j| {
+            state
+                .iter()
+                .zip(transition_matrix)
+                .map(|(value, row)| value * row[j])
+                .sum()
+        })
+        .collect()
 }
 
 /// One cycle's cost: `sum_s state[s] * cost_per_cycle[s]`.
@@ -172,7 +180,7 @@ pub fn cycle_cost(state: &[f64], cost_per_cycle: &[f64]) -> Option<f64> {
     if state.len() != cost_per_cycle.len() {
         return None;
     }
-    Some(state.iter().zip(cost_per_cycle).map(|(s, c)| s * c).sum())
+    Some(weighted_sum(state, cost_per_cycle))
 }
 
 /// One cycle's QALYs: `sum_s state[s] * utility[s] * cycle_length_years`.
@@ -203,7 +211,11 @@ pub fn cycle_qalys(state: &[f64], utility: &[f64], cycle_length_years: f64) -> O
     if state.len() != utility.len() {
         return None;
     }
-    Some(state.iter().zip(utility).map(|(s, u)| s * u).sum::<f64>() * cycle_length_years)
+    Some(weighted_sum(state, utility) * cycle_length_years)
+}
+
+fn weighted_sum(weights: &[f64], values: &[f64]) -> f64 {
+    weights.iter().zip(values).map(|(w, v)| w * v).sum()
 }
 
 /// Runs a full multi-cycle Markov cohort simulation, discounting each
@@ -280,8 +292,10 @@ pub fn simulate_cohort(
     let mut total_discounted_qalys = 0.0;
 
     for t in 0..cycles {
-        let cost = cycle_cost(&state, cost_per_cycle)?;
-        let qalys = cycle_qalys(&state, utility, cycle_length_years)?;
+        // Shapes were validated above and the internal transition preserves
+        // state length, so the cycle calculations are infallible here.
+        let cost = weighted_sum(&state, cost_per_cycle);
+        let qalys = weighted_sum(&state, utility) * cycle_length_years;
         // `cycles` is a small human-scale cycle count (single/double digits
         // to low hundreds for a lifetime horizon), well within f64's 52-bit
         // mantissa.
@@ -289,7 +303,7 @@ pub fn simulate_cohort(
         let discount_factor = 1.0 / (1.0 + discount_rate).powf(t as f64);
         total_discounted_cost += cost * discount_factor;
         total_discounted_qalys += qalys * discount_factor;
-        state = advance_cohort(&state, transition_matrix)?;
+        state = advance_cohort_well_shaped(&state, transition_matrix);
     }
 
     Some((total_discounted_cost, total_discounted_qalys))
@@ -350,6 +364,12 @@ mod tests {
     }
 
     #[test]
+    fn cycle_qalys_scale_with_nonannual_cycle_length() {
+        let qalys = cycle_qalys(&[0.75, 0.25], &[0.8, 0.2], 0.5).unwrap();
+        assert!((qalys - 0.325).abs() < TOL, "got {qalys}");
+    }
+
+    #[test]
     fn cycle_qalys_none_on_shape_mismatch() {
         assert!(cycle_qalys(&[1.0, 0.0], &[0.8], 1.0).is_none());
     }
@@ -392,6 +412,61 @@ mod tests {
             )
             .is_none()
         );
+
+        let bad_matrix_count = vec![vec![1.0, 0.0]];
+        assert!(
+            simulate_cohort(
+                &initial_distribution,
+                &bad_matrix_count,
+                &[1_000.0, 0.0],
+                &utility,
+                1.0,
+                3,
+                0.035
+            )
+            .is_none()
+        );
+
+        let bad_matrix_row = vec![vec![1.0], vec![0.0, 1.0]];
+        assert!(
+            simulate_cohort(
+                &initial_distribution,
+                &bad_matrix_row,
+                &[1_000.0, 0.0],
+                &utility,
+                1.0,
+                3,
+                0.035
+            )
+            .is_none()
+        );
+    }
+
+    #[test]
+    fn simulate_cohort_scales_qalys_for_half_year_cycles() {
+        let (initial_distribution, transition_matrix, cost_per_cycle, utility) =
+            worked_example_inputs();
+        let (_, annual_qalys) = simulate_cohort(
+            &initial_distribution,
+            &transition_matrix,
+            &cost_per_cycle,
+            &utility,
+            1.0,
+            3,
+            0.035,
+        )
+        .unwrap();
+        let (_, half_year_qalys) = simulate_cohort(
+            &initial_distribution,
+            &transition_matrix,
+            &cost_per_cycle,
+            &utility,
+            0.5,
+            3,
+            0.035,
+        )
+        .unwrap();
+        assert!((half_year_qalys - annual_qalys * 0.5).abs() < TOL);
     }
 
     #[test]

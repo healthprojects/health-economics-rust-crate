@@ -1,0 +1,25 @@
+# Exercise the branch-heavy iterative kernels with the complete test suite.
+# Scalar one-line formulas are already locked by worked examples and 100%
+# coverage; these modules benefit materially from mutation analysis.
+examine_globs = [
+    "src/dominance_and_efficiency_frontier.rs",
+    "src/markov_cohort_simulation.rs",
+    "src/probabilistic_sensitivity_analysis.rs",
+]
+
+# These mutations are behaviorally equivalent. The first two only change the
+# fast sufficient Gamma-acceptance shortcut; when it does not fire, the exact
+# logarithmic test reaches the same decision. The third changes strictness only
+# when a deterministic uniform draw's logarithm exactly equals the continuous
+# acceptance boundary, which the generator cannot construct in tested paths.
+exclude_re = [
+    "src/probabilistic_sensitivity_analysis.rs:311:23: replace < with == in Lcg::gamma",
+    "src/probabilistic_sensitivity_analysis.rs:311:23: replace < with <= in Lcg::gamma",
+    "src/probabilistic_sensitivity_analysis.rs:313:21: replace < with <= in Lcg::gamma",
+]
+all_features = true
+profile = "mutants"
+build_timeout_multiplier = 3.0
+timeout_multiplier = 3.0
+minimum_test_timeout = 60.0
+cap_lints = true

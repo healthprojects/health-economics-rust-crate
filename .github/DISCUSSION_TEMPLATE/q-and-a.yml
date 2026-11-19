@@ -1,0 +1,14 @@
+title: "[Q&A] "
+labels: [question]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: Include the decision context, candidate module, inputs, and units.
+    validations:
+      required: true
+  - type: textarea
+    id: attempts
+    attributes:
+      label: What have you tried?

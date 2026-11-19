@@ -1,0 +1,15 @@
+title: "[Idea] "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Decision need
+      description: Explain the user and the real decision this would support.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and possible contract
+      description: Add primary sources, formulas, units, and undefined conditions if known.

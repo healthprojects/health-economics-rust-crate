@@ -1,0 +1,4 @@
+scenario,population,prevalence,sensitivity,specificity,screen_cost_gbp,workup_cost_gbp
+low_prevalence,100000,0.005,0.90,0.95,15,400
+targeted,100000,0.020,0.90,0.95,15,400
+improved_specificity,100000,0.005,0.90,0.99,15,400

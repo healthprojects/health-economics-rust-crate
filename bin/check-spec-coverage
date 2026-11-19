@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Verify that every specification topic is wired through all public indexes.
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+failed=0
+count=0
+
+require_text() {
+  local needle="$1"
+  local file="$2"
+  local description="$3"
+  if ! rg -Fq -- "${needle}" "${file}"; then
+    echo "missing ${description}: ${needle} in ${file}" >&2
+    failed=1
+  fi
+}
+
+while IFS= read -r spec_file; do
+  topic="${spec_file#spec/}"
+  topic="${topic%.md}"
+  module="${topic//-/_}"
+  count=$((count + 1))
+
+  if [[ ! -f "src/${module}.rs" ]]; then
+    echo "missing implementation: src/${module}.rs for ${spec_file}" >&2
+    failed=1
+  fi
+  require_text "**Status**: implemented" "${spec_file}" "implemented status"
+  require_text "src/${module}.rs" "${spec_file}" "module link"
+  require_text "pub mod ${module};" src/lib.rs "crate export"
+  require_text "\`${module}\`" README.md "README module index entry"
+  require_text "src/${module}.rs" llms.txt "llms.txt entry"
+  require_text "\"path\": \"src/${module}.rs\"" llms.json "llms.json entry"
+  require_text "../src/${module}.rs" health-economics-skill/SKILL.md "skill route"
+done < <(find spec -maxdepth 1 -name '*.md' ! -name README.md | sort)
+
+implementation_count="$(find src -maxdepth 1 -name '*.rs' ! -name lib.rs ! -name main.rs ! -name tutorials.rs | wc -l | tr -d ' ')"
+if [[ "${implementation_count}" != "${count}" ]]; then
+  echo "topic count mismatch: ${count} specs, ${implementation_count} implementations" >&2
+  failed=1
+fi
+
+if [[ "${failed}" != 0 ]]; then
+  exit "${failed}"
+fi
+echo "spec coverage: ${count} topics are implemented and indexed"

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Run unit, integration, example-target, and documentation tests.
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+if [[ "${CARGO_TARGET_AARCH64_APPLE_DARWIN_RUNNER:-}" == "kache test-runner" ]]; then
+  unset CARGO_TARGET_AARCH64_APPLE_DARWIN_RUNNER
+fi
+cargo test --all-targets --all-features
+cargo test --doc --all-features

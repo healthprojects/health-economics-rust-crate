@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: health-economics-ci
+        name: health-economics CI gates
+        entry: bin/ci
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]

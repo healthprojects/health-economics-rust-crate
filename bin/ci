@@ -4,14 +4,21 @@
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
+if [[ "${CARGO_TARGET_AARCH64_APPLE_DARWIN_RUNNER:-}" == "kache test-runner" ]]; then
+  unset CARGO_TARGET_AARCH64_APPLE_DARWIN_RUNNER
+fi
+
 export RUSTDOCFLAGS="${RUSTDOCFLAGS:--D warnings}"
 
 echo "==> cargo fmt --check"
 cargo fmt --all -- --check
+echo "==> spec coverage"
+bin/check-spec-coverage
 echo "==> cargo clippy"
-cargo clippy --all-targets --all-features -- -D warnings
+cargo clippy --all-targets --all-features -- \
+  -D warnings \
+  -W clippy::cognitive_complexity
 echo "==> cargo test"
-cargo test --all-targets --all-features
-cargo test --doc --all-features
+bin/test
 echo "==> cargo doc"
 cargo doc --no-deps --all-features

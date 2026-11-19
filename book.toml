@@ -1,0 +1,14 @@
+[book]
+title = "Health Economics in Rust"
+description = "Tutorials and decision pathways for the health-economics crate"
+authors = ["Joel Parker Henderson"]
+language = "en"
+src = "docs"
+
+[build]
+build-dir = "target/book"
+
+[output.html]
+git-repository-url = "https://github.com/healthprojects/health-economics-rust-crate"
+edit-url-template = "https://github.com/healthprojects/health-economics-rust-crate/edit/main/{path}"
+site-url = "/health-economics-rust-crate/tutorials/"

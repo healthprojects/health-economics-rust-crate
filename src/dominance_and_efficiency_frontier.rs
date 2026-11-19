@@ -442,4 +442,20 @@ mod tests {
         let names: Vec<&str> = frontier.iter().map(|o| o.name.as_str()).collect();
         assert_eq!(names, vec!["A", "C"]);
     }
+
+    #[test]
+    fn equal_adjacent_icers_retain_the_middle_option() {
+        // Equal ICERs are collinear, not decreasing: extended dominance uses
+        // a strict comparison and therefore keeps all three alternatives.
+        let options = vec![
+            Alternative::new("A", 0.0, 0.0),
+            Alternative::new("B", 10.0, 1.0),
+            Alternative::new("C", 20.0, 2.0),
+        ];
+        let frontier = efficiency_frontier(&options);
+        assert_eq!(
+            frontier.iter().map(|x| x.name.as_str()).collect::<Vec<_>>(),
+            ["A", "B", "C"]
+        );
+    }
 }

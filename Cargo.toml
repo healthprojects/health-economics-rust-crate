@@ -1,12 +1,13 @@
 [package]
 name = "health-economics"
-version = "1.0.2"
+version = "1.0.3"
 edition = "2024"
 rust-version = "1.98"
 authors = ["Joel Parker Henderson <joel@joelparkerhenderson.com>"]
 description = "Health economics models, structs, calculations, and examples."
 readme = "README.md"
 repository = "https://github.com/healthprojects/health-economics-rust-crate/"
+documentation = "https://docs.rs/health-economics"
 license = "MIT OR Apache-2.0 OR BSD-3-Clause OR GPL-2.0-only OR GPL-3.0-only"
 keywords = ["health", "economics", "statistics", "analytics", "medical"]
 categories = ["science", "data-structures", "finance"]
@@ -14,9 +15,45 @@ include = [
     "src/**/*",
     "spec/**/*",
     "docs/tutorials/**/*",
+    "docs/adr/**/*",
+    "docs/case-studies/**/*",
+    "docs/community/**/*",
+    "docs/notebooks/**/*",
+    "docs/architecture.md",
+    "docs/comparisons.md",
+    "docs/cheat-sheet.md",
+    "docs/course-curriculum.md",
+    "docs/blog-series.md",
+    "docs/data-flow.md",
+    "docs/dependency-graph.md",
+    "docs/getting-started.md",
+    "docs/migration.md",
+    "docs/project-metrics.md",
+    "docs/podcast-outline.md",
+    "docs/talk-outline.md",
+    "docs/workshop.md",
+    "docs/video-tutorial-outline.md",
+    "docs/SUMMARY.md",
+    "docs/audits/security-checklist.md",
+    "docs/audits/mistral-medium-3-5-high/disposition.md",
+    "docs/audits/mistral-medium-3-5-high/task-status.md",
+    "benches/**/*",
+    "book.toml",
+    "examples/**/*",
+    "tests/**/*",
+    "assets/**/*",
+    "data/**/*",
     "health-economics-skill/**/*",
+    "CHANGELOG.md",
+    "FAQ.md",
+    "GLOSSARY.md",
+    "MAINTAINERS.md",
+    "RELEASING.md",
+    "REVIEW.md",
+    "ROADMAP.md",
     "LICENSE.md",
     "README.md",
+    "SECURITY.md",
     "AGENTS.md",
     "CLAUDE.md",
     "llms.txt",
@@ -47,3 +84,7 @@ debug = false
 inherits = "test"
 debug = "none"
 incremental = false
+
+[[bench]]
+name = "core"
+harness = false

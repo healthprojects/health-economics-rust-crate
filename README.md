@@ -1,5 +1,16 @@
 # Health Economics Rust crate
 
+![Health Economics Rust logo](assets/logo.svg)
+
+[![crates.io](https://img.shields.io/crates/v/health-economics.svg)](https://crates.io/crates/health-economics)
+[![downloads](https://img.shields.io/crates/d/health-economics.svg)](https://crates.io/crates/health-economics)
+[![GitHub stars](https://img.shields.io/github/stars/healthprojects/health-economics-rust-crate.svg?style=flat)](https://github.com/healthprojects/health-economics-rust-crate/stargazers)
+[![contributors](https://img.shields.io/github/contributors/healthprojects/health-economics-rust-crate.svg)](https://github.com/healthprojects/health-economics-rust-crate/graphs/contributors)
+[![CI](https://github.com/healthprojects/health-economics-rust-crate/actions/workflows/ci.yml/badge.svg)](https://github.com/healthprojects/health-economics-rust-crate/actions/workflows/ci.yml)
+[![coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](docs/audits/code-audit-2026-11-19.md)
+[![MSRV](https://img.shields.io/badge/MSRV-1.98-blue.svg)](Cargo.toml)
+[![license](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0%20OR%20BSD--3--Clause%20OR%20GPL--2.0--only%20OR%20GPL--3.0--only-blue.svg)](LICENSE.md)
+
 Health economics models, structs, calculations, and examples — 91 modules
 covering the metrics of health technology assessment, healthcare operations,
 digital health products, clinical AI evaluation, and their software
@@ -23,7 +34,7 @@ Add the dependency to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-health-economics = "0.1"
+health-economics = "1"
 ```
 
 ## Quickstart
@@ -63,6 +74,11 @@ agent modifying this crate should start with [`AGENTS.md`](AGENTS.md); one
 answering a metrics question should start with
 [`health-economics-skill/SKILL.md`](health-economics-skill/SKILL.md).
 
+New to the crate? Read the [Getting Started guide](docs/getting-started.md),
+then keep the [glossary](GLOSSARY.md) and [FAQ](FAQ.md) nearby.
+The same learning material is configured as a browsable mdBook, alongside
+searchable rustdoc, in the repository's documentation-site workflow.
+
 Long-form tutorials live in the `tutorials` module
 ([`docs/tutorials/`](docs/tutorials/)), in reading order:
 
@@ -90,7 +106,7 @@ cargo run --example engineering_economics       # delivery metrics as economics
 
 ## Module index by theme
 
-### Health outcome measures
+### 🫀 Health outcome measures
 
 - `quality_adjusted_life_year` — QALY: duration × utility, the common currency of HTA
 - `eq_5d` — EQ-5D utility instrument
@@ -102,7 +118,7 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `work_productivity_and_activity_impairment` — WPAI: absenteeism and presenteeism
 - `time_trade_off_utility` — TTO: how a utility weight is actually elicited from a respondent
 
-### Economic evaluation frameworks
+### 📊 Economic evaluation frameworks
 
 - `cost_effectiveness_analysis` — cost per natural unit of outcome
 - `cost_utility_analysis` — cost per QALY
@@ -115,7 +131,7 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `markov_cohort_simulation` — multi-cycle state-transition modelling for chronic conditions
 - `human_capital_and_friction_cost` — indirect/productivity cost valuation methods
 
-### Decision rules and thresholds
+### ⚖️ Decision rules and thresholds
 
 - `incremental_cost_effectiveness_ratio` — ICER: Δcost / Δeffect
 - `net_monetary_benefit` — NMB: effect × threshold − cost
@@ -132,7 +148,7 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `carbon_footprint_per_qaly` — carbon efficiency alongside cost efficiency
 - `cross_currency_icer_comparison` — PPP vs market-FX conversion for international comparisons
 
-### Uncertainty and evidence
+### 🎲 Uncertainty and evidence
 
 - `sensitivity_analysis` — one-way analysis and tornado diagrams
 - `probabilistic_sensitivity_analysis` — Monte Carlo over parameter distributions
@@ -141,7 +157,7 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `expected_value_of_sample_information` — EVSI: pricing a specific proposed study
 - `benefits_realization` — tracking promised benefits after go-live
 
-### Healthcare operations
+### 🏥 Healthcare operations
 
 - `bed_days_saved`, `length_of_stay`, `readmission_rate`
 - `referral_to_treatment`, `waiting_list_impact`, `did_not_attend_rate`
@@ -154,7 +170,7 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `hard_cash_releasing_savings_deficit_defense`
 - `value_generating_capacity_operational_turnaround`
 
-### Digital health products
+### 📱 Digital health products
 
 - `activation_and_uptake`, `adherence_and_persistence`
 - `engagement_metrics`, `retention_and_churn`, `reach_and_equity`, `concentration_index`
@@ -164,14 +180,14 @@ cargo run --example engineering_economics       # delivery metrics as economics
 - `nice_evidence_standards_framework` — NICE ESF for digital health
 - `gds_service_metrics` — UK Government Digital Service metrics
 
-### AI evaluation and economics
+### 🤖 AI evaluation and economics
 
 - `clinical_ai_evaluation` — sensitivity, specificity, PPV, and prevalence effects
 - `ai_quality_metrics`, `ai_regulatory_evaluation`
 - `ai_return_on_investment`, `ai_developer_productivity`
 - `inference_unit_economics` — cost per token, per request, per outcome
 
-### Software engineering economics
+### 🛠️ Software engineering economics
 
 - `dora_metrics`, `flow_metrics`, `space_and_devex`, `technical_debt`
 - `cost_of_delay`, `wsjf_and_cd3` — sequencing by cost of delay
@@ -188,6 +204,7 @@ doc example compiles and asserts under `cargo test --doc`, and the
 
 ```sh
 cargo test
+make coverage # enforces 100% coverage; writes target/llvm-cov/html/index.html
 ```
 
 ## Citation

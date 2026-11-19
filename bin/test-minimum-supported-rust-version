@@ -11,6 +11,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT}"
 
+if [[ "${CARGO_TARGET_AARCH64_APPLE_DARWIN_RUNNER:-}" == "kache test-runner" ]]; then
+  unset CARGO_TARGET_AARCH64_APPLE_DARWIN_RUNNER
+fi
+
 # Workspace/package roots: a Cargo.toml with no ancestor Cargo.toml declaring [workspace].
 roots=()
 while IFS= read -r manifest; do
@@ -35,17 +39,20 @@ n1="1.$(( BASH_REMATCH[1] + 1 ))"
 failed=0
 for toolchain in "${n2}" "${n1}"; do
   label="N-2"; [[ "${toolchain}" == "${n1}" ]] && label="N-1"
-  if ! rustup toolchain list | grep -q "^${toolchain}"; then
+  installed_toolchain="$(rustup toolchain list | awk -v prefix="${toolchain}" '
+    $1 ~ ("^" prefix "([.-]|$)") { sub(/-.*/, "", $1); print $1 }
+  ' | sort -V | tail -1)"
+  if [[ -z "${installed_toolchain}" ]]; then
     echo "Rust ${toolchain} (${label}) is not installed:" >&2
     echo "  rustup toolchain install ${toolchain} --profile minimal" >&2
     failed=1
     continue
   fi
   for dir in "${roots[@]}"; do
-    echo "==> ${label}: Rust ${toolchain} in ${dir}"
+    echo "==> ${label}: Rust ${installed_toolchain} in ${dir}"
     (cd "${dir}" \
-      && RUSTUP_TOOLCHAIN="${toolchain}" cargo check --all-targets \
-      && RUSTUP_TOOLCHAIN="${toolchain}" cargo test) || failed=1
+      && RUSTUP_TOOLCHAIN="${installed_toolchain}" cargo check --all-targets \
+      && RUSTUP_TOOLCHAIN="${installed_toolchain}" cargo test) || failed=1
   done
 done
 exit "${failed}"
