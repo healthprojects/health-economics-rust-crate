@@ -10,10 +10,13 @@ require_text() {
   local needle="$1"
   local file="$2"
   local description="$3"
-  if ! rg -Fq -- "${needle}" "${file}"; then
-    echo "missing ${description}: ${needle} in ${file}" >&2
-    failed=1
+  if command -v rg >/dev/null 2>&1; then
+    rg -Fq -- "${needle}" "${file}" && return
+  elif grep -Fq -- "${needle}" "${file}"; then
+    return
   fi
+  echo "missing ${description}: ${needle} in ${file}" >&2
+  failed=1
 }
 
 while IFS= read -r spec_file; do
