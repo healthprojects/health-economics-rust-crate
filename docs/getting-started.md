@@ -49,4 +49,4 @@ three `rusty_money::Money` modules instead of `f64`.
 ## Contribute
 
 Read `AGENTS.md` and `CONTRIBUTING.md`, make the spec and implementation move
-together, then run `bin/ci` and `bin/coverage`.
+together, then run `bin/ci` and `bin/test-coverage`.

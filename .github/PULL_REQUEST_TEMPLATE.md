@@ -10,6 +10,6 @@ Describe the decision need and the resulting change.
 ## Verification
 
 - [ ] `bin/ci`
-- [ ] `bin/coverage` (100%)
+- [ ] `bin/test-coverage` (100%)
 - [ ] No new dependency, license option, or repository URL change without prior agreement.
 - [ ] Public documentation and worked examples remain accurate.

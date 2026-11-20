@@ -6,12 +6,12 @@ The project reports reproducible engineering metrics, not vanity estimates.
 | --- | --- | --- |
 | Published version and downloads | crates.io badges in `README.md` | Live |
 | Test success | CI workflow | Every push and pull request |
-| Line/function/region coverage | `bin/coverage` | Every push and pull request; all must be 100% |
+| Line/function/region coverage | `bin/test-coverage` | Every push and pull request; all must be 100% |
 | Mutation score and survivors | mutation workflow artifact | Weekly and on demand; configured gate currently has zero missed mutants |
 | Dependency advisories and licenses | `cargo audit`, `cargo deny check` | Weekly and relevant pull requests |
 | Documentation spelling and links | `typos`, Lychee | Weekly and documentation pull requests |
 | Supported platforms | Linux, macOS, Windows, MSRV, nightly, WASM jobs | Scheduled or every relevant change |
-| Benchmark observations | `bin/benchmarks` | Before performance-sensitive releases |
+| Benchmark observations | `bin/test-benchmarks` | Before performance-sensitive releases |
 | Cognitive complexity | Clippy `cognitive_complexity` lint in `bin/ci` | Every push and pull request |
 
 GitHub’s repository Insights remains the source for contributor, issue, and
@@ -24,8 +24,8 @@ documentation, and performance changes rather than lines-of-code counts.
 
 ```sh
 cargo test --all-targets --all-features
-bin/coverage
-bin/benchmarks
+bin/test-coverage
+bin/test-benchmarks
 cargo tree
 cargo audit
 cargo deny check

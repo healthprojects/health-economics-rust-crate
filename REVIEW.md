@@ -13,7 +13,7 @@ Review changes against the specification before reviewing style.
 - New public items have complete documentation and runnable examples.
 - No dependency, license option, or repository URL changes are introduced
   without explicit maintainer agreement.
-- `bin/ci` and `bin/coverage` pass.
+- `bin/ci` and `bin/test-coverage` pass.
 
 ## Review posture
 

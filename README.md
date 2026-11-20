@@ -204,7 +204,7 @@ doc example compiles and asserts under `cargo test --doc`, and the
 
 ```sh
 cargo test
-make coverage # enforces 100% coverage; writes target/llvm-cov/html/index.html
+make test-coverage # enforces 100% coverage; writes target/llvm-cov/html/index.html
 ```
 
 ## Citation

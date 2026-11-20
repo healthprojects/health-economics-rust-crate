@@ -9,11 +9,11 @@ specs:
 ci:
     bin/ci
 
-coverage:
-    bin/coverage
+test-coverage:
+    bin/test-coverage
 
 msrv:
-    bin/test-minimum-supported-rust-version
+    bin/make-ci-minimum-supported-rust-version
 
 package:
     cargo package --locked

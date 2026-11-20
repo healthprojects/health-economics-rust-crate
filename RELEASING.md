@@ -1,7 +1,7 @@
 # Release process
 
 1. Confirm the worktree is clean and the intended commit is on `main`.
-2. Run `bin/ci`, `bin/coverage`, and the MSRV check.
+2. Run `bin/ci`, `bin/test-coverage`, and the MSRV check.
 3. Update `CHANGELOG.md`, `Cargo.toml`, `Cargo.lock`, `llms.json`, and citation
    metadata for the release version.
 4. Run `cargo package --locked` and inspect the packaged file list.

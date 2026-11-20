@@ -6,7 +6,7 @@
 
 ## Benchmark Results
 
-Run `bin/benchmarks` to measure three representative workloads in release mode:
+Run `bin/test-benchmarks` to measure three representative workloads in release mode:
 
 - a scalar net-monetary-benefit calculation;
 - a 40-cycle, two-state Markov cohort simulation;

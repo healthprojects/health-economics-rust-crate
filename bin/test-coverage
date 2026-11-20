@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Measure coverage and enforce complete line, function, and region coverage.
 # Requires cargo-llvm-cov: cargo install cargo-llvm-cov --locked
-# Usage: bin/coverage   # HTML report: target/llvm-cov/html/index.html
+# Usage: bin/test-coverage   # HTML report: target/llvm-cov/html/index.html
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 

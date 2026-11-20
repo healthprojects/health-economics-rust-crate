@@ -39,5 +39,5 @@ together.
 
 ## What quality gates must pass?
 
-Run `bin/ci` and `bin/coverage`. The latter enforces 100% line, function, and
+Run `bin/ci` and `bin/test-coverage`. The latter enforces 100% line, function, and
 region coverage.

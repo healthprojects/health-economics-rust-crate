@@ -47,7 +47,7 @@ jobs:
         run: rustup show active-toolchain || rustup toolchain install
       - uses: taiki-e/install-action@cargo-llvm-cov
       - uses: Swatinem/rust-cache@v2
-      - run: bin/coverage
+      - run: bin/test-coverage
       - uses: actions/upload-artifact@v4
         if: always()
         with:

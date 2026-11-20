@@ -17,8 +17,8 @@ Run the same checks CI runs (format, clippy, tests, doctests, docs):
 ```sh
 make ci                                     # runs bin/ci
 make check-spec-coverage                    # all specs are implemented and indexed
-make test-minimum-supported-rust-version    # MSRV (1.98) and the next release
-make coverage                               # 100% line/function/region coverage
+make ci-minimum-supported-rust-version    # MSRV (1.98) and the next release
+make test-coverage                               # 100% line/function/region coverage
 ```
 
 The project supports `just ci`, `just coverage`, and `just msrv` as aliases.
