@@ -32,7 +32,7 @@ jobs:
           cp docs/site-index.html target/site/index.html
           cp -R target/doc target/site/api
           cp -R target/book target/site/tutorials
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
         with:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
