@@ -9,7 +9,7 @@
 [![CI](https://github.com/healthprojects/health-economics-rust-crate/actions/workflows/ci.yml/badge.svg)](https://github.com/healthprojects/health-economics-rust-crate/actions/workflows/ci.yml)
 [![coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](docs/audits/code-audit-2026-11-19.md)
 [![MSRV](https://img.shields.io/badge/MSRV-1.98-blue.svg)](Cargo.toml)
-[![license](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0%20OR%20BSD--3--Clause%20OR%20GPL--2.0--only%20OR%20GPL--3.0--only-blue.svg)](LICENSE.md)
+[![license](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0%20OR%20BSD--3--Clause%20OR%20GPL--2.0--only%20OR%20GPL--3.0--only%20OR%20OGL--UK--3.0%20OR%20CC--BY--NC--SA--4.0-blue.svg)](LICENSE.md)
 
 Health economics models, structs, calculations, and examples — 91 modules
 covering the metrics of health technology assessment, healthcare operations,
@@ -213,8 +213,8 @@ See [`CITATION.cff`](CITATION.cff) for citation metadata.
 
 ## License
 
-Any of MIT, Apache-2.0, BSD-3-Clause, GPL-2.0-only, or GPL-3.0-only, at
-your option — or contact us for custom license options. See
+Any of MIT, Apache-2.0, BSD-3-Clause, GPL-2.0-only, GPL-3.0-only,
+OGL-UK-3.0, or CC-BY-NC-SA-4.0, at your option — or contact us for custom license options. See
 [`LICENSE.md`](LICENSE.md).
 
 ## Tracking
